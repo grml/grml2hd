@@ -1,0 +1,66 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+INSTALL = install
+INSTALL_EXECUTABLES = $(INSTALL)
+INSTALL_FILES = $(INSTALL) -p -oroot -groot -m644
+
+clean:
+	dh_testdir
+	dh_testroot
+	dh_clean
+
+build:
+	make clean
+	make doc
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_installdirs usr/bin usr/sbin usr/share/grml2hd etc/grml2hd boot/grub
+
+	# Add here commands to install the package into debian/grml2hd.
+	$(INSTALL_EXECUTABLES) grml2hd            $(CURDIR)/debian/grml2hd/usr/sbin/
+	$(INSTALL_EXECUTABLES) grml2hd-chrooted   $(CURDIR)/debian/grml2hd/usr/sbin/
+	$(INSTALL_EXECUTABLES) grml2hd-bootparams $(CURDIR)/debian/grml2hd/usr/bin/
+	$(INSTALL_FILES) grml.bmp                 $(CURDIR)/debian/grml2hd/usr/share/grml2hd/
+	$(INSTALL_FILES) grml.bmp.conf            $(CURDIR)/debian/grml2hd/usr/share/grml2hd/
+	$(INSTALL_FILES) bootscreen.bmp           $(CURDIR)/debian/grml2hd/usr/share/grml2hd/
+	$(INSTALL_FILES) bootscreen.bmp.conf      $(CURDIR)/debian/grml2hd/usr/share/grml2hd/
+	$(INSTALL_FILES) config                   $(CURDIR)/debian/grml2hd/etc/grml2hd/
+	$(INSTALL_FILES) grml-template_menu.lst   $(CURDIR)/debian/grml2hd/boot/grub/
+
+
+# Build architecture-independent files here.
+binary-indep: install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs 
+	dh_installdocs debian/TODO
+	dh_installman grml2hd.8
+	cp --no-dereference *.8.gz debian/grml2hd/usr/share/man/man8/
+	dh_link /lib/grub/i386-pc/stage1 /boot/grub/stage1
+	dh_link /lib/grub/i386-pc/stage2 /boot/grub/stage2
+	dh_compress
+	mkdir -p $(CURDIR)/debian/grml2hd/usr/share/lintian/overrides/
+	cp -av debian/overrides $(CURDIR)/debian/grml2hd/usr/share/lintian/overrides/grml2hd
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: binary-indep binary-arch binary install clean build

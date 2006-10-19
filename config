@@ -1,0 +1,73 @@
+# Filename:      /etc/grml2hd/config
+# Purpose:       config file for grml2hd running in non-interactive mode
+# Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>
+# Bug-Reports:   see http://grml.org/bugs/
+# License:       This file is licensed under the GPL v2.
+# Latest change: Thu Apr 27 17:29:07 CEST 2006 [mika]
+################################################################################
+
+# username of user which should be used by default on grml system:
+# e.g.: "grml"
+NEWUSER="grml"
+
+# realname of user which should be used by default on grml system:
+# e.g.: "grml User"
+REALNAME="grml user"
+
+# hostname of computer
+HOSTNAME="grml"
+
+# please adjust after installation!
+ROOTPASSWD="grml"
+USERPASSWD="grml"
+
+# which partition should be used for installation to harddisk:
+# e.g.: "/dev/hda1"  -> install grml on /dev/hda1
+PARTITION=""         # empty by default to avoid accidents
+
+# install lilo into mbr (master boot record) of the following device:
+# e.g.: "/dev/hda"   -> install in mbr
+# e.g.: "/dev/hda1"  -> don't touch mbr but write into partition only
+BOOT_PARTITION=""    # empty by default to avoid accidents
+
+# which filesystem should be used for installation:
+# e.g.: "ext3"
+# valid values: ext3, ext2, jfs, xfs, reiserfs, reiser4
+# notice: reiser4 only supported with grml >= 0.5
+#         reiser4 has problems with lilo/booting, it's *very* experimental
+#         reiser4, jfs and xfs not supported with grml-small
+FILESYSTEM="ext3"
+
+# run grml-x to create /etc/X11/xorg.conf?
+# notice: does not work with grml-small as there does not exist a X window system
+#         setting it won't affect it
+GRMLX='yes'
+
+# commands which should be run right before main installation
+# e.g.:
+# function PREEXECUTE() {
+#   echo -e "o\nn\np\n1\n\n$size\nt\n7\na\n1\nw\n" | fdisk /dev/hda
+#   apt-get -o Acquire::HTTP::Timeout=1 -y --force-yes update
+#   apt-get -y --force-yes install jfsutils
+# }
+function PREEXECUTE() {
+  echo "running preexecute function"
+}
+
+# commands which should be run right before finishing installation
+# e.g.:
+# function POSTEXECUTE() {
+#   echo "Running update: "
+#     apt-get -o Acquire::HTTP::Timeout=1 -y --force-yes update
+#    apt-get -y --force-yes upgrade
+#   echo "done"
+#   echo -n "Setting timezone: "
+#   echo "Europe/Vienna" > /etc/timezone && echo "done"
+#   ntpdate time.tugraz.at
+# }
+# function POSTEXECUTE() { ; }
+function POSTEXECUTE() {
+  echo "running postexecute function"
+}
+
+## END OF FILE #################################################################

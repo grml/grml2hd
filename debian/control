@@ -1,0 +1,17 @@
+Source: grml2hd
+Section: grml
+Priority: optional
+Maintainer: Andreas "Jimmy" Gredler <jimmy@grml.org>
+Uploaders: Michael Prokop <mika@grml.org>
+Build-Depends: debhelper (>= 4.0.0), asciidoc, xsltproc, docbook-xsl
+Standards-Version: 3.6.2
+
+Package: grml2hd
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, lilo, grml-autoconfig, yaird | initramfs-tools, file-rc, grml-scripts (>= 0.7-19)
+Suggests: grml2hd-utils, grml-x, jfsutils, xfsprogs, reiserfsprogs, reiser4progs
+Description: make a harddisk installation of grml
+ grml2hd is a script that installs grml on your harddisk.
+ Use it with care! Take a look at grml2hd-utils.
+ .
+  Homepage: http://grml.org/grml2hd/

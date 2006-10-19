@@ -1,0 +1,485 @@
+grml2hd (0.8.10) unstable; urgency=low
+
+  * Small modification of "no partitions" dialog in partition_select.
+
+ -- Michael Prokop <mika@grml.org>  Mon,  9 Oct 2006 11:41:47 +0200
+
+grml2hd (0.8.9) unstable; urgency=low
+
+  * Fix configuration files of b0rken apps (idesktop, gkrellm2) which
+    don't allow relative paths, so adjust it via grml2hd.
+  * Don't display the additional lilo-entry for /dev/[hs]da
+    if $PARTITION is /dev/[hs]da.
+
+ -- Michael Prokop <mika@grml.org>  Sat,  7 Oct 2006 15:37:09 +0200
+
+grml2hd (0.8.8) unstable; urgency=low
+
+  * Set GRML2HD=1 when running grml-hostname so we tell grml-hostname
+    that we are running inside grml2hd (adjust message corresponding).
+
+ -- Michael Prokop <mika@grml.org>  Sat, 30 Sep 2006 12:28:34 +0200
+
+grml2hd (0.8.7) unstable; urgency=low
+
+  * Added function bailout() to clean up on exit and use
+    a special exit code for every single function.
+  * Adjust boot-partition if installing into /dev/[sd]hda in
+    new MBR-check.
+
+ -- Michael Prokop <mika@grml.org>  Sat, 23 Sep 2006 00:05:09 +0200
+
+grml2hd (0.8.6) unstable; urgency=low
+
+  * Removed zsh specific code from MBR-check which has been
+    added in previous version.
+
+ -- Michael Prokop <mika@grml.org>  Fri, 22 Sep 2006 18:40:31 +0200
+
+grml2hd (0.8.5) unstable; urgency=low
+
+  * Apply patch from Alexander Bernauer which checks for partition
+    where MBR should be installed to.
+  * Remove noswap from grml2hd-bootparams as it does not make
+    sense on hd-installations (Debian's initscripts like checkroot.sh,
+    mountall.sh,.. run 'swapon -a' without taking care about boot
+    options like noswap).
+
+ -- Michael Prokop <mika@grml.org>  Mon, 18 Sep 2006 11:58:21 +0200
+
+grml2hd (0.8.4) unstable; urgency=low
+
+  * Symlink /etc/init to /sbin/init and adjust /etc/inittab
+    creation therefore.
+  * Use "ca::ctrlaltdel:/etc/init.d/grml-halt" instead of
+    "ca::ctrlaltdel:/sbin/init 0" in /etc/inittab.
+
+ -- Michael Prokop <mika@grml.org>  Sun, 17 Sep 2006 00:10:39 +0200
+
+grml2hd (0.8.3) unstable; urgency=low
+
+  * Update manpage.
+  * Added noswap to grml2hd-bootparams (as suggested by Mark).
+
+ -- Michael Prokop <mika@grml.org>  Tue,  5 Sep 2006 23:36:40 +0200
+
+grml2hd (0.8.2) unstable; urgency=low
+
+  * Removed the unnecessary chown-command.
+  * Print error message and exit if we can't find a valid partition.
+  * Run chpasswd with option '-m' to fix the "8 chars are enough
+    to be able to login"-problem (thanks for reporting, wuehlmaus!)
+    and use encryption.
+
+ -- Michael Prokop <mika@grml.org>  Mon, 14 Aug 2006 16:40:13 +0200
+
+grml2hd (0.8.1) unstable; urgency=low
+
+  * New grml release.
+
+ -- Michael Prokop <mika@grml.org>  Sun, 13 Aug 2006 10:47:34 +0200
+
+grml2hd (0.7.14) unstable; urgency=low
+
+  * Synchronise /etc/skel and /home/$NEWUSER in newuser().
+
+ -- Michael Prokop <mika@grml.org>  Mon,  7 Aug 2006 18:32:08 +0200
+
+grml2hd (0.7.13) unstable; urgency=low
+
+  * Detect /dev/md* and don't modify $BOOT_PARTITON then as we
+    have to install MBR into /dev/md0 and not /dev/md.
+  * Added check4mem() to check for at least 64MB of free memory
+    so dpkg runs smoothly.
+
+ -- Michael Prokop <mika@grml.org>  Sat,  5 Aug 2006 11:57:12 +0200
+
+grml2hd (0.7.12) unstable; urgency=low
+
+  * Updated /home/$NEWUSER code: move /home/grml to /home/$NEWUSER
+    in any case, even if the username is 'grml' - this should
+    fix the permission problem...
+
+ -- Michael Prokop <mika@grml.org>  Fri, 28 Jul 2006 22:08:10 +0200
+
+grml2hd (0.7.11) unstable; urgency=low
+
+  [mika, jimmy]
+  * Updated manpage corresponding to current implementation.
+
+ -- Michael Prokop <mika@grml.org>  Thu, 27 Jul 2006 22:10:02 +0200
+
+grml2hd (0.7.10) unstable; urgency=low
+
+  * Sychronize /home/grml with /etc/skel when $NEWUSER is grml.
+  * Added setlanguage() [set keyboard and language settings].
+  * Allow setting partition via cmdline and activate the given
+    partition in partition selector by default.
+  * Added backward compatibiliy support for -mbr cmdline option.
+  * Return '0' for help and version information.
+  * Don't continue executing non-interactive mode if partition
+    is not set via /etc/grml2hd/config.
+  * Check whether $PARTITION set via cmdline exists before selecting
+    a partition in the partition selector dialog and print a
+    warning.
+
+ -- Michael Prokop <mika@grml.org>  Fri,  7 Jul 2006 22:48:55 +0200
+
+grml2hd (0.7.9) unstable; urgency=low
+
+  [Jimmy]
+  * Added the partition selector to grml2hd.
+    Also changed the commandline handling: grml2hd can now be started
+    without any parameters, or with -i for non-interactive mode.
+    It's still possible to use the environment variable instead of
+    the -i switch.  Docu needs to be updated soon.
+  
+  [Mika]
+  * Dropped unnecessary $PARTITIONLIST in new partition selector. 
+  * Don't provide loopback devices in partition selector.
+  * Replace `...` with $(...) in partition selector and
+    grml2hd-bootparams.
+  * Removed debugging code.
+  * Adjusted dialog text in function check4mbr for new partition
+    selector.
+  * Don't provide reiser4 in filesystem menu. It's just too b0rken.
+  * Added /usr/sbin/dpkg_running to /etc/sudoers.
+
+ -- Michael Prokop <mika@grml.org>  Sun, 25 Jun 2006 11:32:44 +0200
+
+grml2hd (0.7.8) unstable; urgency=low
+
+  * Updated /boot/grub/grml-template_menu.lst.
+
+ -- Michael Prokop <mika@grml.org>  Sat, 24 Jun 2006 17:56:32 +0200
+
+grml2hd (0.7.7) unstable; urgency=low
+
+  * Don't use zsh-login in single user mode anymore.
+
+ -- Michael Prokop <mika@grml.org>  Sun,  4 Jun 2006 23:18:13 +0200
+
+grml2hd (0.7.6) unstable; urgency=low
+
+  * Added /boot/grub/grml-template_menu.lst.
+  * Symlink /boot/grub/stage[12] with /lib/grub/i386-pc/stage[12].
+
+ -- Michael Prokop <mika@grml.org>  Fri, 12 May 2006 22:33:06 +0200
+
+grml2hd (0.7.5) unstable; urgency=low
+
+  * Updated information dialog in finalize-function.
+  * Added grml-scripts (>= 0.7-19) to depends.
+  * Run global check for grml-small.
+  * Don't run remove-packages-server on grml-small even if
+    remove-packages-server script is available.
+
+ -- Michael Prokop <mika@grml.org>  Thu, 27 Apr 2006 21:33:01 +0200
+
+grml2hd (0.7.4) unstable; urgency=low
+
+  * Added support for setting $HOSTNAME.
+
+ -- Michael Prokop <mika@grml.org>  Thu, 27 Apr 2006 17:33:22 +0200
+
+grml2hd (0.7.3) unstable; urgency=low
+
+  * Don't create new home directory for new user but instead move
+    /home/grml to /home/$NEWUSER. Don't do anything if username
+    is 'grml'.
+
+ -- Michael Prokop <mika@grml.org>  Thu, 13 Apr 2006 13:04:59 +0200
+
+grml2hd (0.7.2) unstable; urgency=low
+
+  * Use *:* instead of *.* for chown in /home/.... Thanks for reporting
+    the bug, Peter Czyz!
+
+ -- Michael Prokop <mika@grml.org>  Wed, 12 Apr 2006 14:42:38 +0200
+
+grml2hd (0.7.1) unstable; urgency=low
+
+  * Switch order of change name and realname in grml2hd-chrooted
+    so $REALNAME is added also if not using username 'grml'.
+
+ -- Michael Prokop <mika@grml.org>  Sun,  9 Apr 2006 16:37:53 +0200
+
+grml2hd (0.7.0) unstable; urgency=low
+
+  * New grml version is coming, adjusted version therefore.
+  * Fixed forgotten debug stuff in grml2hd-bootparams.
+
+ -- Michael Prokop <mika@grml.org>  Thu,  6 Apr 2006 13:49:35 +0200
+
+grml2hd (0.6.8) unstable; urgency=low
+
+  * Added resume, brltty, speakup_synth and swspeak to list of
+    grml2hd-bootparams so it's easier to use out of the box for
+    blind people.
+  * Added hints for mailinglist and to check ISO to welcome
+    screen.
+
+ -- Michael Prokop <mika@grml.org>  Wed, 29 Mar 2006 17:15:52 +0200
+
+grml2hd (0.6.7) unstable; urgency=low
+
+  * Added support for initramfs-tools.
+  * Removed the VESAFB_TNG-workaround.
+
+ -- Michael Prokop <mika@grml.org>  Sun, 12 Mar 2006 22:36:41 +0100
+
+grml2hd (0.6.6) unstable; urgency=low
+
+  * Added a simple echo output to functions PREEXECUTE and
+    POSTEXECUTE so we are /bin/sh compatible.
+
+ -- Michael Prokop <mika@grml.org>  Mon, 27 Feb 2006 01:03:42 +0100
+
+grml2hd (0.6.5) unstable; urgency=low
+
+  * Add pci=assign-busses to grml2hd-bootparams.
+
+ -- Michael Prokop <mika@grml.org>  Sun, 26 Feb 2006 21:00:10 +0100
+
+grml2hd (0.6.4) unstable; urgency=low
+
+  * Don't check for video=ofonly/vga=normal in grml2hd-bootparams
+    as lilo.conf does not accept vga-options in append line.
+  * Updated manpage, mention the "driver has to be in kernel"
+    problem of SW-RAID.
+
+ -- Michael Prokop <mika@grml.org>  Sun, 26 Feb 2006 15:34:07 +0100
+
+grml2hd (0.6.3) unstable; urgency=low
+
+  * Added function check4mbr for people who don't read docs.
+
+ -- Michael Prokop <mika@grml.org>  Mon,  6 Feb 2006 12:54:39 +0100
+
+grml2hd (0.6.2) unstable; urgency=low
+
+  * Updated comments in /etc/grml2hd/config.
+
+ -- Michael Prokop <mika@grml.org>  Sun, 22 Jan 2006 14:46:52 +0100
+
+grml2hd (0.6.1) unstable; urgency=low
+
+  * Bumb version number to 0.6 for new release.
+  * Fix variable handling in several functions.
+
+ -- Michael Prokop <mika@grml.org>  Fri, 20 Jan 2006 10:59:38 +0100
+
+grml2hd (0.5.14) unstable; urgency=low
+
+  * Added 'Known issues' to manpage.
+  * We have to strip down $UNAME for lilo label. Use $UNAME_SHORT
+    in lilo.conf therefor.
+
+ -- Michael Prokop <mika@grml.org>  Sat,  7 Jan 2006 17:05:52 +0100
+
+grml2hd (0.5.13) unstable; urgency=low
+
+  * Improved usage information and added support for cmdline
+    options '-h' and '--help'.
+  * Write into $CONFIGTMP only if it's writeable (prevent
+    generation on running 'grml [-h|--help]'.
+  * Remove base-config tip as base-config has been removed in
+    Debian.
+
+ -- Michael Prokop <mika@grml.org>  Sun,  1 Jan 2006 14:11:42 +0100
+
+grml2hd (0.5.12) unstable; urgency=low
+
+  * Added some more comments in /etc/grml2hd/config.
+
+ -- Michael Prokop <mika@grml.org>  Wed, 21 Dec 2005 22:29:47 +0100
+
+grml2hd (0.5.11) unstable; urgency=low
+
+  * Added file-rc to depends.
+  * Mention environment variables in grml2hd manpage.
+  * Don't use static values for grml2hd-bootparams interface.
+  * Updated manpage (verified use of encrypted /home partition).
+
+ -- Michael Prokop <mika@grml.org>  Sun, 18 Dec 2005 03:18:16 +0100
+
+grml2hd (0.5.10) unstable; urgency=low
+
+  * Switched from nroff to asciidoc for manpage. Adjusted
+    build depends therefor.
+
+ -- Michael Prokop <mika@grml.org>  Sun, 18 Dec 2005 00:59:21 +0100
+
+grml2hd (0.5.9) unstable; urgency=low
+
+  * Improved initrd creation function so it automatically
+    works in non-interactive mode as well.
+  * Use status bar when lilo is running (improves "feedback
+    for user").
+
+ -- Michael Prokop <mika@grml.org>  Sun, 11 Dec 2005 13:14:02 +0100
+
+grml2hd (0.5.8) unstable; urgency=low
+
+  * Added support for installation on SW-RAID (/dev/md*).
+  * Improved info message when running lilo fails (print error message).
+
+ -- Michael Prokop <mika@grml.org>  Sat, 10 Dec 2005 17:40:36 +0100
+
+grml2hd (0.5.7) unstable; urgency=low
+
+  * Improved and simplified runlevel configuration.
+
+ -- Michael Prokop <mika@grml.org>  Thu,  1 Dec 2005 11:13:44 +0100
+
+grml2hd (0.5.6) unstable; urgency=low
+
+  * Adjusted depends (added yaird).
+
+ -- Michael Prokop <mika@grml.org>  Sat, 26 Nov 2005 19:11:43 +0100
+
+grml2hd (0.5.5) unstable; urgency=low
+
+  * Added support for initrd. Now installation on SCSI harddisk
+    is supported. Installation on USB devices as well (needs
+    some more testing though).
+  * Fixed handling of $NOSWREMOVAL.
+  * Removed notice about reinstall-packages (thx, Josef Wolf!)
+    and added aptitude tip instead.
+
+ -- Michael Prokop <mika@grml.org>  Wed, 16 Nov 2005 12:00:43 +0100
+
+grml2hd (0.5.4) unstable; urgency=low
+
+  * Added commented templates for options password and restricted
+    options to /etc/lilo.conf.
+  * Removed some not used code.
+
+ -- Michael Prokop <mika@grml.org>  Thu, 10 Nov 2005 23:07:14 +0100
+
+grml2hd (0.5.3) unstable; urgency=low
+
+  * Added support for environment variable $NOSWREMOVAL so removal
+    of server packages via script remove-server-packages can be skipped
+    running NOSWREMOVAL=1 grml2hd....
+
+ -- Michael Prokop <mika@grml.org>  Tue,  8 Nov 2005 00:18:32 +0100
+
+grml2hd (0.5.2) unstable; urgency=low
+
+  * Notice: not really a relevant upgrade, just some small cleanups.
+  * Upps, forgot to bump the grml2hd version in grml2hd itself.
+  * Removed $PARTITION in cfdisk hint.
+
+ -- Michael Prokop <mika@grml.org>  Sun, 23 Oct 2005 22:19:23 +0200
+
+grml2hd (0.5.1) unstable; urgency=low
+
+  * Release new version for grml 0.5.
+
+ -- Michael Prokop <mika@grml.org>  Sun, 23 Oct 2005 19:30:39 +0200
+
+grml2hd (0.4.8) unstable; urgency=low
+
+  * Added check for interactive mode to interrupt installation
+    inside dialog.
+
+ -- Michael Prokop <mika@grml.org>  Sun, 23 Oct 2005 19:03:13 +0200
+
+grml2hd (0.4.7) unstable; urgency=low
+
+  * Added dialog function for setting bootparams in lilo's append line.
+  * Use $LANG='C' and $LC_ALL='C' so we get english-only messages and
+    interface.
+  * Start cron and postfix by default on harddisk installation.
+  * Added grml2hd-bootparams.
+
+ -- Michael Prokop <mika@grml.org>  Wed,  5 Oct 2005 23:37:54 +0200
+
+grml2hd (0.4.6) unstable; urgency=low
+
+  * Fixed racecondition in yes/no dialog of mkfs (thanks for reporting,
+    Karl Voit!).
+  * Updated manpage.
+
+ -- Michael Prokop <mika@grml.org>  Tue, 27 Sep 2005 18:32:11 +0200
+
+grml2hd (0.4.5) unstable; urgency=low
+
+  * Start support of automatization of grml2hd via bootoptions.
+
+ -- Michael Prokop <mika@grml.org>  Wed, 21 Sep 2005 14:07:32 +0200
+
+grml2hd (0.4.4) unstable; urgency=low
+
+  * The "we did a lot of testing and adding features" release.
+  * Some fixes for grml-small, now we are able to run grml2hd on grml-small.
+  * Added xconfig (checks it /etc/X11/xorg.conf is present, otherwise
+    run grml-x in background to create the file).
+  * Run update-rc.d for x11-common (if file is present) to get appropriate
+    permissions in /tmp/.X*.
+  * Several small improvements like check for files, don't hack udev in
+    /etc/rcS.d/.
+  * Added remove_unwanted_packages (currently: remove grml-firefox).
+  * Added check whether given partition-argument is a valid partition or not.
+  * Now depends from lilo and grml-autoconfig.
+  * Now suggests grml2hd-utils and grml-x.
+  * Added myself (mika) to the Uploaders.
+  * Made the package lintian-clean.
+
+ -- Michael Prokop <mika@grml.org>  Sun,  4 Sep 2005 13:50:55 +0200
+
+grml2hd (0.4.3) unstable; urgency=low
+
+  * Removed /etc/rcS.d/S98grml-home and /etc/rcS.d/S99grml-misc [notice: we
+    are running 'rsync /etc/skel /home' also for user grml - now when
+    installing grml].
+  * When there's not enough disk space don't quit but show
+    a smart warning.
+
+ -- Michael Prokop <mika@grml.org>  Fri,  3 Jun 2005 22:01:05 +0200
+
+grml2hd (0.4.2) unstable; urgency=low
+
+  * The "improved security"-release.
+
+ -- Michael Prokop <mika@grml.org>  Sat,  7 May 2005 22:45:39 +0200
+
+grml2hd (0.4.1) unstable; urgency=low
+
+  * Modified grml2hd so lilo uses the appropriate fb-option (video=
+    instead of vga=). Default bootoption now uses framebuffer, renamed
+    grml-fb to grml-nofb.
+  * Fixed path to grml2hd-chrooted in grml2hd-manpage.
+  * Added new features:
+     - adduser (select username and realname)
+     - filesystem chooser
+
+ -- Michael Prokop <mika@grml.org>  Tue, 19 Apr 2005 16:09:25 +0200
+
+grml2hd (0.4.0) unstable; urgency=low
+
+  * Changed grml2hd to handle new unionfs directory tree 
+
+ -- Andreas "Jimmy" Gredler <jimmy@grml.org>  Mon,  4 Apr 2005 10:07:03 +0200
+
+grml2hd (0.3.0) unstable; urgency=low
+
+  * Changed grml2hd-chrooted to handle new sysvinit
+
+ -- Andreas "Jimmy" Gredler <jimmy@grml.org>  Thu, 10 Feb 2005 15:26:11 +0100
+
+grml2hd (0.2.1) unstable; urgency=low
+
+  * /GRML is now removed on the hd-install to satisfy FHS.
+  * Fixed some packaging bugs.
+  * Fixed versioning scheme to include grml release version.
+
+ -- Andreas "Jimmy" Gredler <jimmy@grml.org>  Sat, 29 Jan 2005 22:11:12 +0100
+
+grml2hd (0.1.0) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Andreas "Jimmy" Gredler <jimmy@grml.org>  Fri,  3 Dec 2004 15:10:51 +0100
+

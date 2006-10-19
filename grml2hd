@@ -1,0 +1,814 @@
+#!/bin/sh
+# Filename:      grml2hd
+# Purpose:       install grml to harddisk
+# Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
+# Bug-Reports:   see http://grml.org/bugs/
+# License:       This file is licensed under the GPL v2.
+# Latest change: Mon Okt 09 11:42:13 CEST 2006 [mika]
+################################################################################
+
+LANG='C'
+LC_ALL='C'
+
+function is_grml_small(){
+  grep -q small /etc/grml_version && return 0 || return 1
+}
+
+function is_grml_usb(){
+  grep -q usb /etc/grml_version && return 0 || return 1
+}
+
+function is_grml2hd_noninteractive(){
+  if ! [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
+     return 0 # we running automatic installation
+  else
+     return 1 # we are running interactive installatio
+  fi
+}
+
+[ -f /boot/memtest86+.bin ] && MEMTEST="
+image=/boot/memtest86+.bin
+        label=\"Memory Test+\"
+        read-only
+"
+
+# variables
+VERSION='0.8.10'
+PN=$(basename "$0")
+PID="$(echo $$)"
+UNAME=$(uname -r)
+UNAME_SHORT=$(echo $UNAME | sed 's/-small//')
+ARGUMENTS="$*"
+[ -z "$PARTITION" ] && PARTITION=$1
+[ -z "$BOOT_PARTITION" ] && BOOT_PARTITION=$PARTITION
+SOURCE=/
+TARGET='/mnt/grml'
+SPACE_REQUIRED_MB=2700
+is_grml_small && SPACE_REQUIRED_MB=250
+is_grml_usb   && SPACE_REQUIRED_MB=1400
+CONFIGTMP='/etc/grml2hd/grml2hdtmp'
+[ -w $CONFIGTMP ] && echo -n "" > $CONFIGTMP
+YDATE=$(date -R)
+GRMLVERSION=$(cat /etc/grml_version)
+TMP=${TMP:-'/tmp'}
+TMPFILE=$(mktemp ${TMP}/grml2hd.XXXXXX)
+
+function bailout(){
+  rm -f "$TMPFILE"
+  exit "$1"
+}
+
+trap bailout 1 2 3 15
+
+if ! [ -z "$NOSWREMOVAL" ] ; then
+  echo "NOSWREMOVAL=$NOSWREMOVAL" >> $CONFIGTMP
+fi
+
+# debug output and log file:
+# DEBUG=yes
+# LOGFILE=/tmp/grml2hd.log
+DEBUG=${DEBUG:-''}
+LOGFILE=${LOGFILE:-'/dev/null'}
+
+[ -w $CONFIGTMP ] && echo "PN=${PN}" >> $CONFIGTMP
+
+function usageinfo()
+{
+    cat <<EOF >&2
+Usage: $PN [ -i | <partition> ]
+
+Usage examples:
+
+  $PN
+  Run the interactive installer.
+
+  $PN /dev/hda2
+  Run the interactive installer and select /dev/hda2 for partition dialog.
+
+  $PN -i
+  Start the non-interactive installer.
+
+For more information take a look at 'man grml2hd' and http://grml.org/grml2hd/
+EOF
+}
+
+# commandline handling...
+if [ "$1" == "-h" -o "$1" == "--help" ] ; then
+  usageinfo
+  bailout 0
+fi
+
+if [ "$1" == "-v" -o "$1" == "--version" ] ; then
+  echo $VERSION
+  bailout 0
+fi
+
+if [ "$1" == "-i" -o "$1" == "--noninteractive" ] ; then
+  export GRML2HD_NONINTERACTIVE=1
+fi
+
+# be backward compatible for users who still run 'grml2hd /dev/ice1 -mbr /dev/ice'
+if [ "$#" -gt 1 ]; then
+ if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
+  shift
+  if [ "$1" == "-mbr" ]; then
+    shift
+    MBRDEFAULT=mbr
+  fi
+ fi
+fi
+
+function checkforrun()
+{
+  if [ -n "$PARTITION" ] ; then
+    dialog --timeout 10 --title "$PN" \
+           --yesno "Do you want to stop at this stage?
+
+Notice: you are running grml2hd in non-interactive mode.
+grml2hd will install the grml system on ${PARTITION}.
+Last chance to quit. Timeout of 10 seconds running....
+
+Do you want to stop now?" 0 0 2>/dev/null
+  else # no partition set via /etc/grml2hd/config
+    dialog --stdout --title "$PN" --msgbox  \
+    "Error running non-interactive mode of grml2hd.
+No partition set via /etc/grml2hd/config. Exiting." 6 60
+    bailout 1
+  fi
+}
+
+function check4root()
+{
+  if [ $UID != 0 ]; then
+    dialog --title "${PN}" --msgbox "You must be root to install grml!" 5 60
+    bailout 2
+  fi
+}
+
+function check4mem()
+{
+  local RAM=$(/usr/bin/gawk '/MemTotal/{print $2}' /proc/meminfo)
+  local MEM=$(/usr/bin/gawk 'BEGIN{m=0};/MemFree|Cached|SwapFree/{m+=$2};END{print m}' /proc/meminfo)
+  if [ "$MEM" -lt 60248 ] ; then
+    dialog --title "${PN}" --yes-label "Continue" --no-label "Cancel" --yesno \
+    "Warning: you have $(( $RAM / 1024 )) MB of RAM, $(( $MEM / 1024 )) MB free memory at all.
+
+Package management inside grml2hd very probably will need more than 64MB of free memory to work proberly.
+
+If you do not have enough RAM you can manually add a swap-partition now (swapon /dev/partition) to hopefully have enough free memory for grml2hd.
+
+Please make sure to have enough free memory. Continuing anyway..." 15 70
+  fi
+  if [ $? != 0 ]; then
+     bailout 3
+  fi
+}
+
+function check4space()
+{
+  PARTITION_NAME=${PARTITION#/*/}
+  SPACE_PARTITION=$(grep /proc/partitions -e "${PARTITION_NAME}$" |gawk '{print $3}')
+  SPACE_PARTITION_MB=$[$SPACE_PARTITION/1024]
+  if [ $SPACE_PARTITION_MB -lt $SPACE_REQUIRED_MB ]; then
+    dialog --title "${PN}" --yes-label "Continue" --no-label "Cancel" --yesno \
+    "Warning: $SPACE_REQUIRED_MB MB free space \
+are required. $PARTITION_NAME has only $SPACE_PARTITION_MB MB.
+
+Please make sure to have enough free space. Continuing anyway..." 10 60
+  fi
+  if [ $? != 0 ]; then
+     bailout 4
+  fi
+}
+
+function partition_select()
+{
+  # Partitions and Blocksize
+  if ! is_grml2hd_noninteractive ; then
+    if [ -n "$PARTITION" ] ; then
+      if ! [ -b "$PARTITION" ] ; then
+         dialog --stdout --title "$PN" --msgbox "Warning: $PARTITION does not seem to exist.
+Please select another partition in the following dialog!" 6 60
+      else
+         DEFAULT_PARTITION=${PARTITION#/*/}
+      fi
+    fi
+    PART=$(cat /proc/partitions 2> /dev/null | grep -v loop | \
+           gawk -v num=0 -v ORS=' ' /'[[:alpha:]]+[[:digit:]]+'/'{print $4, $3}')
+    if [ -z "$PART" ] ; then
+      dialog --stdout --title "$PN" --msgbox "Error: no harddisk partition(s) found for installation. \
+Please make sure you have an existing partition. Exiting." 0 0 ; bailout 5
+    fi
+
+    if SELECTED_PARTITION=$(dialog --stdout --default-item "$DEFAULT_PARTITION" --menu Partitions 0 0 0 \
+       $(cat /proc/partitions 2> /dev/null | grep -v loop | \
+       gawk -v num=0 -v ORS=' ' /'[[:alpha:]]+[[:digit:]]+'/'{print $4, $3}')) ; then
+       PARTITION="/dev/$SELECTED_PARTITION"
+    else
+      bailout 6
+    fi
+  fi
+}
+
+function check4partition()
+{
+  fdisk -l $PARTITION 2>/dev/null | grep -q $PARTITION
+  if [ $? != 0 ]; then
+    dialog --title "${PN}" --msgbox "Error: $PARTITION does not seem to be an existing partition.
+
+Please use a programm like cfdisk to create partition ${PARTITION} and restart grml2hd.
+
+Exiting..." 11 60
+    bailout 7
+  fi
+}
+
+function initialize()
+{
+  echo "Starting grml2hd" 1>$LOGFILE
+  if ! is_grml2hd_noninteractive ; then
+   dialog --stdout --title "${PN}" --defaultno --yesno "
+All your data on $PARTITION will be destroyed!
+It will be formated using the ${FILESYSTEM} filesystem.
+Are you sure you want to continue?" 10 60
+   if [ $? != 0 ]; then
+     bailout 8
+   fi
+  fi
+  umount -l $TARGET 1>>$LOGFILE 2>&1 # make sure $TARGET is not mounted! lazy unmount to be sure...
+  echo "Creating $FILESYSTEM filesystem on $PARTITION" 1>> $LOGFILE
+  dialog --title "${PN}" --infobox "
+Creating $FILESYSTEM filesystem on $PARTITION" 5 60
+  $MKFS $MKFSOPTIONS $PARTITION 1>>$LOGFILE 2>&1 || return 1
+  if [ -n "$TUNE2FS" ] ; then
+    echo "Disabling automatic filesystem check on $PARTITION via tune2fs" 1>>$LOGFILE
+    tune2fs -c0 -i0 $PARTITION 1>>$LOGFILE 2>&1
+  fi
+  mkdir $TARGET 1>>$LOGFILE 2>&1
+  mount -t $FILESYSTEM -o rw,dev,suid $PARTITION $TARGET 1>>$LOGFILE 2>&1 || return 1
+}
+
+function initialize_error()
+{
+  echo "There was an error mounting the partition.
+Please make sure that $MKFS for creating $PARTITION is available and
+that $PARTITION is not in use/mounted. Exiting."
+  bailout 9
+}
+
+function copy_files()
+{
+  cd /UNIONFS
+  ( echo "0" ;
+    cp -a backups $TARGET 1>>$LOGFILE 2>&1
+    echo "2"
+    echo "XXX";
+    echo "Copying /bin";
+    echo "XXX";
+    cp -a bin $TARGET 1>>$LOGFILE 2>&1
+    echo "6"
+    echo "XXX";
+    echo "Copying /boot";
+    echo "XXX";
+    cp -a boot $TARGET 1>>$LOGFILE 2>&1
+    echo "8"
+    echo "XXX";
+    echo "Copying /cdrom";
+    echo "XXX";
+    cp -a cdrom $TARGET 1>>$LOGFILE 2>&1
+    echo "9"
+    echo "XXX";
+    echo "Copying /dev";
+    echo "XXX";
+    cp -a dev $TARGET 1>>$LOGFILE 2>&1
+    echo "10"
+    echo "XXX";
+    echo "Copying /etc";
+    echo "XXX";
+    cp -a etc $TARGET 1>>$LOGFILE 2>&1
+    echo "15"
+    echo "XXX";
+    echo "Copying /floppy";
+    echo "XXX";
+    cp -a floppy $TARGET 1>>$LOGFILE 2>&1
+    echo "16"
+    echo "XXX";
+    echo "Copying /home";
+    echo "XXX";
+    cp -a home $TARGET 1>>$LOGFILE 2>&1
+    echo "20"
+    echo "XXX";
+    echo "Copying /initrd";
+    echo "XXX";
+    cp -a initrd $TARGET 1>>$LOGFILE 2>&1
+    echo "21"
+    echo "XXX";
+    echo "Copying /lib";
+    echo "XXX";
+    cp -a lib $TARGET 1>>$LOGFILE 2>&1
+    echo "30"
+    echo "XXX";
+    echo "Copying /media";
+    echo "XXX";
+    cp -a media $TARGET 1>>$LOGFILE 2>&1
+    echo "32"
+    echo "XXX";
+    echo "Copying /mnt";
+    echo "XXX";
+    cp -a mnt $TARGET 1>>$LOGFILE 2>&1
+    echo "34"
+    echo "XXX";
+    echo "Copying /none";
+    echo "XXX";
+    cp -a none $TARGET 1>>$LOGFILE 2>&1
+    echo "35"
+    echo "XXX";
+    echo "Copying /opt";
+    echo "XXX";
+    cp -a opt $TARGET 1>>$LOGFILE 2>&1
+    echo "36"
+    echo "XXX";
+    echo "Copying /root";
+    echo "XXX";
+    cp -a root $TARGET 1>>$LOGFILE 2>&1
+    echo "37"
+    echo "XXX";
+    echo "Copying /sbin";
+    echo "XXX";
+    cp -a sbin $TARGET 1>>$LOGFILE 2>&1
+    echo "40"
+    echo "XXX";
+    echo "Copying /selinux";
+    echo "XXX";
+    cp -a selinux $TARGET 1>>$LOGFILE 2>&1
+    echo "41"
+    echo "XXX";
+    echo "Copying /swap";
+    echo "XXX";
+    cp -a swap $TARGET 1>>$LOGFILE 2>&1
+    echo "42"
+    echo "XXX";
+    echo "Copying /usr\n(Notice: this takes a while - be patient!)";
+    echo "XXX";
+    cp -a usr $TARGET 1>>$LOGFILE 2>&1
+    echo "80"
+    echo "XXX";
+    echo "Copying /var";
+    echo "XXX";
+    cp -a var $TARGET 1>>$LOGFILE 2>&1
+    echo "95"
+    echo "XXX";
+    echo "Creating /sys, /proc, /tmp and fixing permissions...";
+    echo "XXX";
+    mkdir -m  755 ${TARGET}/sys  ; chown root.root ${TARGET}/sys
+    mkdir -m  555 ${TARGET}/proc ; chown root.root ${TARGET}/proc
+    mkdir -m 1777 ${TARGET}/tmp  ; chown root.root ${TARGET}/tmp
+    chmod 755 ${TARGET}/home/
+    chmod 750 ${TARGET}/home/*
+    echo "100") | \
+  dialog --title "${PN}" --gauge "Copying files to $PARTITION" 9 50 0
+  is_grml2hd_noninteractive || dialog --msgbox "Copying files was successful!" 5 50
+
+  # /UNIONFS/dev is not correct, we need to copy /dev
+  rsync --progress -auv $SOURCE/dev/ $TARGET/dev/ 1>>$LOGFILE 2>&1
+}
+
+function create_fstab()
+{
+  # remount-ro seems to make problems at least when using XFS - check!
+  if [[ $FILESYSTEM == ext* ]] ; then
+    echo "$PARTITION  /  $FILESYSTEM  errors=remount-ro  0 1" > $TARGET/etc/fstab
+  else
+    echo "$PARTITION  /  $FILESYSTEM  defaults 0 1" > $TARGET/etc/fstab
+  fi
+  cat /etc/fstab >> $TARGET/etc/fstab
+}
+
+function create_inittab()
+{
+  [ -x /sbin/init ] && ln -sf /sbin/init /etc/
+
+  cat > $TARGET/etc/inittab << EOF
+# Filename:      inittab
+# Purpose:       init(8) configuration.
+# Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>
+# Bug-Reports:   see http://grml.org/bugs/
+# License:       This file is licensed under the GPL v2.
+# Latest change: Sam Sep 16 23:29:53 CEST 2006 [mika]
+################################################################################
+
+# grml ${GRMLVERSION} installed with $PN $VERSION on ${YDATE}
+
+# The default runlevel.
+id:2:initdefault:
+
+# Boot-time system configuration/initialization script.
+# This is run first except when booting in emergency (-b) mode.
+si::sysinit:/etc/init.d/rcS
+
+# What to do in single-user mode.
+# ~~:S:respawn:/bin/zsh --login >/dev/tty1 2>&1 </dev/tty1
+~~:S:wait:/sbin/sulogin
+
+# /etc/init.d executes the S and K scripts upon change
+# of runlevel.
+#
+# Runlevel 0 is halt.
+# Runlevel 1 is single-user.
+# Runlevels 2-5 are multi-user.
+# Runlevel 6 is reboot.
+
+# l0:0:wait:/etc/init.d/rc 0
+l0:0:wait:/etc/init.d/grml-halt
+l1:1:wait:/etc/init.d/rc 1
+l2:2:wait:/etc/init.d/rc 2
+l3:3:wait:/etc/init.d/rc 3
+l4:4:wait:/etc/init.d/rc 4
+l5:5:wait:/etc/init.d/rc 5
+l6:6:wait:/etc/init.d/grml-reboot
+# l6:6:wait:/etc/init.d/rc 6
+
+# What to do when CTRL-ALT-DEL is pressed.
+ca::ctrlaltdel:/etc/init.d/grml-halt
+
+# Action on special keypress (ALT-UpArrow).
+kb::kbrequest:/bin/echo "Keyboard Request -- edit /etc/inittab to let this work."
+
+# What to do when the power fails/returns.
+pf::powerwait:/etc/init.d/powerfail start
+pn::powerfailnow:/etc/init.d/powerfail now
+po::powerokwait:/etc/init.d/powerfail stop
+
+# /sbin/getty invocations for the runlevels.
+#
+# The "id" field MUST be the same as the last
+# characters of the device (after "tty").
+#
+# Format:
+#  <id>:<runlevels>:<action>:<process>
+# 4 virtual consoles with immortal shells
+# Note that on most Debian systems tty7 is used by the X Window System.
+# Use tty8 a second xserver.
+
+1:12345:respawn:/sbin/getty  38400 tty1
+2:2345:respawn:/sbin/getty  38400 tty2
+3:2345:respawn:/sbin/getty  38400 tty3
+4:2345:respawn:/sbin/getty  38400 tty4
+5:2345:respawn:/sbin/getty  38400 tty5
+6:2345:respawn:/sbin/getty  38400 tty6
+EOF
+}
+
+function get_bootparams
+{
+  if ! is_grml2hd_noninteractive ; then
+    grml2hd-bootparams
+    LILOAPPEND=$(cat /tmp/liloappendline)
+  fi
+}
+
+function lilo_sw_raid
+{
+ if ! is_grml2hd_noninteractive ; then
+  if echo $PARTITION | grep -q '/dev/md' ; then
+    if ! [ -z "$SWRAID" ] ; then
+      LILORAID="raid-extra-boot=$SWRAID"
+      dialog --stdout --title "${PN}" --msgbox "
+You are installing grml to ${PARTITION} which seems to be a software
+RAID device. It is necessary to tweak lilo to be able to boot
+grml. The following line will be automatically added to lilo.conf:
+
+raid-extra-boot=${SWRAID}
+
+Everything looks OK so far. Continuing.
+
+" 13 70
+    else
+      dialog --stdout --title "${PN}" --defaultno --yesno "You are installing grml to ${PARTITION} which seems
+to be a software RAID device. The lilo.conf needs
+to be adjusted therefor probably. But you did not
+provide the SWRAID environment variable which might
+be necessary to be able to boot from ${PARTITION}.
+
+If you really know what you are doing you can continue,
+otherwise please restart grml2hd using (adjusted):
+
+\$SWRAID='/dev/...,/dev/...' $PN $ARGUMENTS
+
+Do you really want to continue?" 0 0
+      if [ $? != 0 ] ; then
+        echo "Exiting at stage lilo_sw_raid"
+        bailout 10
+      fi
+    fi
+  fi
+ fi
+}
+
+function create_liloconfig
+{
+  cp /usr/share/grml2hd/bootscreen.bmp $TARGET/boot
+  cat > $TARGET/etc/lilo.conf << EOF
+# Generated by $PN
+
+# This allows booting from any partition on disks with more than 1024
+# cylinders.
+lba32
+
+# Specifies the boot device
+boot=$BOOT_PARTITION
+
+# Specifies the device that should be mounted as root.
+# If the special name CURRENT is used, the root device is set to the
+# device on which the root file system is currently mounted. If the root
+# has been changed with  -r , the respective device is used. If the
+# variable ROOT is omitted, the root device setting contained in the
+# kernel image is used. It can be changed with the rdev program.
+root=$PARTITION
+
+# use grml on software raid:
+# raid-extra-boot=...
+$LILORAID
+
+# Prevent unattended booting:
+#  password=...
+# A password is only required to boot the image if kernel parameters are
+# specified on the command line (e.g. 'single'):
+#  restricted
+
+bitmap=/boot/bootscreen.bmp
+bmp-colors=138,,190,134,,190
+bmp-table=210p,280p,1,10,150p
+bmp-timer=540p,50p,125,0,190
+
+install=bmp
+prompt
+timeout=50
+map=/boot/map
+vga=normal
+
+image=/boot/vmlinuz-$UNAME
+        label="$UNAME_SHORT"
+        #append="video=vesafb:ypan,1024x768-16@60 ${LILOAPPEND}"
+        append="grml_from_hd ${LILOAPPEND}"
+        read-only
+        vga=0x0317
+#        initrd=ADJUSTME
+
+image=/boot/vmlinuz-$UNAME
+        label="grml-debug"
+        append="debug log nocolor ${LILOAPPEND}"
+        read-only
+#        initrd=ADJUSTME
+
+image=/boot/vmlinuz-$UNAME
+        label="grml-nofb"
+        append="video=ofonly ${LILOAPPEND}"
+        read-only
+#        initrd=ADJUSTME
+
+$MEMTEST
+
+# If you have another OS on this machine to boot, you can uncomment the
+# following lines, changing the device name on the 'other' line to
+# where your other OS' partition is.
+#
+# other=/dev/hda4
+# label=HURD
+
+EOF
+}
+
+function getfs()
+{
+  if ! is_grml2hd_noninteractive ; then
+   FILESYSTEM=$(dialog --stdout --title "$PN" \
+          --radiolist "Which filesystem do you want to use on $PARTITION on your grml system?
+Please make sure that the partition itself is available (check e.g. via cfdisk)!" 14 78 5 \
+          ext3   "the default on most Linux systems (recommended)" on \
+          ext2   "ext3 without journaling" off \
+          xfs    "journaling file system by SGI (notice: problems with lilo)" off \
+          jfs    "the journaled file system by IBM" off \
+          reiserfs   "fs for use with huge numbers of small files" off)
+#          reiser4   "the new version of reiserfs (very experimental!)" off)
+   if [ $? != 0 ]; then
+     bailout 11
+   fi
+  fi
+  echo "FILESYSTEM=${FILESYSTEM}" >> $CONFIGTMP
+  echo "MKFS=mkfs.${FILESYSTEM}"  >> $CONFIGTMP
+  export "MKFS=mkfs.${FILESYSTEM}"
+  export "FILESYSTEM=${FILESYSTEM}"
+  if [[ $FILESYSTEM == ext* ]] ; then
+    TUNE2FS="yes"
+  else
+    TUNE2FS=""
+  fi
+  if [[ $FILESYSTEM == xfs ]] ; then
+    MKFSOPTIONS='-f'
+  fi
+  if [[ $FILESYSTEM == jfs ]] ; then
+    MKFSOPTIONS='-f'
+  fi
+  if [[ $FILESYSTEM == reiserfs ]] ; then
+    MKFSOPTIONS='-f'
+  fi
+  if [[ $FILESYSTEM == reiser4 ]] ; then
+    MKFSOPTIONS='-y'
+  fi
+}
+
+function call_chroot()
+{
+  chroot $TARGET grml2hd-chrooted
+}
+
+function finalize()
+{
+  rm $TARGET/etc/mtab
+  # hack for udev
+  echo "none /dev tmpfs rw,size=5M,mode=0755 0 0" > $TARGET/etc/mtab
+  rm $TARGET/etc/grml_cd
+  rm -f $TMPFILE
+
+  sync ; umount -l $TARGET
+  echo "$PN: Done" 1>>$LOGFILE 2>&1
+
+  dialog --stdout --title "${PN}" --msgbox "Congratulations!
+
+  You have a harddisk installation of GRML now! Enjoy.
+
+  If you want to reconfigure the basesystem of grml take a
+  look at the script 'grml-autoconfig'. To configure network
+  run 'grml-network' or edit /etc/network/interfaces manually.
+
+  Run 'grml2hd-utils' to install useful additional software.
+
+  Visit the grml2hd-homepage for more information:
+  http://grml.org/grml2hd/
+
+  Useful tips and information can be found in the grml-wiki:
+  http://wiki.grml.org/
+
+  Do you have any further questions? Bug reports? Feedback?
+  Do not hesitate to contact us! http://grml.org/contact/
+
+  Please consider donation if you like grml!
+  http://grml.org/donations/
+
+  Now reboot the system to use the harddisk installation.
+" 0 0
+}
+
+# if config file is present and we are running the non-interactive installation then source it:
+if ! [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
+   [ -r /etc/grml2hd/config ] && . /etc/grml2hd/config
+fi
+
+function welcome_screen()
+{
+  is_grml2hd_noninteractive || ( dialog --stdout --msgbox "Welcome to ${PN} ${VERSION}!
+
+${PN} can install grml to your harddisk.
+
+The grml team doesn't take responsibility for any loss of data!
+grml2hd requires at least $SPACE_REQUIRED_MB MB of free space on your harddisk.
+
+Make sure you have the latest version of ${PN}!
+Additional information and updates are available at:
+http://grml.org/grml2hd/
+
+Please make sure that your grml-ISO is ok. Otherwise installation
+will not be possible and might hang at a specific point. Verify the
+ISO via booting with 'grml testcd'. Check your CD low-level running
+# readcd -c2scan dev=/dev/cdrom
+
+If you are running a grml2hd installation we strongly recommend to
+subscribe to the grml-user mailinglist (see http://grml.org/mailinglist/)!
+
+Please give us feedback to improve the installer!
+http://grml.org/contact/    contact (at) grml.org
+" 0 0 )
+}
+
+function grmlsmall_fixes()
+{
+  is_grml2hd_noninteractive || dialog --stdout --msgbox "Notice: You are running grml-small.
+
+grml-small includes some hacks to get all the software inside
+the ~55MB ISO. Therefore grml2hd has to run some fixes.
+
+For example all the documentation has been removed - several
+packages are not completely installed. If you want to reinstall
+the packages install aptitude, run it and get the cursor over the
+Installed Packages category. Then press Shift-L and run
+update/upgrade afterwards. This tip is present in the grml-wiki
+as well: http://wiki.grml.org/doku.php?id=tips
+" 15 70
+  SUCCESS=''
+  cp /cdrom/boot/isolinux/linux26 $TARGET/boot/vmlinuz-${UNAME} 1>>$LOGFILE 2>&1 && SUCCESS='1'
+  mkdir -p $TARGET/usr/man        1>>$LOGFILE 2>&1
+  mkdir -p $TARGET/usr/share/doc  1>>$LOGFILE 2>&1
+  mkdir -p $TARGET/usr/share/info 1>>$LOGFILE 2>&1
+  mkdir -p $TARGET/usr/share/man  1>>$LOGFILE 2>&1
+  if ! [ -z "$SUCCESS" ] ; then
+    is_grml2hd_noninteractive || dialog --stdout --msgbox "Running fixes for grml-small was successful." 5 60
+  else
+    is_grml2hd_noninteractive || dialog --stdout --msgbox "There was an error running the fixes. Sorry, exiting." 5 60 ; bailout 12
+  fi
+}
+
+function check4mbr()
+{
+if ! is_grml2hd_noninteractive ; then
+  if [ -z "$MBRDEFAULT" ] ; then
+     MBRDEFAULT=partition
+     PART=on
+     MBR=off
+  else
+     PART=off
+     MBR=on
+  fi
+
+  ADDITIONAL_PARAMS=""
+  for device in sda hda; do
+    if [ /dev/$device != ${PARTITION%[0-9]} ]; then
+      grep $device /proc/partitions > /dev/null
+      [ $? -eq 0 ] && ADDITIONAL_PARAMS=:$device:"install lilo into MBR of $device":"off"
+    fi
+  done
+  ADDITIONAL_PARAMS=${ADDITIONAL_PARAMS#:}
+
+  OIFS="$IFS"; IFS=:
+  GETMBR=$(dialog --stdout --title "$PN" --default-item $MBRDEFAULT \
+          --radiolist "Where do you want to install the bootmanager?" 10 65 0 \
+          mbr   "install lilo into MBR of ${PARTITION%[0-9]}" $MBR \
+          partition  "install lilo into partition $PARTITION" $PART \
+          ${ADDITIONAL_PARAMS})
+  [ $? -eq 0 ] || bailout 13
+  IFS="$OIFS"
+
+  case "$GETMBR" in
+    mbr)
+      # /dev/md0: has to be installed in MBR of /dev/md0 and not in /dev/md:
+      if [[ $PARTITION == *md* ]] ; then
+	 BOOT_PARTITION=${PARTITION}
+      else
+	BOOT_PARTITION=${PARTITION%[0-9]}
+      fi
+      ;;
+    partition)
+      BOOT_PARTITION="$PARTITION" ;;
+    hda)
+      BOOT_PARTITION="/dev/hda" ;;
+    sda)
+      BOOT_PARTITION="/dev/sda" ;;
+    *)
+      BOOT_PARTITION="$GETMBR" ;;
+  esac
+fi
+}
+
+# now run the functions:
+is_grml2hd_noninteractive && if checkforrun ; then
+ echo "Exiting as requested"
+ bailout 14
+fi
+check4root
+check4mem
+is_grml2hd_noninteractive && PREEXECUTE # execute defined function in /etc/grml2hd/config
+welcome_screen
+partition_select
+check4partition
+check4space
+check4mbr
+lilo_sw_raid
+getfs
+initialize || initialize_error
+copy_files
+is_grml_small && grmlsmall_fixes
+create_fstab
+create_inittab
+get_bootparams
+create_liloconfig
+call_chroot
+
+# reiser4 :-(
+ if [[ $FILESYSTEM == reiser4 ]] ; then
+  dialog --stdout --msgbox "Important notice!
+Installing grml on reiser4 requires a reboot and running lilo again.
+
+Please reboot and rerun lilo using:
+
+mount -t reiser4 -o rw,suid,dev $PARTITION /mnt/test
+chroot /mnt/test lilo
+
+If this fails try it once more.
+Sorry for any inconvenience caused." 15 70
+fi
+
+finalize
+
+rm -f $TMPFILE
+
+## END OF FILE #################################################################

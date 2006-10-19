@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<refentry>
+<refmeta>
+<refentrytitle>grml2hd</refentrytitle>
+<manvolnum>8</manvolnum>
+</refmeta>
+<refnamediv>
+    <refname>grml2hd</refname>
+    <refpurpose>install grml on harddisk</refpurpose>
+</refnamediv>
+<refsynopsisdiv>
+<simpara>grml2hd [ partition ] [ options ]</simpara>
+
+<sidebar>
+<simpara>Important! The grml team does not take responsibility for loss of any data!</simpara>
+
+</sidebar>
+</refsynopsisdiv>
+<refsect1>
+<title>Options and environment variables</title>
+<literallayout class="monospaced">-v</literallayout>
+<simpara>Return version and exit.</simpara>
+
+<literallayout class="monospaced">GRML2HD_NONINTERACTIVE=1 grml2hd ....</literallayout>
+<simpara>Install grml2hd in non-interactive mode (using /etc/grml2hd/config).</simpara>
+
+<literallayout class="monospaced">NOSWREMOVAL=1 grml2hd ...</literallayout>
+<simpara>Disable running script remove-packages-server for removing some
+special software packages.</simpara>
+
+<literallayout class="monospaced">SWRAID='mbr-only' grml2hd /dev/md0 -mbr /dev/md0</literallayout>
+<simpara>Install grml on raid array /dev/md0 and install mbr as well.</simpara>
+
+</refsect1>
+<refsect1>
+<title>Introduction</title>
+<simpara>grml2hd installs grml on a partition on your harddisk and makes it
+bootable. The partition is formatted with mkfs (using the selected
+filesystem), then all necessary files are copied. Then you have to answer a
+few questions like username, passwords and which features you want to use
+on your harddisk installation.  To boot the new installation lilo is
+installed in the boot-sector of the partition or in the MBR, depending
+on your selection.</simpara>
+
+</refsect1>
+<refsect1>
+<title>Automatic installation</title>
+<simpara>It is possible to run grml2hd in a non-interactive mode where no further
+manual input is required. This mode is useful if you do not want to sit in
+front of your computer during installation or if you want to set up a
+cluster of computers (e.g. a computer lab). There are two possibilities to
+run grml2hd in automatic mode.  But: Do <emphasis role="bold">not</emphasis> use the grml2hd
+non-interactive mode if you do not know what you are doing!</simpara>
+
+<refsect2>
+<title>Automatic installation trough running grml system</title>
+<simpara>Configuration of the automatic installation is done via the configuration file
+/etc/grml2hd/config. To activate automatic mode you have to set the environment
+variable GRML2HD_NONINTERACTIVE or use the <emphasis>-i</emphasis> option on the commandline.
+Use the automatic installation mode with care as you won't be prompted
+for any more questions!</simpara>
+
+</refsect2>
+<refsect2>
+<title>Automatic installation through booting grml</title>
+<simpara>You can install grml without even booting it before. If you do not know
+your system very well we recommend booting grml before running grml2hd. If
+everything works as intented and you want to install grml on many computers
+at the same time you can do this via entering only some few words on the
+bootprompt or use grml2hd via
+<ulink url="http://grml.org/terminalserver/">grml-terminalserver</ulink>.</simpara>
+
+<simpara>Configuration is done via boot options:</simpara>
+
+<literallayout class="monospaced">user=                                            =&gt; user name for user which should be used at hd-install (default: grml)
+filesystem={ext2|ext3|reiserfs|reiser4|jfs|xfs}  =&gt; filesystem to be used (default: ext3)
+mbr=/dev/...                                     =&gt; partition where MBR should be installed (default:=partition)
+partition=/dev/...                               =&gt; partition where grml should be installed (must be set - no default!)</literallayout>
+<simpara>Usage example for booting and installing grml on partition /dev/hda4:</simpara>
+
+<literallayout class="monospaced">grml2hd partion=/dev/hda4 mbr=/dev/hda filesystem=ext3 user=mika</literallayout>
+<simpara>Passwords of user root and user are "grml" - please adjust after harddisk
+installation!</simpara>
+
+<sidebar>
+<simpara>Important: not all filesystems are supported in grml-small. ext3 is the
+default and recommended.  Do <emphasis role="bold">not</emphasis> use the grml2hd bootoption if you do not
+know what you are doing!</simpara>
+
+</sidebar>
+</refsect2>
+</refsect1>
+<refsect1>
+<title>grml2hd with software RAID</title>
+<literallayout class="monospaced">mdadm --create --verbose /dev/md0 --level=raid1 --raid-devices=2 /dev/hda1 /dev/hdc1</literallayout>
+<simpara>Prepare RAID setup with mdadm.</simpara>
+
+<literallayout class="monospaced">SWRAID='mbr-only' grml2hd</literallayout>
+<simpara>Install grml on raid array /dev/md0 and install mbr as well.  The SWRAID
+environment variable provides the option for the raid-extra-boot option in
+/etc/lilo.conf. Please notice that the driver(s) for the devices used in a
+raid array have to be statically compiled into the kernel, otherwise
+automatic assembling won't work and assembling has to be done in userland
+(won't work for SW-RAID on root partitions then of course).</simpara>
+
+</refsect1>
+<refsect1>
+<title>grml2hd with encrypted partitions.</title>
+<simpara>Installing grml on an encrypted root-partition ('/') is <emphasis role="bold">not</emphasis> supported.
+But you can use encrypted partitions like /home or swap. Install grml2hd as
+usual, (re)boot into your grml system and then activate encrypted
+partitions manually.</simpara>
+
+<refsect2>
+<title>encrypted swap partition</title>
+<simpara>Deactivate swap partition:</simpara>
+
+<literallayout class="monospaced"># swapoff -a</literallayout>
+<simpara>Now adjust /etc/crypttab</simpara>
+
+<literallayout class="monospaced"># echo "cswap   /dev/hda5       /dev/urandom    swap" &gt;&gt; /etc/crypttab</literallayout>
+<simpara>Now delete the old swap-entry in /etc/fstab and add the following line:</simpara>
+
+<literallayout class="monospaced">/dev/mapper/cswap   none    swap  sw,pri=1        0  0</literallayout>
+<simpara>Make sure this entry is above(!) the 'Warning! Please do *not* change
+any&#8230;' line!  Then enable the encrypted swap partition running:</simpara>
+
+<literallayout class="monospaced"># /etc/init.d/cryptdisks start &amp;&amp; swapon -a</literallayout>
+</refsect2>
+<refsect2>
+<title>encrypted /home partition</title>
+<simpara>Make sure the device you want to use for your /home-partition is not
+mounted. Then initialize the partition you want to use as encrypted /home
+using grml-crypt. Important: this will destroy all data on /home!
+grml-crypt is a wrapper around cryptsetup-luks, you will be able to use the
+partition with every linux distribution which supports cryptsetup-luks.</simpara>
+
+<simpara>The following example demonstrates how to use /dev/hda5 as an encrypted
+/home partition:</simpara>
+
+<literallayout class="monospaced"># grml-crypt -t ext3 -o format /dev/hda5</literallayout>
+<simpara>Now adjust /etc/crypttab</simpara>
+
+<literallayout class="monospaced"># echo "chda5  /dev/hda5  none luks" &gt;&gt;/etc/crypttab</literallayout>
+<simpara>Then add the /home-partition to /etc/fstab (make sure there is not other
+entry for the partition):</simpara>
+
+<literallayout class="monospaced">/dev/mapper/chda5  /home  ext3  defaults  0 0</literallayout>
+<simpara>Make sure this entry is above(!) the 'Warning! Please do *not* change
+any&#8230;' line! If you want to keep content of your old /home make sure you
+can access it later again:</simpara>
+
+<literallayout class="monospaced"># mv /home /home.old
+# mkdir -m 755 /home</literallayout>
+<simpara>To make sure that /home is not accessible before mounted as crypto
+partition you can use chattr:</simpara>
+
+<literallayout class="monospaced"># chattr +i /home</literallayout>
+<simpara>Now start cryptdisks and mount your new /home-partition:</simpara>
+
+<literallayout class="monospaced"># /etc/init.d/cryptdisks start &amp;&amp; mount /home</literallayout>
+<simpara>Please make sure cryptdisks is started in runlevel 2 via
+/etc/runlevel.conf!</simpara>
+
+<simpara>If you moved your old /home to /home.old copy files to your new
+/home-partition:</simpara>
+
+<literallayout class="monospaced"># cp -a /home.old/* /home/</literallayout>
+<simpara>If everything works as expected you will be prompted for the given LUKS
+passphrase when booting your grml system.</simpara>
+
+</refsect2>
+</refsect1>
+<refsect1>
+<title>Files</title>
+<literallayout class="monospaced">/etc/grml2hd/config</literallayout>
+<simpara>Configuration file for automatic installation via grml2hd. You do not
+need to adjust this file if you do not want to run the automatic installation.</simpara>
+
+<literallayout class="monospaced">/usr/sbin/grml2hd-chrooted</literallayout>
+<simpara>A small helper script, that executes a few commands in the harddisk
+installation. You'll never need this script, it's only useful for the
+grml2hd script.</simpara>
+
+<literallayout class="monospaced">/usr/bin/grml2hd-bootparams</literallayout>
+<simpara>A small helper script that reads kernel's command line and displays a menu
+of boot parameters which should be used for lilo's append line.  The script
+provides the selected entries on stdout so it's possible to use the script
+inside grml2hd itself.</simpara>
+
+<literallayout class="monospaced">/boot/grub/grml-template_menu.lst</literallayout>
+<simpara>Template file for use with grml installation (grml2hd) and Grub.
+Adjust it for your needs before using it.</simpara>
+
+</refsect1>
+<refsect1>
+<title>FAQ</title>
+<refsect2>
+<title>Why is $FEATURE not available in grml2hd?</title>
+<simpara>Because one major goal of grml2hd is keep it small, simple and stable.  If
+you think that you can not live without $FEATURE please let us know, see
+<link linkend="X7">the <emphasis>Bugs</emphasis> section in this document</link> how to report feedback/bugs.</simpara>
+
+</refsect2>
+<refsect2>
+<title>Why is SW-RAID and/or encrypted partition not available through an interface?</title>
+<simpara>If you are using such a feature you should know how to handle it. It won't
+help you if you get an interface within the installer but do not know
+how to handle it afterwards.</simpara>
+
+</refsect2>
+<refsect2>
+<title>Why is lilo the bootmanager?</title>
+<simpara>Because it works.</simpara>
+
+</refsect2>
+<refsect2>
+<title>Can I get grub?</title>
+<simpara>Yes, not (yet) via grml2hd but via installing it manually. Instructions:
+After installing grml via grml2hd adjust grub's configuration file menu.lst:</simpara>
+
+<literallayout class="monospaced">$EDITOR /boot/grub/menu.lst</literallayout>
+<simpara>Then install grub (usage example for /dev/sda1):</simpara>
+
+<literallayout class="monospaced"># grub install
+root (hd0,0)
+setup (hd0)</literallayout>
+</refsect2>
+</refsect1>
+<refsect1>
+<title>Known issues</title>
+<refsect2>
+<title>I can't boot my grml system because Lilo says LI L99 99 99&#8230;</title>
+<simpara>You probably did not install lilo to master boot record (MBR) via e.g.
+<emphasis>grml2hd /dev/hda1 -mbr /dev/hda</emphasis> and don't have a bootmanager in your MBR.
+Solution: Install lilo to MBR. Example:</simpara>
+
+<literallayout class="monospaced">sudo mount -o rw,dev,suid /mnt/hda1 # mount harddisk
+sudo chroot /mnt/hda1 # chroot into the grml-system
+vim -X /etc/lilo.conf # adjust the line containing the bootoption to 'boot=/dev/hda'
+lilo  # now run lilo again, leave chroot environment (exit) and reboot your system afterwards</literallayout>
+</refsect2>
+<refsect2>
+<title>I installed grml on a XFS, JFS or reiser4 filesystem and grml does not boot anymore</title>
+<simpara>Some filesystems and lilo don't work together when lilo is installed in the
+boot sector of the harddisk because the filesystem superblock goes where
+lilo would be installed. You have to install lilo in the master boot record
+of your harddisk to solve this problem.
+If you read this after installing grml to your harddisk you should use the
+grml live-cd and fix /etc/lilo.conf manually and rerun lilo (see above).</simpara>
+
+</refsect2>
+<refsect2>
+<title>I installed grml to an SCSI device and now I can not boot it anymore</title>
+<simpara>To access an SCSI device you probably need a specific kernel module.  This
+is provided by an initial ramdisk. Please use the initrd support within
+grml2hd. To fix this issue please install a kernel with SCSI-device support
+in the chroot after running grml2hd:</simpara>
+
+<literallayout class="monospaced">sudo mount -o rw,dev,suid /mnt/hda1 # mount harddisk where grml is installed
+sudo chroot /mnt/hda1               # chroot into the grml-system
+update-initramfs -u -t -k $(uname -r) # create initramfs
+vim -X /etc/lilo.conf               # adjust lilo for use with initrd
+lilo  # now run lilo again, leave chroot environment (exit) and reboot your system afterwards</literallayout>
+</refsect2>
+</refsect1>
+<refsect1>
+<title>Usage examples</title>
+<simpara>Install grml on /dev/sda4 and install lilo in the mbr of /dev/sda.</simpara>
+
+<literallayout class="monospaced">GRML2HD_NONINTERACTIVE=1 grml2hd</literallayout>
+<simpara>Runs grml2hd in automatic (non-interactive) mode. Needs adjustment of
+/etc/grml2hd/config. Use with care!</simpara>
+
+</refsect1>
+<refsect1 id="X7">
+<title>Bugs</title>
+<simpara>Please report feedback, <ulink url="http://grml.org/bugs/">bugreports</ulink> and wishes <ulink url="http://grml.org/contact/">to us</ulink>!</simpara>
+
+</refsect1>
+<refsect1>
+<title>Authors</title>
+<simpara>Michael Prokop &lt;mika@grml.org&gt; and Andreas "Jimmy" Gredler &lt;jimmy@grml.org&gt;</simpara>
+
+</refsect1>
+</refentry>

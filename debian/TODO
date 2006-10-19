@@ -1,0 +1,22 @@
+TODO for grml2hd
+================
+
+high priority
+-------------
+
+  - "mounting target" => mount several partitions to one target and
+    don't run mkfs then but just copy grml to the target
+  - configuration system: enable specific dialogs only so
+    optimization for special grml flavours is possible
+  - lilo vs. grub dialog
+
+low priority
+------------
+
+  - mkfs.reiserfs (and some other fs-utils) are missing on
+    grml-small - find a solution how to install them
+    automatically through grml2hd
+  - set label (grml/grml-root) for partition where grml is installed to
+  - choose and mount /$DIRECTORY (via /etc/fstab)
+  - make a small script which simply copies all files to a
+    mounted partition (for experts only)

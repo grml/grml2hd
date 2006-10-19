@@ -1,0 +1,435 @@
+#!/bin/sh
+# Filename:      grml2hd-chrooted
+# Purpose:       helper script for grml2hd
+# Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>
+# Bug-Reports:   see http://grml.org/bugs/
+# License:       This file is licensed under the GPL v2.
+# Latest change: Sam Sep 30 12:28:12 CEST 2006 [mika]
+################################################################################
+
+LANG='C'
+LC_ALL='C'
+
+# source config:
+if ! [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
+   [ -r /etc/grml2hd/config ] && . /etc/grml2hd/config
+fi
+
+# source variables:
+[ -r /etc/grml2hd/grml2hdtmp ] && . /etc/grml2hd/grml2hdtmp
+
+GRML_SMALL=''
+grep -q small /etc/grml_version && GRML_SMALL='1'
+
+function initialize()
+{
+  mount -t proc  none /proc
+  mount -t sysfs none /sys  # important for grml-x and it's hwinfo and yaird
+}
+
+function is_grml2hd_noninteractive(){
+  if ! [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
+     return 0 # we running automatic installation
+  else
+     return 1 # we are running interactive installatio
+  fi
+}
+
+function setpassword(){
+# Set a password, via chpasswd.
+# Use perl rather than echo, to avoid the password
+# showing in the process table. (However, this is normally
+# only called when first booting the system, when root has no
+# password at all, so that should be an unnecessary precaution).
+#
+# Pass in three arguments: the user, the password, and 'true' if the
+# password has been pre-crypted (by preseeding).
+# 
+# Taken from /var/lib/dpkg/info/passwd.config
+	SETPASSWD_PW="$2"
+	export SETPASSWD_PW
+
+	# This is very annoying. chpasswd cannot handle generating md5
+	# passwords as it is not PAM-aware. Thus, I have to work around
+	# that by crypting the password myself if md5 is used.
+	USE_MD5=1
+	export USE_MD5
+
+        if [ "$3" = true ]; then
+                PRECRYPTED=1
+        else
+                PRECRYPTED=''
+        fi
+        export PRECRYPTED
+        perl -e '
+		sub CreateCryptSalt {
+			my $md5 = shift;
+
+			my @valid = split(//, "./0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+			my ($in, $out);
+
+			my $cryptsaltlen = ($md5 ? 8 : 2);
+
+			open (F, "</dev/urandom") || die "No /dev/urandom found!";
+			foreach (1..$cryptsaltlen) {
+				read(F, $in, 1);
+				$out .= $valid[ord($in) % ($#valid + 1)];
+			}
+			close F;
+			return ($md5 ? "\$1\$$out\$" : $out);
+		}
+	
+		open(P,"| chpasswd -e");
+                if ($ENV{PRECRYPTED}) {
+                        print P shift().":$ENV{SETPASSWD_PW}\n";
+                } else {
+                        print P shift().":".
+                                crypt($ENV{SETPASSWD_PW}, CreateCryptSalt($ENV{USE_MD5})).
+                                "\n";
+                }
+		close P;
+        ' "$1"
+	SETPASSWD_PW=''
+	USE_MD5=''
+        PRECRYPTED=''
+}
+
+function root_account()
+{
+  if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
+    PASSWD=$(cat /etc/shadow |gawk -F: '/root/{print $2}')
+    if [ "$PASSWD" = "*" ]; then
+      ROOTPW1='PW1'
+      ROOTPW2='PW2'
+      while [ "$ROOTPW1" != "$ROOTPW2" ]; do
+        ROOTPW1=$(dialog --stdout --title "${PN}" --passwordbox \
+        "Please enter the password for the root account:" 10 60)
+        ROOTPW2=$(dialog --stdout --title "${PN}" --passwordbox \
+        "Please enter the password for the root account again for \
+        confirmation:" 10 60)
+
+        if [ "$ROOTPW1" != "$ROOTPW2" ]; then
+          $(dialog --stdout --title "${PN}" --ok-label \
+          "Retry" --msgbox "Passwords do not match!" 10 60)
+        fi
+      done
+        # echo "root:$ROOTPW1" | chpasswd -m
+        setpassword root $ROOTPW1 false
+        export ROOTPW1=''
+        export ROOTPW2=''
+    else
+      $(dialog --stdout --title "${PN}" --msgbox  "The password for the root account was already set before.
+Thus this step will be skipped" 8 60)
+    fi
+  else
+    # echo "root:$ROOTPASSWD" | chpasswd -m
+    setpassword root $ROOTPASSWD false
+    export ROOTPASSWD=''
+  fi
+}
+
+function setlanguage()
+{
+  is_grml2hd_noninteractive || /usr/sbin/grml-setkeyboard
+  is_grml2hd_noninteractive || /usr/sbin/grml-setlang
+}
+
+function xconfig()
+{
+  if [ -z "$GRML_SMALL" ] ; then
+   if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
+    if ! [ -f /etc/X11/xorg.conf ] ; then
+    dialog --stdout --title "${PN}" --defaultno --yesno "You do not have the configuration file /etc/X11/xorg.conf
+for running the X window system. It is recommended to create
+the file when running the live-CD system. grml-x can create
+the file according to your hardware for you.
+
+Create /etc/X11/xorg.conf?" 12 70
+     if [[ $? == 0 ]]; then
+      SUCCESS=''
+      grml-x -force -nostart fluxbox 1>/dev/null && SUCCESS='1'
+     fi
+     if ! [ -z "$SUCCESS" ] ; then
+      is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Running grml-x was successful and you should have a
+working X window system now. Run 'startx ~/.xinitrc'
+as user to start the X." 8 60
+     fi
+    fi
+   else # running grml in noninteractive mode and $GRMLX is set
+     [ -n "$GRMLX" ] && grml-x -force -nostart fluxbox 1>/dev/null 2>&1
+   fi
+  fi
+}
+
+function sethostname()
+{
+  if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
+    if [ -x /usr/sbin/grml-hostname ] ; then
+       GRML2HD=1 grml-hostname # set GRML2HD=1 so we tell grml-hostname we are running inside grml2hd
+    fi
+  else # non-interactive
+    [ -n "$HOSTNAME" ] || HOSTNAME='grml'
+    hostname "$HOSTNAME"
+  fi
+}
+
+function newuser()
+{
+  if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
+    NEWUSER="$(dialog --stdout --title "${PN}" --inputbox "Please enter username \
+    (e.g. grml) for the user you want to use on your grml system:" 10 60 grml)"
+    REALNAME="$(dialog --stdout --title "${PN}" --inputbox "Your real name (eg'John GRML User'):" 10 60)"
+  fi
+
+# fix b0rken apps which don't allow relative paths for configuration:
+  [ -r /home/grml/.gkrellm2/user-config ]  && sed -i "s#/home/grml#/home/$NEWUSER#g" /home/grml/.gkrellm2/user-config  2>/dev/null
+  [ -r /home/grml/.gkrellm2/theme_config ] && sed -i "s#/home/grml#/home/$NEWUSER#g" /home/grml/.gkrellm2/theme_config 2>/dev/null
+  [ -d /home/grml/.idesktop ] && sed -i "s#/home/grml#/home/$NEWUSER#g" /home/grml/.idesktop/*.lnk 2>/dev/null
+
+  su -s /bin/sh grml -c "rsync -Ha --ignore-existing /etc/skel/ /home/grml/"
+
+  if ! [ "$NEWUSER" == grml ] ; then
+    sed -i "s/grml/$NEWUSER/g"      /etc/aliases
+    sed -i "s/grml/$NEWUSER/g"      /etc/sudoers
+    sed -i "s/grml User/$REALNAME/" /etc/passwd
+    sed -i "s/grml/$NEWUSER/g"      /etc/passwd
+    sed -i "s/grml/$NEWUSER/g"      /etc/group
+    sed -i "s/grml/$NEWUSER/g"      /etc/shadow
+    sed -i "s/grml/$NEWUSER/g"      /etc/gshadow
+    sed -i "s/grml/$NEWUSER/g"      /etc/grml/screen_multisession
+    sed -i "s/uid=[a-z]*/uid=$NEWUSER/g"  /etc/fstab
+    sed -i "s/gid=[a-z]*/gid=$NEWUSER/g"  /etc/fstab
+    [ -f /etc/automount.sh ]       && sed -i "s/=grml/=$NEWUSER/g"    /etc/automount.sh
+    [ -f /etc/samba/smb.conf ]     && sed -i "s#/home/grml#/home/${NEWUSER}#g"    /etc/samba/smb.conf
+    [ -f /etc/pcmcia/shared ]      && sed -i "s#/home/grml/#/home/${NEWUSER}/#g"  /etc/pcmcia/shared
+    [ -f /etc/cups/printers.conf ] && sed -i "s#/home/grml#/home/$NEWUSER#g"      /etc/cups/printers.conf
+    find /etc/skel/ -type f -exec sed -i "s#/home/grml/#/home/${NEWUSER}/#g" {} \;
+    mv /home/grml /home/"$NEWUSER"
+  fi
+
+  if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
+    USERPW1='PW1'
+    USERPW2='PW2'
+    while [ "$USERPW1" != "$USERPW2" ]; do
+      USERPW1=$(dialog --stdout --title "${PN}" --passwordbox "Please enter the password for user $NEWUSER:" 10 60)
+      USERPW2=$(dialog --stdout --title "${PN}" --passwordbox "Please enter the password for user $NEWUSER again for confirmation:" 10 60)
+
+      if [ "$USERPW1" != "$USERPW2" ]; then
+        $(dialog --stdout --title "${PN}" --ok-label \
+        "Retry" --msgbox "Passwords do not match!" 10 60)
+      fi
+    done
+    # echo "$NEWUSER:$USERPW1" | chpasswd -m
+    setpassword $NEWUSER $USERPW1 false
+    export USERPW1=''
+    export USERPW2=''
+  else
+    # echo "$NEWUSER:$USERPASSWD" | chpasswd -m
+    setpassword $NEWUSER $USERPASSWD false
+    export USERPASSWD=''
+  fi
+}
+
+function create_sudoers()
+{
+  cat > /etc/sudoers << EOF
+# sudoers file.
+# This file MUST be edited with the "visudo" command as root.
+# See the man page for details on how to write a sudoers file.
+
+# Host alias specification
+
+# User alias specification
+
+# Cmnd alias specification
+
+Cmnd_Alias GRML = /usr/sbin/grml-nessus, /usr/sbin/grml-network, \\
+/usr/sbin/grml-pptp-inode, /usr/sbin/grml-pptp-vcgraz, \\
+/usr/sbin/grml-pptp-xdsl-students, /usr/sbin/grml-vpnc-tugraz, \\
+/usr/bin/grml-setlang, /usr/sbin/hwinfo
+
+Cmnd_Alias DEBIAN = /usr/bin/apt-get, /usr/bin/dpkg, /usr/bin/auto-apt, /usr/bin/apt-file, /usr/bin/aptitude, /usr/sbin/dpkg_running
+
+# User privilege specification
+root ALL=(ALL) ALL
+
+# $NEWUSER WARNING: This allows the unprivileged $NEWUSER user to start commands as root
+# $NEWUSER WARNING: This is totally insecure and (almost) makes $NEWUSER a second root account.
+# $NEWUSER WARNING: Never allow external access to the $NEWUSER user!!!
+# $NEWUSER ALL=NOPASSWD: ALL
+
+# Only allow a few grml scripts
+$NEWUSER ALL=NOPASSWD: GRML
+$NEWUSER ALL=NOPASSWD: DEBIAN
+
+# usage examples:
+# $NEWUSER ALL=NOPASSWD: /sbin/hdparm
+# $NEWUSER ALL=NOPASSWD: /usr/sbin/hwinfo
+# Cmnd_Alias DEBIAN = /usr/bin/apt-get, /usr/bin/dpkg, /usr/bin/auto-apt, /usr/bin/apt-file
+# $NEWUSER ALL=NOPASSWD: DEBIAN
+# chroot       ALL=NOPASSWD: /usr/sbin/chroot, /bin/su - chroot
+# chroot       ALL=NOPASSWD: /usr/sbin/chroot, /bin/su - chroot
+
+secvpn  ALL=NOPASSWD: /usr/sbin/secvpn, /usr/sbin/pppd
+
+EOF
+}
+
+function install_lilo()
+{
+  lilo 1> /dev/null 2>/tmp/lilo.error
+  # lilo ${LILO_OPTIONS} 1> /dev/null 2>/tmp/lilo.error
+  #[ -r /proc/1 ] || mount -t proc  none /proc
+  # lilo -v 3 1>/tmp/lilo.1 2>/tmp/lilo.error.1
+  # lilo -v 3 1>/tmp/lilo.2 2>/tmp/lilo.error.2
+  if [ "$?" -eq 0 ]; then
+    is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Lilo exited successfully" 5 60
+  else
+    dialog --stdout --title "${PN}" --msgbox "Lilo failed! Please fix manually.
+
+Error:
+
+`cat /tmp/lilo.error`
+
+" 0 0
+  fi
+}
+
+function fix_sysvinit()
+{
+  dpkg --purge grml-sysvinit 1>/dev/null 2>&1
+  cp /sbin/init /etc 1>/dev/null 2>&1
+  if [ -n "$GRML_SMALL" ] ; then
+     cp /etc/runlevel.conf.hdinstall.small /etc/runlevel.conf
+  else
+     cp /etc/runlevel.conf.hdinstall       /etc/runlevel.conf
+  fi
+}
+
+function remove_unwanted_packages()
+{
+  dpkg --purge grml-firefox 1>/dev/null 2>&1
+  rm -rf /etc/skel/.mozilla/firefox 1>/dev/null 2>&1
+}
+
+function run_yaird()
+{
+  INITRD=/boot/initrd.img-$(uname -r)
+
+  yaird -o $INITRD 1>/tmp/yaird.error 2>&1
+
+  if [ "$?" -eq 0 ]; then
+    sed -i "s#.*initrd=ADJUSTME#        initrd=$INITRD#g" /etc/lilo.conf
+    is_grml2hd_noninteractive || dialog --msgbox "Running yaird was successful." 5 50
+  else
+    dialog --msgbox "There was an error running yaird for creating an initrd:
+`cat /tmp/yaird.error`
+
+Sorry." 0 0
+  fi
+}
+
+function run_initramfs()
+{
+  INITRD=/boot/initrd.img-$(uname -r)
+  update-initramfs -u -t -k $(uname -r) 1>/tmp/initramfs.error 2>&1
+
+  if [ "$?" -eq 0 ]; then
+    sed -i "s#.*initrd=ADJUSTME#        initrd=$INITRD#g" /etc/lilo.conf
+    is_grml2hd_noninteractive || dialog --msgbox "Running initramfs was successful." 5 50
+  else
+    dialog --msgbox "There was an error running initramfs for creating an initrd:
+`cat /tmp/initramfs.error`
+
+Sorry." 0 0
+  fi
+}
+
+function create_initrd()
+{
+ # yaird seems to resolve symlinks ->
+ # "yaird error: duplicate device name in fstab: /dev/sda1 (fatal)"
+ # avoid doubled entries therfor - restore it later again:
+ cp /etc/fstab /etc/fstab.TMP             1>/dev/null 2>&1
+ sed -i 's|/dev/external|#&|g' /etc/fstab 1>/dev/null 2>&1
+
+ # do we need an initrd?
+ DEFAULT='--defaultno'
+ # is the target a SCSI-/USB-device?
+ grep ' / ' /etc/fstab | grep -q '/dev/sd[a-z]' && DEFAULT=''
+ # is the target a software raid array?
+ grep ' / ' /etc/fstab | grep -q '/dev/md'      && DEFAULT=''
+ is_grml2hd_noninteractive || dialog --stdout --title "${PN}" $DEFAULT --yesno "Do you want to create and use an initrd?
+
+This is very important for systems which can not boot directly using the kernel. If you install grml to a SCSI / USB / firewire harddisk or on a software RAID array you need an initrd!" 0 0
+ if [ "$?" -eq 0 ]; then
+  # remove duplicate entries in /etc/fstab:
+  rebuildfstab -r 1>/dev/null 2>&1 # FIXME
+  if ! is_grml2hd_noninteractive ; then
+   if [ -x /usr/sbin/update-initramfs ] ; then
+     run_initramfs
+   else
+     run_yaird # that was our default before grml2hd 0.6.7
+   fi
+  fi
+ fi
+ cp /etc/fstab.TMP /etc/fstab                     # restore original fstab file
+}
+
+function finalize()
+{
+  umount /proc
+  umount /sys
+  sync
+}
+
+# now run the functions:
+initialize
+sethostname
+setlanguage
+xconfig
+root_account
+newuser
+
+  ( echo "0" ;
+    create_sudoers
+    echo "42"
+    echo "XXX";
+    echo "Fixing sysvinit for usage with harddisk installation (purging grml-sysvinit).";
+    echo "XXX";
+    fix_sysvinit
+    echo "76"
+    echo "XXX";
+    echo "Removing unwanted packages which are not necessary on harddisk installation.";
+    echo "XXX";
+    remove_unwanted_packages
+    echo "100") | \
+  dialog --title "${PN}" --gauge "Running some fixes for the harddisk installation." 9 50 0
+  is_grml2hd_noninteractive || dialog --msgbox "Finished running fixes." 5 50
+
+is_grml2hd_noninteractive || grml-autoconfig        # script in /usr/sbin/
+if [ -z "$NOSWREMOVAL" ] ; then
+ if ! is_grml2hd_noninteractive ; then
+  if [ -z "$GRML_SMALL" ] ; then
+    [ -r /usr/sbin/remove-packages-server ] && /usr/sbin/remove-packages-server
+  fi
+ fi
+fi
+
+is_grml2hd_noninteractive && POSTEXECUTE # execute defined function in /etc/grml2hd/config
+
+create_initrd
+
+# use status bar for lilo to provide feedback what's running...
+  ( echo "0" ;
+    echo "42"
+    echo "XXX";
+    echo "Running lilo..."
+    echo "XXX";
+    install_lilo
+    echo "100") | \
+  dialog --title "${PN}" --gauge "Running lilo..." 9 50 0
+
+finalize
+
+## END OF FILE #################################################################
