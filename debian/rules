@@ -50,7 +50,6 @@ binary-arch: install
 	dh_installchangelogs 
 	dh_installdocs debian/TODO
 	dh_installman grml2hd.8
-	cp --no-dereference *.8.gz debian/grml2hd/usr/share/man/man8/
 	dh_link /lib/grub/i386-pc/stage1 /boot/grub/stage1
 	dh_link /lib/grub/i386-pc/stage2 /boot/grub/stage2
 	dh_link /usr/share/man/man8/grml2hd.8.gz /usr/share/man/man8/grml2hd-bootparams.8.gz
