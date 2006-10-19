@@ -1,3 +1,9 @@
+grml2hd (0.8.12) unstable; urgency=low
+
+  * Support customization of grml2hd through /etc/grml2hd/customization.
+
+ -- Michael Prokop <mika@grml.org>  Fri, 20 Oct 2006 00:28:13 +0200
+
 grml2hd (0.8.11) unstable; urgency=low
 
   * Manage symlinks via dh_link in debian/rules.

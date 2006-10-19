@@ -1,0 +1,29 @@
+# Filename:      /etc/grml2hd/customization
+# Purpose:       configuration file for customization of grml2hd
+# Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>
+# Bug-Reports:   see http://grml.org/bugs/
+# License:       This file is licensed under the GPL v2.
+# Latest change: Fre Okt 20 00:18:46 CEST 2006 [mika]
+################################################################################
+
+GRML2HD_NONINTERACTIVE='yes'
+GRML2HD_CHECK4ROOT='yes'
+GRML2HD_CHECK4MEM='yes'
+GRML2HD_WELCOME_SCREEN='yes'
+GRML2HD_PARTITION_SELECT='yes'
+GRML2HD_CHECK4PARTITION='yes'
+GRML2HD_CHECK4SPACE='yes'
+GRML2HD_CHECK4MBR='yes'
+GRML2HD_LILO_SW_RAID='yes'
+GRML2HD_GETFS='yes'
+GRML2HD_INITIALIZE='yes'
+GRML2HD_COPY_FILES='yes'
+GRML2HD_IS_GRML_SMALL='yes'
+GRML2HD_CREATE_FSTAB='yes'
+GRML2HD_CREATE_INITTAB='yes'
+GRML2HD_GET_BOOTPARAMS='yes'
+GRML2HD_CREATE_LILOCONFIG='yes'
+GRML2HD_CALL_CHROOT='yes'
+GRML2HD_FINALIZE='yes'
+
+## END OF FILE #################################################################

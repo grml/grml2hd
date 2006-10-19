@@ -37,6 +37,7 @@ install: build
 	$(INSTALL_FILES) bootscreen.bmp           $(CURDIR)/debian/grml2hd/usr/share/grml2hd/
 	$(INSTALL_FILES) bootscreen.bmp.conf      $(CURDIR)/debian/grml2hd/usr/share/grml2hd/
 	$(INSTALL_FILES) config                   $(CURDIR)/debian/grml2hd/etc/grml2hd/
+	$(INSTALL_FILES) customization            $(CURDIR)/debian/grml2hd/etc/grml2hd/
 	$(INSTALL_FILES) grml-template_menu.lst   $(CURDIR)/debian/grml2hd/boot/grub/
 
 
