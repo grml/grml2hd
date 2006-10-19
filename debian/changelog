@@ -1,3 +1,9 @@
+grml2hd (0.8.11) unstable; urgency=low
+
+  * Manage symlinks via dh_link in debian/rules.
+
+ -- Michael Prokop <mika@grml.org>  Thu, 19 Oct 2006 23:56:04 +0200
+
 grml2hd (0.8.10) unstable; urgency=low
 
   * Small modification of "no partitions" dialog in partition_select.

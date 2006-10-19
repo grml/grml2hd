@@ -33,7 +33,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='0.8.10'
+VERSION='0.8.11'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
