@@ -18,8 +18,24 @@ fi
 # source variables:
 [ -r /etc/grml2hd/grml2hdtmp ] && . /etc/grml2hd/grml2hdtmp
 
+# source customization file:
+if [ -r /etc/grml2hd/customization ] ; then
+   . /etc/grml2hd/customization
+else
+   echo "Error: /etc/grml2hd/customization not found, exiting." >&2
+   exit 1
+fi
+
 GRML_SMALL=''
 grep -q small /etc/grml_version && GRML_SMALL='1'
+
+function checkvalue(){
+  if [ "$1" = "yes" ] ; then
+    return 0
+  else
+    return 1
+  fi
+}
 
 function initialize()
 {
@@ -278,10 +294,6 @@ EOF
 function install_lilo()
 {
   lilo 1> /dev/null 2>/tmp/lilo.error
-  # lilo ${LILO_OPTIONS} 1> /dev/null 2>/tmp/lilo.error
-  #[ -r /proc/1 ] || mount -t proc  none /proc
-  # lilo -v 3 1>/tmp/lilo.1 2>/tmp/lilo.error.1
-  # lilo -v 3 1>/tmp/lilo.2 2>/tmp/lilo.error.2
   if [ "$?" -eq 0 ]; then
     is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Lilo exited successfully" 5 60
   else
@@ -347,12 +359,6 @@ Sorry." 0 0
 
 function create_initrd()
 {
- # yaird seems to resolve symlinks ->
- # "yaird error: duplicate device name in fstab: /dev/sda1 (fatal)"
- # avoid doubled entries therfor - restore it later again:
- cp /etc/fstab /etc/fstab.TMP             1>/dev/null 2>&1
- sed -i 's|/dev/external|#&|g' /etc/fstab 1>/dev/null 2>&1
-
  # do we need an initrd?
  DEFAULT='--defaultno'
  # is the target a SCSI-/USB-device?
@@ -363,8 +369,6 @@ function create_initrd()
 
 This is very important for systems which can not boot directly using the kernel. If you install grml to a SCSI / USB / firewire harddisk or on a software RAID array you need an initrd!" 0 0
  if [ "$?" -eq 0 ]; then
-  # remove duplicate entries in /etc/fstab:
-  rebuildfstab -r 1>/dev/null 2>&1 # FIXME
   if ! is_grml2hd_noninteractive ; then
    if [ -x /usr/sbin/update-initramfs ] ; then
      run_initramfs
@@ -373,7 +377,6 @@ This is very important for systems which can not boot directly using the kernel.
    fi
   fi
  fi
- cp /etc/fstab.TMP /etc/fstab                     # restore original fstab file
 }
 
 function finalize()
@@ -384,43 +387,53 @@ function finalize()
 }
 
 # now run the functions:
-initialize
-sethostname
-setlanguage
-xconfig
-root_account
-newuser
+checkvalue $CHROOT_INITIALIZE   && initialize
+checkvalue $CHROOT_SETHOSTNAME  && sethostname
+checkvalue $CHROOT_SETLANGUAGE  && setlanguage
+checkvalue $CHROOT_XCONFIG      && xconfig
+checkvalue $CHROOT_ROOT_ACCOUNT && root_account
+checkvalue $CHROOT_NEWUSER      && newuser
 
   ( echo "0" ;
-    create_sudoers
+    checkvalue $CHROOT_CREATE_SUDOERS && create_sudoers
     echo "42"
-    echo "XXX";
-    echo "Fixing sysvinit for usage with harddisk installation (purging grml-sysvinit).";
-    echo "XXX";
-    fix_sysvinit
-    echo "76"
-    echo "XXX";
-    echo "Removing unwanted packages which are not necessary on harddisk installation.";
-    echo "XXX";
-    remove_unwanted_packages
+    if checkvalue $CHROOT_FIX_SYSVINIT ; then
+      echo "XXX";
+      echo "Fixing sysvinit for usage with harddisk installation (purging grml-sysvinit).";
+      echo "XXX";
+      fix_sysvinit
+      echo "76"
+    fi
+    if checkvalue $CHROOT_REMOVE_UNWANTED_PACKAGES ; then
+      echo "XXX";
+      echo "Removing unwanted packages which are not necessary on harddisk installation.";
+      echo "XXX";
+      remove_unwanted_packages
+    fi
     echo "100") | \
   dialog --title "${PN}" --gauge "Running some fixes for the harddisk installation." 9 50 0
   is_grml2hd_noninteractive || dialog --msgbox "Finished running fixes." 5 50
 
-is_grml2hd_noninteractive || grml-autoconfig        # script in /usr/sbin/
-if [ -z "$NOSWREMOVAL" ] ; then
- if ! is_grml2hd_noninteractive ; then
-  if [ -z "$GRML_SMALL" ] ; then
-    [ -r /usr/sbin/remove-packages-server ] && /usr/sbin/remove-packages-server
-  fi
- fi
+if checkvalue $CHROOT_GRML_AUTOCONFIG ; then
+   is_grml2hd_noninteractive || grml-autoconfig        # script in /usr/sbin/
+fi
+
+if checkvalue $CHROOT_REMOVE_PACKAGES_SERVER ; then
+   if [ -z "$NOSWREMOVAL" ] ; then
+      if ! is_grml2hd_noninteractive ; then
+         if [ -z "$GRML_SMALL" ] ; then
+            [ -r /usr/sbin/remove-packages-server ] && /usr/sbin/remove-packages-server
+         fi
+      fi
+   fi
 fi
 
 is_grml2hd_noninteractive && POSTEXECUTE # execute defined function in /etc/grml2hd/config
 
-create_initrd
+checkvalue $CHROOT_CREATE_INITRD && create_initrd
 
 # use status bar for lilo to provide feedback what's running...
+if checkvalue $CHROOT_INSTALL_LILO ; then
   ( echo "0" ;
     echo "42"
     echo "XXX";
@@ -429,7 +442,8 @@ create_initrd
     install_lilo
     echo "100") | \
   dialog --title "${PN}" --gauge "Running lilo..." 9 50 0
+fi
 
-finalize
+checkvalue $CHROOT_FINALIZE && finalize
 
 ## END OF FILE #################################################################

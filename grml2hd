@@ -10,6 +10,7 @@
 LANG='C'
 LC_ALL='C'
 
+# source customization file:
 if [ -r /etc/grml2hd/customization ] ; then
    . /etc/grml2hd/customization
 else

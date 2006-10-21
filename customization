@@ -11,6 +11,8 @@
 # in grml2hd itself.
 ################################################################################
 
+## First of all configure the stuff in grml2hd itself
+
 # check for root-permissions
 GRML2HD_CHECK4ROOT='yes'
 
@@ -32,7 +34,7 @@ GRML2HD_CHECK4SPACE='yes'
 # check where lilo should be installed to (mbr vs. partition)
 GRML2HD_CHECK4MBR='yes'
 
-# check and use raid-extra-boot-option in lilo.conf?
+# check and use raid-extra-boot-option in lilo.conf
 GRML2HD_LILO_SW_RAID='yes'
 
 # display filesystem selection dialog (ext3/ext2/xfs/jfs/reiserfs)
@@ -59,8 +61,51 @@ GRML2HD_GET_BOOTPARAMS='yes'
 # generate /etc/lilo.conf for hd-installation system
 GRML2HD_CREATE_LILOCONFIG='yes'
 
-# chroot into hd-installation system and execute script grml2hd-chrooted
+# chroot into hd-installation system and execute script grml2hd-chrooted, see CHROOT_* variables below
 GRML2HD_CALL_CHROOT='yes'
+
+## configure stuff executed in script grml2hd-chrooted (see $GRML2HD_CALL_CHROOT)
+# initialize system for use (mount /proc and /sys)
+CHROOT_INITIALIZE='yes'
+
+# set hostname via script grml-hostname (interactive) or 'hostname' (non-interactive)
+CHROOT_SETHOSTNAME='yes'
+
+# run scripts grml-setkeyboard and grml-setlang in interactive mode
+CHROOT_SETLANGUAGE='yes'
+
+# ask for generation of /etc/X11/xorg.conf via grml-x if /etc/X11/xorg.conf not yet present
+CHROOT_XCONFIG='yes'
+
+# set up root account
+CHROOT_ROOT_ACCOUNT='yes'
+
+# set up user account
+CHROOT_NEWUSER='yes'
+
+# set up /etc/sudoers
+CHROOT_CREATE_SUDOERS='yes'
+
+# purge grml-sysvinit and adjust /etc/runlevel.conf
+CHROOT_FIX_SYSVINIT='yes'
+
+# remove unwanted packages (grml-firefox)
+CHROOT_REMOVE_UNWANTED_PACKAGES='yes'
+
+# run script grml-autoconfig in interactive mode
+CHROOT_GRML_AUTOCONFIG='yes'
+
+# run script remove-packages-server in interactive mode if $NOSWREMOVAL is not set
+CHROOT_REMOVE_PACKAGES_SERVER='yes'
+
+# create initrd through update-initramfs
+CHROOT_CREATE_INITRD='yes'
+
+# install lilo
+CHROOT_INSTALL_LILO='yes'
+
+# finalize installation (unmount /proc, /sys and sync)
+CHROOT_FINALIZE='yes'
 
 # finalize installation (rm /etc/grml_cd, sync && unmount)
 GRML2HD_FINALIZE='yes'
