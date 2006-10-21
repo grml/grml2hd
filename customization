@@ -3,26 +3,66 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Sam Okt 21 13:07:24 CEST 2006 [mika]
+# Latest change: Sam Okt 21 13:20:15 CEST 2006 [mika]
+################################################################################
+# Notice: this file allows customized execution of grml2hd.
+# The variables correspond with the function used in grml2hd -
+# for example GRML2HD_CHECK4ROOT is the function check4root defined
+# in grml2hd itself.
 ################################################################################
 
+# check for root-permissions
 GRML2HD_CHECK4ROOT='yes'
+
+# check for free memory (60248kB)
 GRML2HD_CHECK4MEM='yes'
+
+# display welcome screen
 GRML2HD_WELCOME_SCREEN='yes'
+
+# display partition selection dialog
 GRML2HD_PARTITION_SELECT='yes'
+
+# check whether provided partition really exists
 GRML2HD_CHECK4PARTITION='yes'
+
+# check for enough space on the provided partition
 GRML2HD_CHECK4SPACE='yes'
+
+# check where lilo should be installed to (mbr vs. partition)
 GRML2HD_CHECK4MBR='yes'
+
+# check and use raid-extra-boot-option in lilo.conf?
 GRML2HD_LILO_SW_RAID='yes'
+
+# display filesystem selection dialog (ext3/ext2/xfs/jfs/reiserfs)
 GRML2HD_GETFS='yes'
+
+# mount target partition
 GRML2HD_INITIALIZE='yes'
+
+# copy files to target partition
 GRML2HD_COPY_FILES='yes'
+
+# check for grml-small and execute grmlsmall_fixes
 GRML2HD_IS_GRML_SMALL='yes'
+
+# generate /etc/fstab for hd-installation system
 GRML2HD_CREATE_FSTAB='yes'
+
+# generate /etc/inittab file for hd-installation system
 GRML2HD_CREATE_INITTAB='yes'
+
+# execute script grml2hd-bootparams
 GRML2HD_GET_BOOTPARAMS='yes'
+
+# generate /etc/lilo.conf for hd-installation system
 GRML2HD_CREATE_LILOCONFIG='yes'
+
+# chroot into hd-installation system and execute script grml2hd-chrooted
 GRML2HD_CALL_CHROOT='yes'
+
+# finalize installation (rm /etc/grml_cd, sync && unmount)
 GRML2HD_FINALIZE='yes'
 
 ## END OF FILE #################################################################
