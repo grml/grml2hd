@@ -70,7 +70,8 @@ TMPFILE=$(mktemp ${TMP}/grml2hd.XXXXXX)
 
 function bailout(){
   rm -f "$TMPFILE"
-  exit "$1"
+  [ -n "$1" ] && EXIT="$1" || EXIT="1"
+  exit "$EXIT"
 }
 
 trap bailout 1 2 3 15
@@ -749,7 +750,7 @@ if ! is_grml2hd_noninteractive ; then
   for device in sda hda; do
     if [ /dev/$device != ${PARTITION%[0-9]} ]; then
       grep $device /proc/partitions > /dev/null
-      [ $? -eq 0 ] && ADDITIONAL_PARAMS=:$device:"install lilo into MBR of $device":"off"
+      [ $? -eq 0 ] && ADDITIONAL_PARAMS=:$device:"install lilo into MBR of /dev/${device}":"off"
     fi
   done
   ADDITIONAL_PARAMS=${ADDITIONAL_PARAMS#:}
@@ -785,16 +786,16 @@ fi
 }
 
 # now run the functions:
-checkvalue $GRML2HD_NONINTERACTIVE && (
- is_grml2hd_noninteractive && \
- if checkforrun ; then
-   echo "Exiting as requested"
-   bailout 14
- fi
-)
+is_grml2hd_noninteractive && if checkforrun ; then
+ echo "Exiting as requested"
+ bailout 14
+fi
+
 checkvalue $GRML2HD_CHECK4ROOT && check4root
 checkvalue $GRML2HD_CHECK4MEM && check4mem
-checkvalue $GRML2HD_NONINTERACTIVE && ( is_grml2hd_noninteractive && PREEXECUTE ) # execute defined function in /etc/grml2hd/config
+
+is_grml2hd_noninteractive && PREEXECUTE # execute defined function in /etc/grml2hd/config
+
 checkvalue $GRML2HD_WELCOME_SCREEN && welcome_screen
 checkvalue $GRML2HD_PARTITION_SELECT && partition_select
 checkvalue $GRML2HD_CHECK4PARTITION && check4partition
