@@ -227,6 +227,13 @@ After installing grml via grml2hd adjust grub's configuration file menu.lst:</si
 root (hd0,0)
 setup (hd0)</literallayout>
 </refsect2>
+<refsect2>
+<title>Is it possible to customize grml2hd?</title>
+<simpara>Yes, you can customize execution of grml2hd via the configuration file
+/etc/grml2hd/customization. It is used automatically when running grml2hd,
+so you just have to adjust the configuration file itself.</simpara>
+
+</refsect2>
 </refsect1>
 <refsect1>
 <title>Known issues</title>

@@ -1,6 +1,12 @@
 grml2hd (0.8.12) unstable; urgency=low
 
   * Support customization of grml2hd through /etc/grml2hd/customization.
+  * Cleanup of debian/rules
+  * Drop yaird workaround in create_initrd as we don't use yaird anymore
+    (by default).
+  * Add 'Is it possible to customize grml2hd?' to faq-section of manpage.
+  * Improve function bailout to support clean exit via trap
+  * Use infotext /dev/[sh]da instead of [sh]da in mbr-dialog.
 
  -- Michael Prokop <mika@grml.org>  Fri, 20 Oct 2006 00:28:13 +0200
 
