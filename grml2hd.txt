@@ -249,6 +249,13 @@ Then install grub (usage example for /dev/sda1):
   root (hd0,0)
   setup (hd0)
 
+Is it possible to customize grml2hd?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Yes, you can customize execution of grml2hd via the configuration file
+/etc/grml2hd/customization. It is used automatically when running grml2hd,
+so you just have to adjust the configuration file itself.
+
 Known issues
 ------------
 
