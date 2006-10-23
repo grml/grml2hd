@@ -107,21 +107,21 @@ timeout		10
 ## ## End Default Options ##
 
 # default entry
-title  2.6.17-grml
-kernel (hd0,0)/boot/vmlinuz-2.6.17-grml root=/dev/sda1 vga=0x0317
-initrd (hd0,0)/boot/initrd.img-2.6.17-grml
+title  2.6.18-grml
+kernel (hd0,0)/boot/vmlinuz-2.6.18-grml root=/dev/sda1 vga=0x0317
+initrd (hd0,0)/boot/initrd.img-2.6.18-grml
 # savedefault
 # boot
 
 # for debugging purposes
-title  2.6.17-grml debug
-kernel (hd0,0)/boot/vmlinuz-2.6.17-grml root=/dev/sda1 debug log nocolor
-initrd (hd0,0)/boot/initrd.img-2.6.17-grml
+title  2.6.18-grml debug
+kernel (hd0,0)/boot/vmlinuz-2.6.18-grml root=/dev/sda1 debug log nocolor
+initrd (hd0,0)/boot/initrd.img-2.6.18-grml
 
 # without framebuffer
-title  2.6.17-grml no framebuffer
-kernel (hd0,0)/boot/vmlinuz-2.6.17-grml root=/dev/sda1 video=ofonly
-initrd (hd0,0)/boot/initrd.img-2.6.17-grml
+title  2.6.18-grml no framebuffer
+kernel (hd0,0)/boot/vmlinuz-2.6.18-grml root=/dev/sda1 video=ofonly
+initrd (hd0,0)/boot/initrd.img-2.6.18-grml
 
 # memorytest
 title memorytest

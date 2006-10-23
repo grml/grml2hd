@@ -1,3 +1,9 @@
+grml2hd (0.8.13) unstable; urgency=low
+
+  * Update grub's config file grml-template_menu.lst for 2.6.18-grml.
+
+ -- Michael Prokop <mika@grml.org>  Mon, 23 Oct 2006 21:17:16 +0200
+
 grml2hd (0.8.12) unstable; urgency=low
 
   * Support customization of grml2hd through /etc/grml2hd/customization.
