@@ -1,3 +1,9 @@
+grml2hd (0.8.15) unstable; urgency=low
+
+  * Fix checkvalue handling of is_grml_small function as well.
+
+ -- Michael Prokop <mika@grml.org>  Tue, 31 Oct 2006 12:42:49 +0100
+
 grml2hd (0.8.14) unstable; urgency=low
 
   * Fix checkvalue handling of initialize function.

@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Okt 31 11:33:06 CET 2006 [mika]
+# Latest change: Die Okt 31 12:43:04 CET 2006 [mika]
 ################################################################################
 
 LANG='C'
@@ -49,7 +49,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='0.8.14'
+VERSION='0.8.15'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
@@ -810,7 +810,11 @@ if checkvalue $GRML2HD_INITIALIZE ; then
 fi
 
 checkvalue $GRML2HD_COPY_FILES && copy_files
-checkvalue $GRML2HD_IS_GRML_SMALL && ( is_grml_small && grmlsmall_fixes )
+
+if checkvalue $GRML2HD_IS_GRML_SMALL ; then
+   is_grml_small && grmlsmall_fixes
+fi
+
 checkvalue $GRML2HD_CREATE_FSTAB && create_fstab
 checkvalue $GRML2HD_CREATE_INITTAB && create_inittab
 checkvalue $GRML2HD_GET_BOOTPARAMS && get_bootparams

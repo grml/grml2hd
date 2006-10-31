@@ -353,7 +353,7 @@ function run_initramfs()
     dialog --msgbox "There was an error running initramfs for creating an initrd:
 `cat /tmp/initramfs.error`
 
-Sorry." 0 0
+Sorry. Continuing anyway, you might need to rerun update-initramfs on your own." 0 0
   fi
 }
 
