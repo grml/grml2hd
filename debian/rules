@@ -17,7 +17,7 @@ clean:
 	dh_testdir
 	dh_testroot
 	dh_clean
-	rm -f html-stamp man-stamp
+	rm -f html-stamp man-stamp grml2hd.html
 
 build:
 	make clean
