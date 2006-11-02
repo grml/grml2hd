@@ -344,7 +344,7 @@ Sorry." 0 0
 function run_initramfs()
 {
   INITRD=/boot/initrd.img-$(uname -r)
-  update-initramfs -u -t -k $(uname -r) 1>/tmp/initramfs.error 2>&1
+  update-initramfs -c -t -k $(uname -r) 1>/tmp/initramfs.error 2>&1
 
   if [ "$?" -eq 0 ]; then
     sed -i "s#.*initrd=ADJUSTME#        initrd=$INITRD#g" /etc/lilo.conf

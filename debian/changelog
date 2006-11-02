@@ -1,3 +1,11 @@
+grml2hd (0.8.16) unstable; urgency=low
+
+  * Run update-initramfs with '-c' option instead of '-u',
+    should be more reliable (as in broken version 0.85
+    of initramfs-tools).
+
+ -- Michael Prokop <mika@grml.org>  Thu,  2 Nov 2006 15:38:10 +0100
+
 grml2hd (0.8.15) unstable; urgency=low
 
   * Fix checkvalue handling of is_grml_small function as well.
