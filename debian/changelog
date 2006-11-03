@@ -1,3 +1,9 @@
+grml2hd (0.8.17) unstable; urgency=low
+
+  * Fix symlinks for stage1 + stage2 of grub in debian/rules.
+
+ -- Michael Prokop <mika@grml.org>  Fri,  3 Nov 2006 17:37:27 +0100
+
 grml2hd (0.8.16) unstable; urgency=low
 
   * Run update-initramfs with '-c' option instead of '-u',
