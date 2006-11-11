@@ -1,3 +1,13 @@
+grml2hd (0.8.18) unstable; urgency=low
+
+  * Use "Architecture: all" in debian/control to support architectures
+    not running on x86 as well.
+  * Bumb Standard Version to 3.7.2 (no further changes).
+  * Switch Maintainer and Uploaders field, currently I'm the
+    maintainer of grml2hd.
+
+ -- Michael Prokop <mika@grml.org>  Sat, 11 Nov 2006 21:23:52 +0100
+
 grml2hd (0.8.17) unstable; urgency=low
 
   * Fix symlinks for stage1 + stage2 of grub in debian/rules.
