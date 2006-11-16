@@ -1,10 +1,10 @@
 #!/bin/sh
 # Filename:      grml2hd-chrooted
 # Purpose:       helper script for grml2hd
-# Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>
+# Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Sam Sep 30 12:28:12 CEST 2006 [mika]
+# Latest change: Don Nov 16 20:45:13 CET 2006 [mika]
 ################################################################################
 
 LANG='C'
@@ -25,6 +25,9 @@ else
    echo "Error: /etc/grml2hd/customization not found, exiting." >&2
    exit 1
 fi
+
+# make sure we have the usual functions for boot-related stuff available
+. /etc/grml/autoconfig.functions
 
 GRML_SMALL=''
 grep -q small /etc/grml_version && GRML_SMALL='1'
@@ -60,7 +63,7 @@ function setpassword(){
 #
 # Pass in three arguments: the user, the password, and 'true' if the
 # password has been pre-crypted (by preseeding).
-# 
+#
 # Taken from /var/lib/dpkg/info/passwd.config
 	SETPASSWD_PW="$2"
 	export SETPASSWD_PW
@@ -94,7 +97,7 @@ function setpassword(){
 			close F;
 			return ($md5 ? "\$1\$$out\$" : $out);
 		}
-	
+
 		open(P,"| chpasswd -e");
                 if ($ENV{PRECRYPTED}) {
                         print P shift().":$ENV{SETPASSWD_PW}\n";
@@ -318,6 +321,26 @@ function fix_sysvinit()
   fi
 }
 
+function adjust_timezone()
+{
+  if grep -q -e utc -e gmt /proc/cmdline ; then
+     sed -i 's/^UTC=.*/UTC=yes/' /etc/default/rcS
+     if [ "$?" -eq 0 ]; then
+        is_grml2hd_noninteractive ||  dialog --stdout --title "${PN}" --msgbox "Adjusted timezone for UTC as requested via bootoption." 5 60
+     fi
+  fi
+
+  if checkbootparam tz ; then
+     KTZ="$(getbootparam tz 2>>$DEBUG)"
+     [ -f "/usr/share/zoneinfo/$KTZ" ] && TZ="$KTZ"
+     rm -f /etc/localtime
+     cp "/usr/share/zoneinfo/$TZ" /etc/localtime
+     if [ "$?" -eq 0 ]; then
+        is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Adjusted timezone for $KTZ as requested via bootoption." 5 60
+     fi
+  fi
+}
+
 function remove_unwanted_packages()
 {
   dpkg --purge grml-firefox 1>/dev/null 2>&1
@@ -387,12 +410,13 @@ function finalize()
 }
 
 # now run the functions:
-checkvalue $CHROOT_INITIALIZE   && initialize
-checkvalue $CHROOT_SETHOSTNAME  && sethostname
-checkvalue $CHROOT_SETLANGUAGE  && setlanguage
-checkvalue $CHROOT_XCONFIG      && xconfig
-checkvalue $CHROOT_ROOT_ACCOUNT && root_account
-checkvalue $CHROOT_NEWUSER      && newuser
+checkvalue $CHROOT_INITIALIZE     && initialize
+checkvalue $CHROOT_SETHOSTNAME    && sethostname
+checkvalue $CHROOT_SETLANGUAGE    && setlanguage
+checkvalue $CHROOT_ADJUSTTIMEZONE && adjust_timezone
+checkvalue $CHROOT_XCONFIG        && xconfig
+checkvalue $CHROOT_ROOT_ACCOUNT   && root_account
+checkvalue $CHROOT_NEWUSER        && newuser
 
   ( echo "0" ;
     checkvalue $CHROOT_CREATE_SUDOERS && create_sudoers

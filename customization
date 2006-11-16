@@ -3,7 +3,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Sam Okt 21 13:20:15 CEST 2006 [mika]
+# Latest change: Don Nov 16 20:43:26 CET 2006 [mika]
 ################################################################################
 # Notice: this file allows customized execution of grml2hd.
 # The variables correspond with the function used in grml2hd -
@@ -73,6 +73,9 @@ CHROOT_SETHOSTNAME='yes'
 
 # run scripts grml-setkeyboard and grml-setlang in interactive mode
 CHROOT_SETLANGUAGE='yes'
+
+# adjust /etc/default/rcS according to bootoption utc/gmt and /etc/localtime according to bootoption tz
+CHROOT_ADJUSTTIMEZONE='yes'
 
 # ask for generation of /etc/X11/xorg.conf via grml-x if /etc/X11/xorg.conf not yet present
 CHROOT_XCONFIG='yes'

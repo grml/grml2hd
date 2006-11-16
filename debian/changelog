@@ -1,3 +1,11 @@
+grml2hd (0.8.19) unstable; urgency=low
+
+  * adjust /etc/default/rcS according to bootoption utc/gmt and
+    /etc/localtime according to bootoption tz through configuration
+    variable CHROOT_ADJUSTTIMEZONE.
+
+ -- Michael Prokop <mika@grml.org>  Thu, 16 Nov 2006 20:45:53 +0100
+
 grml2hd (0.8.18) unstable; urgency=low
 
   * Use "Architecture: all" in debian/control to support architectures
