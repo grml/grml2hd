@@ -645,7 +645,7 @@ function finalize()
   rm $TARGET/etc/mtab
   # hack for udev
   echo "none /dev tmpfs rw,size=5M,mode=0755 0 0" > $TARGET/etc/mtab
-  rm $TARGET/etc/grml_cd
+  [ -f "$TARGET/etc/grml_cd" ] && rm $TARGET/etc/grml_cd
   rm -f $TMPFILE
 
   sync ; umount -l $TARGET

@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Don Nov 16 20:45:13 CET 2006 [mika]
+# Latest change: Don Nov 16 21:48:45 CET 2006 [mika]
 ################################################################################
 
 LANG='C'
@@ -42,8 +42,8 @@ function checkvalue(){
 
 function initialize()
 {
-  mount -t proc  none /proc
-  mount -t sysfs none /sys  # important for grml-x and it's hwinfo and yaird
+  [ -f /proc/version ] || mount -t proc  none /proc
+  [ -d /sys/kernel ]   || mount -t sysfs none /sys  # important for grml-x and it's hwinfo [and yaird]
 }
 
 function is_grml2hd_noninteractive(){
@@ -337,6 +337,8 @@ function adjust_timezone()
      cp "/usr/share/zoneinfo/$TZ" /etc/localtime
      if [ "$?" -eq 0 ]; then
         is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Adjusted timezone for $KTZ as requested via bootoption." 5 60
+     else
+        is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Specified timezone [${KTZ}] could not be found, sorry." 5 60
      fi
   fi
 }
