@@ -210,16 +210,16 @@ Please select another partition in the following dialog!" 6 60
          DEFAULT_PARTITION=${PARTITION#/*/}
       fi
     fi
-    PART=$(cat /proc/partitions 2> /dev/null | grep -v loop | \
-           gawk -v num=0 -v ORS=' ' /'[[:alpha:]]+[[:digit:]]+'/'{print $4, $3}')
+    PART=$(fdisk -l 2>/dev/null | sed 's/*//' | grep -v 'Extended$' | \
+           gawk -v num=0 -v ORS=' ' '/^\/dev\// {print $1, $4}' | sed 's#/dev/##g')
     if [ -z "$PART" ] ; then
       dialog --stdout --title "$PN" --msgbox "Error: no harddisk partition(s) found for installation. \
 Please make sure you have an existing partition. Exiting." 0 0 ; bailout 5
     fi
 
     if SELECTED_PARTITION=$(dialog --stdout --default-item "$DEFAULT_PARTITION" --menu Partitions 0 0 0 \
-       $(cat /proc/partitions 2> /dev/null | grep -v loop | \
-       gawk -v num=0 -v ORS=' ' /'[[:alpha:]]+[[:digit:]]+'/'{print $4, $3}')) ; then
+       $(fdisk -l 2>/dev/null | sed 's/*//' | grep -v 'Extended$'  | \
+       gawk -v num=0 -v ORS=' ' '/^\/dev\// {print $1, $4}' | sed 's#/dev/##g' )) ; then
        PARTITION="/dev/$SELECTED_PARTITION"
     else
       bailout 6

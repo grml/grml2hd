@@ -1,3 +1,10 @@
+grml2hd (0.8.20) unstable; urgency=low
+
+  * Use 'fdisk -l' instead of 'cat /proc/partitions' for partition
+    selection dialog. Based on patch by Jens Kubieziel, thanks!
+
+ -- Michael Prokop <mika@grml.org>  Sat,  2 Dec 2006 17:53:19 +0100
+
 grml2hd (0.8.19) unstable; urgency=low
 
   * adjust /etc/default/rcS according to bootoption utc/gmt and
