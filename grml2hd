@@ -214,9 +214,11 @@ Please select another partition in the following dialog!" 6 60
     if [ -n "$SWRAID" ] ; then
        PART=$(for device in /dev/md[0-9]* ; do
                   dev=${device##/dev/}
-                  space=$(grep " ${dev}$" /proc/partitions | awk '{print $3 }')
-                  echo -n "$space $dev "
-               done)
+                  if grep -q "$dev" /proc/partitions ; then
+                    space=$(grep " ${dev}$" /proc/partitions | awk '{print $3}')
+                    [ -n "$space" ] && echo -n "$dev $space "
+                  fi
+              done)
     else
        PART=$(LANG=C fdisk -l 2>/dev/null | sed 's/*//' | grep -v 'Extended$' | \
               gawk -v num=0 -v ORS=' ' '/^\/dev\// {print $1, $4}' | sed 's#/dev/##g')
@@ -228,8 +230,7 @@ Please make sure you have an existing partition. Exiting." 0 0 ; bailout 5
     fi
 
     if SELECTED_PARTITION=$(dialog --stdout --default-item "$DEFAULT_PARTITION" --menu Partitions 0 0 0 \
-       $(fdisk -l 2>/dev/null | sed 's/*//' | grep -v 'Extended$'  | \
-       gawk -v num=0 -v ORS=' ' '/^\/dev\// {print $1, $4}' | sed 's#/dev/##g' )) ; then
+                            $(echo $PART)) ; then
        PARTITION="/dev/$SELECTED_PARTITION"
     else
       bailout 6
@@ -771,9 +772,12 @@ if ! is_grml2hd_noninteractive ; then
   ADDITIONAL_PARAMS=${ADDITIONAL_PARAMS#:}
 
   OIFS="$IFS"; IFS=:
+
+  [[ $PARTITION == *md* ]] && MBRPART=$PARTITION || MBRPART="${PARTITION%[0-9]}"
+
   GETMBR=$(dialog --stdout --title "$PN" --default-item $MBRDEFAULT \
           --radiolist "Where do you want to install the bootmanager?" 10 65 0 \
-          mbr   "install lilo into MBR of ${PARTITION%[0-9]}" $MBR \
+          mbr   "install lilo into MBR of $MBRPART" $MBR \
           partition  "install lilo into partition $PARTITION" $PART \
           ${ADDITIONAL_PARAMS})
   [ $? -eq 0 ] || bailout 13
