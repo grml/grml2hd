@@ -36,7 +36,7 @@ install: build
 	$(INSTALL_FILES) grml.bmp.conf            debian/grml2hd/usr/share/grml2hd/
 	$(INSTALL_FILES) bootscreen.bmp           debian/grml2hd/usr/share/grml2hd/
 	$(INSTALL_FILES) bootscreen.bmp.conf      debian/grml2hd/usr/share/grml2hd/
-	install -m 600   config                   debian/grml2hd/etc/grml2hd/
+	$(INSTALL_FILES) config                   debian/grml2hd/etc/grml2hd/
 	$(INSTALL_FILES) customization            debian/grml2hd/etc/grml2hd/
 	$(INSTALL_FILES) grml-template_menu.lst   debian/grml2hd/boot/grub/
 
@@ -59,6 +59,7 @@ binary-arch: install
 	mkdir -p $(CURDIR)/debian/grml2hd/usr/share/lintian/overrides/
 	cp -av debian/overrides $(CURDIR)/debian/grml2hd/usr/share/lintian/overrides/grml2hd
 	dh_fixperms
+	chmod 600 debian/grml2hd/etc/grml2hd/config
 	dh_installdeb
 	dh_gencontrol
 	dh_md5sums
