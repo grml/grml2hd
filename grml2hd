@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Sam Dez 09 12:54:44 CET 2006 [mika]
+# Latest change: Sam Dez 16 19:07:15 CET 2006 [mika]
 ################################################################################
 
 LANG='C'
@@ -210,8 +210,18 @@ Please select another partition in the following dialog!" 6 60
          DEFAULT_PARTITION=${PARTITION#/*/}
       fi
     fi
-    PART=$(fdisk -l 2>/dev/null | sed 's/*//' | grep -v 'Extended$' | \
-           gawk -v num=0 -v ORS=' ' '/^\/dev\// {print $1, $4}' | sed 's#/dev/##g')
+    # fdisk does not list software raid partitions as we need it
+    if [ -n "$SWRAID" ] ; then
+       PART=$(for device in /dev/md[0-9]* ; do
+                  dev=${device##/dev/}
+                  space=$(grep " ${dev}$" /proc/partitions | awk '{print $3 }')
+                  echo -n "$space $dev "
+               done)
+    else
+       PART=$(LANG=C fdisk -l 2>/dev/null | sed 's/*//' | grep -v 'Extended$' | \
+              gawk -v num=0 -v ORS=' ' '/^\/dev\// {print $1, $4}' | sed 's#/dev/##g')
+    fi
+
     if [ -z "$PART" ] ; then
       dialog --stdout --title "$PN" --msgbox "Error: no harddisk partition(s) found for installation. \
 Please make sure you have an existing partition. Exiting." 0 0 ; bailout 5
@@ -488,7 +498,7 @@ function lilo_sw_raid
 {
  if ! is_grml2hd_noninteractive ; then
   if echo $PARTITION | grep -q '/dev/md' ; then
-    if ! [ -z "$SWRAID" ] ; then
+    if [ -n "$SWRAID" ] ; then
       LILORAID="raid-extra-boot=$SWRAID"
       dialog --stdout --title "${PN}" --msgbox "
 You are installing grml to ${PARTITION} which seems to be a software
@@ -773,9 +783,9 @@ if ! is_grml2hd_noninteractive ; then
     mbr)
       # /dev/md0: has to be installed in MBR of /dev/md0 and not in /dev/md:
       if [[ $PARTITION == *md* ]] ; then
-	 BOOT_PARTITION=${PARTITION}
+         BOOT_PARTITION=${PARTITION}
       else
-	BOOT_PARTITION=${PARTITION%[0-9]}
+        BOOT_PARTITION=${PARTITION%[0-9]}
       fi
       ;;
     partition)
@@ -804,12 +814,12 @@ is_grml2hd_noninteractive && PREEXECUTE # execute defined function in /etc/grml2
 checkvalue $GRML2HD_WELCOME_SCREEN && welcome_screen
 checkvalue $GRML2HD_PARTITION_SELECT && partition_select
 checkvalue $GRML2HD_CHECK4PARTITION && check4partition
-checkvalue $GRML2HD_CHECK4SPACE && check4space
+[ -z "$SWRAID" ] && checkvalue $GRML2HD_CHECK4SPACE && check4space
 checkvalue $GRML2HD_CHECK4MBR && check4mbr
 checkvalue $GRML2HD_LILO_SW_RAID && lilo_sw_raid
 checkvalue $GRML2HD_GETFS && getfs
 
-if checkvalue $GRML2HD_INITIALIZE ; then 
+if checkvalue $GRML2HD_INITIALIZE ; then
    initialize || initialize_error
 fi
 

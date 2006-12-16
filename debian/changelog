@@ -1,3 +1,11 @@
+grml2hd (0.9.2) unstable; urgency=low
+
+  * Support installation on software raid devices again.
+  * Install /etc/grml2hd/config with permissions 600 to
+    prevent sniffing of root password in case it is set.
+
+ -- Michael Prokop <mika@grml.org>  Sat, 16 Dec 2006 20:20:47 +0100
+
 grml2hd (0.9.1) unstable; urgency=low
 
   * Add 'change-rules' and 'reset' as (deactivated) template to

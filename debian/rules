@@ -29,17 +29,16 @@ install: build
 	dh_installdirs usr/bin usr/sbin usr/share/grml2hd etc/grml2hd boot/grub
 
 	# Add here commands to install the package into debian/grml2hd.
-	$(INSTALL_EXECUTABLES) grml2hd            $(CURDIR)/debian/grml2hd/usr/sbin/
-	$(INSTALL_EXECUTABLES) grml2hd-chrooted   $(CURDIR)/debian/grml2hd/usr/sbin/
-	$(INSTALL_EXECUTABLES) grml2hd-bootparams $(CURDIR)/debian/grml2hd/usr/bin/
-	$(INSTALL_FILES) grml.bmp                 $(CURDIR)/debian/grml2hd/usr/share/grml2hd/
-	$(INSTALL_FILES) grml.bmp.conf            $(CURDIR)/debian/grml2hd/usr/share/grml2hd/
-	$(INSTALL_FILES) bootscreen.bmp           $(CURDIR)/debian/grml2hd/usr/share/grml2hd/
-	$(INSTALL_FILES) bootscreen.bmp.conf      $(CURDIR)/debian/grml2hd/usr/share/grml2hd/
-	$(INSTALL_FILES) config                   $(CURDIR)/debian/grml2hd/etc/grml2hd/
-	$(INSTALL_FILES) customization            $(CURDIR)/debian/grml2hd/etc/grml2hd/
-	$(INSTALL_FILES) grml-template_menu.lst   $(CURDIR)/debian/grml2hd/boot/grub/
-
+	$(INSTALL_EXECUTABLES) grml2hd            debian/grml2hd/usr/sbin/
+	$(INSTALL_EXECUTABLES) grml2hd-chrooted   debian/grml2hd/usr/sbin/
+	$(INSTALL_EXECUTABLES) grml2hd-bootparams debian/grml2hd/usr/bin/
+	$(INSTALL_FILES) grml.bmp                 debian/grml2hd/usr/share/grml2hd/
+	$(INSTALL_FILES) grml.bmp.conf            debian/grml2hd/usr/share/grml2hd/
+	$(INSTALL_FILES) bootscreen.bmp           debian/grml2hd/usr/share/grml2hd/
+	$(INSTALL_FILES) bootscreen.bmp.conf      debian/grml2hd/usr/share/grml2hd/
+	install -m 600   config                   debian/grml2hd/etc/grml2hd/
+	$(INSTALL_FILES) customization            debian/grml2hd/etc/grml2hd/
+	$(INSTALL_FILES) grml-template_menu.lst   debian/grml2hd/boot/grub/
 
 # Build architecture-independent files here.
 binary-indep: install
