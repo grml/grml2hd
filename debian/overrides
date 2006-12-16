@@ -1,1 +1,2 @@
 grml2hd: unknown-section grml
+grml2hd: non-standard-file-perm etc/grml2hd/config 0600 != 0644
