@@ -818,7 +818,8 @@ is_grml2hd_noninteractive && PREEXECUTE # execute defined function in /etc/grml2
 checkvalue $GRML2HD_WELCOME_SCREEN && welcome_screen
 checkvalue $GRML2HD_PARTITION_SELECT && partition_select
 checkvalue $GRML2HD_CHECK4PARTITION && check4partition
-[ -z "$SWRAID" ] && checkvalue $GRML2HD_CHECK4SPACE && check4space
+# [ -z "$SWRAID" ] && checkvalue $GRML2HD_CHECK4SPACE && check4space
+checkvalue $GRML2HD_CHECK4SPACE && check4space
 checkvalue $GRML2HD_CHECK4MBR && check4mbr
 checkvalue $GRML2HD_LILO_SW_RAID && lilo_sw_raid
 checkvalue $GRML2HD_GETFS && getfs
