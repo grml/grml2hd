@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 14:18:10 CET 2007 [mika]
+# Latest change: Die Feb 13 15:35:16 CET 2007 [mika]
 ################################################################################
 
 LANG='C'

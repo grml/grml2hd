@@ -4,11 +4,8 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 13:26:37 CET 2007 [mika]
+# Latest change: Die Feb 13 15:35:19 CET 2007 [mika]
 ################################################################################
-
-LANG='C'
-LC_ALL='C'
 
 # source config:
 if ! [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
@@ -28,6 +25,10 @@ fi
 
 # make sure we have the usual functions for boot-related stuff available
 . /etc/grml/autoconfig.functions
+
+LANG='C'
+LC_ALL='C'
+LANGUAGE='C'
 
 GRML_SMALL=''
 grep -q small /etc/grml_version && GRML_SMALL='1'
@@ -64,14 +65,14 @@ setpassword() {
 # password has been pre-crypted (by preseeding).
 #
 # Taken from /var/lib/dpkg/info/passwd.config
-	SETPASSWD_PW="$2"
-	export SETPASSWD_PW
+        SETPASSWD_PW="$2"
+        export SETPASSWD_PW
 
-	# This is very annoying. chpasswd cannot handle generating md5
-	# passwords as it is not PAM-aware. Thus, I have to work around
-	# that by crypting the password myself if md5 is used.
-	USE_MD5=1
-	export USE_MD5
+        # This is very annoying. chpasswd cannot handle generating md5
+        # passwords as it is not PAM-aware. Thus, I have to work around
+        # that by crypting the password myself if md5 is used.
+        USE_MD5=1
+        export USE_MD5
 
         if [ "$3" = true ]; then
                 PRECRYPTED=1
@@ -79,25 +80,25 @@ setpassword() {
                 PRECRYPTED=''
         fi
         export PRECRYPTED
-        LC_LANG=C LANGUAGE=C LANG=C perl -e '
-		sub CreateCryptSalt {
-			my $md5 = shift;
+        LC_ALL=C LANGUAGE=C LANG=C perl -e '
+                sub CreateCryptSalt {
+                        my $md5 = shift;
 
-			my @valid = split(//, "./0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-			my ($in, $out);
+                        my @valid = split(//, "./0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+                        my ($in, $out);
 
-			my $cryptsaltlen = ($md5 ? 8 : 2);
+                        my $cryptsaltlen = ($md5 ? 8 : 2);
 
-			open (F, "</dev/urandom") || die "No /dev/urandom found!";
-			foreach (1..$cryptsaltlen) {
-				read(F, $in, 1);
-				$out .= $valid[ord($in) % ($#valid + 1)];
-			}
-			close F;
-			return ($md5 ? "\$1\$$out\$" : $out);
-		}
+                        open (F, "</dev/urandom") || die "No /dev/urandom found!";
+                        foreach (1..$cryptsaltlen) {
+                                read(F, $in, 1);
+                                $out .= $valid[ord($in) % ($#valid + 1)];
+                        }
+                        close F;
+                        return ($md5 ? "\$1\$$out\$" : $out);
+                }
 
-		open(P,"| chpasswd -e");
+                open(P,"| chpasswd -e");
                 if ($ENV{PRECRYPTED}) {
                         print P shift().":$ENV{SETPASSWD_PW}\n";
                 } else {
@@ -105,10 +106,10 @@ setpassword() {
                                 crypt($ENV{SETPASSWD_PW}, CreateCryptSalt($ENV{USE_MD5})).
                                 "\n";
                 }
-		close P;
+                close P;
         ' "$1"
-	SETPASSWD_PW=''
-	USE_MD5=''
+        SETPASSWD_PW=''
+        USE_MD5=''
         PRECRYPTED=''
 }
 
@@ -299,6 +300,16 @@ Error:
 `cat /tmp/lilo.error`
 
 " 0 0
+  fi
+}
+
+get_rootpartition() {
+  if [ -n "$PARTITION" ] ; then
+     PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
+     ROOTPARTITION="UUID=$PARTUUID"
+  else
+     echo "\$PARTITION not set, error.">&2
+     return 1;
   fi
 }
 
