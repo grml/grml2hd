@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Son Dez 17 17:30:26 CET 2006 [mika]
+# Latest change: Die Feb 13 12:08:00 CET 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -80,7 +80,7 @@ function setpassword(){
                 PRECRYPTED=''
         fi
         export PRECRYPTED
-        LANG=C perl -e '
+        LC_LANG=C LANGUAGE=C LANG=C perl -e '
 		sub CreateCryptSalt {
 			my $md5 = shift;
 
@@ -188,7 +188,7 @@ function sethostname()
     fi
   else # non-interactive
     [ -n "$HOSTNAME" ] || HOSTNAME='grml'
-    hostname "$HOSTNAME"
+    grml-hostname "$HOSTNAME"
   fi
 }
 
@@ -373,7 +373,7 @@ function run_initramfs()
 
   if [ "$?" -eq 0 ]; then
     sed -i "s#.*initrd=ADJUSTME#        initrd=$INITRD#g" /etc/lilo.conf
-    is_grml2hd_noninteractive || dialog --msgbox "Running initramfs was successful." 5 50
+#    is_grml2hd_noninteractive || dialog --msgbox "Running initramfs was successful." 5 50
   else
     dialog --msgbox "There was an error running initramfs for creating an initrd:
 `cat /tmp/initramfs.error`

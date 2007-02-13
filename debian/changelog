@@ -5,6 +5,8 @@ grml2hd (0.9.3) unstable; urgency=low
   * some code cleanup
   * use initrd by default now as root=UUID requires userspace
     handling
+  * use grml-hostname in non-interactive mode as well (supported
+    by by grml-hostname of grml-scripts 0.9.16)
 
  -- Michael Prokop <mika@grml.org>  Sat, 20 Jan 2007 13:42:49 +0100
 
