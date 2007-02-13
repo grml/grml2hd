@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 13:15:24 CET 2007 [mika]
+# Latest change: Die Feb 13 13:26:37 CET 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -338,56 +338,18 @@ remove_unwanted_packages() {
   rm -rf /etc/skel/.mozilla/firefox 1>/dev/null 2>&1
 }
 
-run_yaird() {
-  INITRD=/boot/initrd.img-$(uname -r)
-
-  yaird -o $INITRD 1>/tmp/yaird.error 2>&1
-
-  if [ "$?" -eq 0 ]; then
-    sed -i "s#.*initrd=ADJUSTME#        initrd=$INITRD#g" /etc/lilo.conf
-    is_grml2hd_noninteractive || dialog --msgbox "Running yaird was successful." 5 50
-  else
-    dialog --msgbox "There was an error running yaird for creating an initrd:
-`cat /tmp/yaird.error`
-
-Sorry." 0 0
-  fi
-}
-
-run_initramfs() {
+create_initrd() {
   INITRD=/boot/initrd.img-$(uname -r)
   update-initramfs -c -t -k $(uname -r) 1>/tmp/initramfs.error 2>&1
 
   if [ "$?" -eq 0 ]; then
     sed -i "s#.*initrd=ADJUSTME#        initrd=$INITRD#g" /etc/lilo.conf
-#    is_grml2hd_noninteractive || dialog --msgbox "Running initramfs was successful." 5 50
   else
     dialog --msgbox "There was an error running initramfs for creating an initrd:
 `cat /tmp/initramfs.error`
 
 Sorry. Continuing anyway, you might need to rerun update-initramfs on your own." 0 0
   fi
-}
-
-create_initrd() {
- # do we need an initrd?
- DEFAULT='--defaultno'
- # is the target a SCSI-/USB-device?
- grep ' / ' /etc/fstab | grep -q '/dev/sd[a-z]' && DEFAULT=''
- # is the target a software raid array?
- grep ' / ' /etc/fstab | grep -q '/dev/md'      && DEFAULT=''
- is_grml2hd_noninteractive || dialog --stdout --title "${PN}" $DEFAULT --yesno "Do you want to create and use an initrd?
-
-This is very important for systems which can not boot directly using the kernel. If you install grml to a SCSI / USB / firewire harddisk or on a software RAID array you need an initrd!" 0 0
- if [ "$?" -eq 0 ]; then
-  if ! is_grml2hd_noninteractive ; then
-   if [ -x /usr/sbin/update-initramfs ] ; then
-     run_initramfs
-   else
-     run_yaird # that was our default before grml2hd 0.6.7
-   fi
-  fi
- fi
 }
 
 finalize() {
@@ -441,7 +403,7 @@ fi
 
 is_grml2hd_noninteractive && POSTEXECUTE # execute defined function in /etc/grml2hd/config
 
-checkvalue $CHROOT_CREATE_INITRD && run_initramfs
+checkvalue $CHROOT_CREATE_INITRD && create_initrd
 
 # use status bar for lilo to provide feedback what's running...
 if checkvalue $CHROOT_INSTALL_LILO ; then
