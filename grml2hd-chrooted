@@ -360,6 +360,8 @@ install_grub() {
 
   grubdevice "$BOOT_PARTITION" 1>/dev/null
 
+  get_rootpartition
+
   if ! [ -r /boot/grub/grml-template_menu.lst ] ; then
      echo "Error: could not find /boot/grub/grml-template_menu.lst">&2
      return 1
