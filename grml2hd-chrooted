@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 19:08:19 CET 2007 [mika]
+# Latest change: Die Feb 13 19:30:20 CET 2007 [mika]
 ################################################################################
 
 # source config:
@@ -325,7 +325,7 @@ grubdevice() {
 
   # create device.map
   if ! [ -f "$device_map" ] ; then
-     grub --device-map="$device_map" | echo 'quit' 1>/dev/null
+     grub --device-map="$device_map" | echo 'quit' 1>/dev/null 2>/tmp/grub.device-map
   fi
 
   # taken from d-i's trunk/packages/arch/i386/grub-installer/grub-installer:
@@ -358,9 +358,9 @@ install_grub() {
      exit 1
   fi
 
-  grubdevice "$BOOT_PARTITION" 1>/dev/null
+  grubdevice "$BOOT_PARTITION" 1>/dev/null 2>/tmp/grubdevice
 
-  get_rootpartition
+  get_rootpartition 1>/dev/null 2>/tmp/grub.rootpartition
 
   if ! [ -r /boot/grub/grml-template_menu.lst ] ; then
      echo "Error: could not find /boot/grub/grml-template_menu.lst">&2
@@ -372,7 +372,7 @@ install_grub() {
      else
         cp /boot/grub/grml-template_menu.lst /boot/grub/menu.lst
         sed -i "s/^# kopt=root=.*/# kopt=root=${ROOTPARTITION} ro/" /boot/grub/menu.lst
-        sed -i "s/^# groot=.*/# groot=${GRUBDEVICE}/" /boot/grub/menu.lst
+        sed -i "s/^# groot=.*/# groot=${GRUBSETUPDEVICE}/" /boot/grub/menu.lst
 
         update-grub -y 1>/dev/null 2>/tmp/update-grub.error
         

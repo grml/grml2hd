@@ -80,13 +80,13 @@ timeout		10
 ## additional options to use with the default boot option, but not with the
 ## alternatives
 ## e.g. defoptions=vga=791 resume=/dev/hda5
-# defoptions=quiet splash
+# defoptions=vga=791
 
 ## altoption boot targets option
 ## multiple altoptions lines are allowed
 ## e.g. altoptions=(extra menu suffix) extra boot options
 ##      altoptions=(recovery mode) single
-# altoptions=(recovery mode) single
+# altoptions=(recovery mode) single vga=normal
 
 ## controls how many kernels should be put into the menu.lst
 ## only counts the first occurence of a kernel, not the
