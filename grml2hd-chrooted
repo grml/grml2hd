@@ -297,7 +297,7 @@ install_lilo() {
 
 Error:
 
-`cat /tmp/lilo.error`
+$(cat /tmp/lilo.error)
 
 " 0 0
   fi
@@ -358,7 +358,10 @@ install_grub() {
      echo "Error: could not find /boot/grub/grml-template_menu.lst">&2
      return 1
   else
-     if [ -n "$GRUBDEVICE" ] ; then
+     if [ -z "$GRUBDEVICE" ] ; then
+        echo "Error: could not find a grub device">&2
+        return 1
+     else
         cp /boot/grub/grml-template_menu.lst /boot/grub/menu.lst
         sed -i "s/^# kopt=root=.*/# kopt=root=${ROOTPARTITION} ro/" /boot/grub/menu.lst
         sed -i "s/^# groot=.*/# groot=${GRUBDEVICE}/"         /boot/grub/menu.lst
@@ -375,14 +378,10 @@ install_grub() {
 
 Error:
 
-`cat /tmp/grub.error
+$(cat /tmp/grub.error)
 
 " 0 0
-  fi
-     else
-        echo "Error: could not find a grub device">&2
-        return 1
-     fi
+        fi
   fi
 }
 
