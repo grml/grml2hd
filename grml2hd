@@ -489,7 +489,7 @@ EOF
 get_bootparams() {
   if ! is_grml2hd_noninteractive ; then
     grml2hd-bootparams
-    LILOAPPEND=$(cat /tmp/liloappendline)
+    BOOTOPTIONS_APPEND=$(cat /tmp/bootappendline)
   fi
 }
 
@@ -578,21 +578,21 @@ vga=normal
 
 image=/boot/vmlinuz-$UNAME
         label="$UNAME_SHORT"
-        #append="video=vesafb:ypan,1024x768-16@60 ${LILOAPPEND}"
-        append="grml_from_hd root=$ROOTPARTITION ${LILOAPPEND}"
+        #append="video=vesafb:ypan,1024x768-16@60 ${BOOTOPTIONS_APPEND}"
+        append="grml_from_hd root=$ROOTPARTITION ${BOOTOPTIONS_APPEND}"
         read-only
         vga=0x0317
 #        initrd=ADJUSTME
 
 image=/boot/vmlinuz-$UNAME
         label="grml-debug"
-        append="debug log nocolor root=$ROOTPARTITION ${LILOAPPEND}"
+        append="debug log nocolor root=$ROOTPARTITION ${BOOTOPTIONS_APPEND}"
         read-only
 #        initrd=ADJUSTME
 
 image=/boot/vmlinuz-$UNAME
         label="grml-nofb"
-        append="video=ofonly root=$ROOTPARTITION ${LILOAPPEND}"
+        append="video=ofonly root=$ROOTPARTITION ${BOOTOPTIONS_APPEND}"
         read-only
 #        initrd=ADJUSTME
 
@@ -768,8 +768,8 @@ if ! is_grml2hd_noninteractive ; then
 
   GETMBR=$(dialog --stdout --title "$PN" --default-item $MBRDEFAULT \
           --radiolist "Where do you want to install the bootmanager?" 10 65 0 \
-          mbr   "install lilo into MBR of $MBRPART" $MBR \
-          partition  "install lilo into partition $PARTITION" $PART \
+          mbr   "install bootmanager into MBR of $MBRPART" $MBR \
+          partition  "install bootmanager into partition $PARTITION" $PART \
           ${ADDITIONAL_PARAMS})
   [ $? -eq 0 ] || bailout 13
   IFS="$OIFS"

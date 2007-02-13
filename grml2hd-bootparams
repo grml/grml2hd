@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika(at)grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Mon Sep 18 12:48:51 CEST 2006 [mika]
+# Latest change: Die Feb 13 15:38:00 CET 2007 [mika]
 ################################################################################
 
 LANG=C
@@ -110,7 +110,7 @@ Set the boot parameters for kernel via append-line of lilo:
 
 # and now run it:
   interface
-  cat $TMPFILE | sed 's/"//g' > /tmp/liloappendline
+  cat $TMPFILE | sed 's/"//g' > /tmp/bootappendline
   rm -f $TMPFILE &>/dev/null
 
 ## END OF FILE #################################################################
