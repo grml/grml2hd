@@ -484,12 +484,8 @@ get_bootparams() {
 
 get_rootpartition() {
   if [ -n "$PARTITION" ] ; then
-    if [ -n "$1" ] ; then
-       PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
-       ROOTPARTITION="root=UUID=$PARTUUID"
-    else
-       echo "Usage: get_rootpartition <device>">&2
-       return 1;
+     PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
+     ROOTPARTITION="root=UUID=$PARTUUID"
     fi
   else
      return 1;
@@ -586,7 +582,7 @@ boot=$BOOT_PARTITION
 # has been changed with  -r , the respective device is used. If the
 # variable ROOT is omitted, the root device setting contained in the
 # kernel image is used. It can be changed with the rdev program.
-root=$ROOTPARTITION
+root=$PARTITION
 
 # use grml on software raid:
 # raid-extra-boot=...
@@ -616,20 +612,20 @@ vga=normal
 image=/boot/vmlinuz-$UNAME
         label="$UNAME_SHORT"
         #append="video=vesafb:ypan,1024x768-16@60 ${LILOAPPEND}"
-        append="grml_from_hd ${LILOAPPEND}"
+        append="grml_from_hd $ROOTPARTITION ${LILOAPPEND}"
         read-only
         vga=0x0317
 #        initrd=ADJUSTME
 
 image=/boot/vmlinuz-$UNAME
         label="grml-debug"
-        append="debug log nocolor ${LILOAPPEND}"
+        append="debug log nocolor $ROOTPARTITION ${LILOAPPEND}"
         read-only
 #        initrd=ADJUSTME
 
 image=/boot/vmlinuz-$UNAME
         label="grml-nofb"
-        append="video=ofonly ${LILOAPPEND}"
+        append="video=ofonly $ROOTPARTITION ${LILOAPPEND}"
         read-only
 #        initrd=ADJUSTME
 

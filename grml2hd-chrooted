@@ -456,7 +456,7 @@ fi
 
 is_grml2hd_noninteractive && POSTEXECUTE # execute defined function in /etc/grml2hd/config
 
-checkvalue $CHROOT_CREATE_INITRD && create_initrd
+checkvalue $CHROOT_CREATE_INITRD && run_initramfs
 
 # use status bar for lilo to provide feedback what's running...
 if checkvalue $CHROOT_INSTALL_LILO ; then
