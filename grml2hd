@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 15:35:16 CET 2007 [mika]
+# Latest change: Die Feb 13 19:40:02 CET 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -55,8 +55,8 @@ PID="$(echo $$)"
 UNAME=$(uname -r)
 UNAME_SHORT=$(echo $UNAME | sed 's/-small//')
 ARGUMENTS="$*"
-[ -z "$PARTITION" ] && PARTITION=$1
-[ -z "$BOOT_PARTITION" ] && BOOT_PARTITION=$PARTITION
+[ -z "$PARTITION" ] && PARTITION="$1"
+[ -z "$BOOT_PARTITION" ] && BOOT_PARTITION="$PARTITION"
 SOURCE=/
 TARGET='/mnt/grml'
 SPACE_REQUIRED_MB=2700
@@ -240,6 +240,7 @@ Please make sure you have an existing partition. Exiting." 0 0 ; bailout 5
       bailout 6
     fi
   fi
+  echo "PARTITION=$PARTITION" >> $CONFIGTMP
 }
 
 check4partition() {
