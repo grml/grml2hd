@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 12:08:00 CET 2007 [mika]
+# Latest change: Die Feb 13 13:15:24 CET 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -32,7 +32,7 @@ fi
 GRML_SMALL=''
 grep -q small /etc/grml_version && GRML_SMALL='1'
 
-function checkvalue(){
+checkvalue() {
   if [ "$1" = "yes" ] ; then
     return 0
   else
@@ -40,13 +40,12 @@ function checkvalue(){
   fi
 }
 
-function initialize()
-{
+initialize() {
   [ -f /proc/version ] || mount -t proc  none /proc
   [ -d /sys/kernel ]   || mount -t sysfs none /sys  # important for grml-x and it's hwinfo [and yaird]
 }
 
-function is_grml2hd_noninteractive(){
+is_grml2hd_noninteractive() {
   if ! [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
      return 0 # we running automatic installation
   else
@@ -54,7 +53,7 @@ function is_grml2hd_noninteractive(){
   fi
 }
 
-function setpassword(){
+setpassword() {
 # Set a password, via chpasswd.
 # Use perl rather than echo, to avoid the password
 # showing in the process table. (However, this is normally
@@ -113,8 +112,7 @@ function setpassword(){
         PRECRYPTED=''
 }
 
-function root_account()
-{
+root_account() {
   if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
     PASSWD=$(cat /etc/shadow |gawk -F: '/root/{print $2}')
     if [ "$PASSWD" = "*" ]; then
@@ -147,14 +145,12 @@ Thus this step will be skipped" 8 60)
   fi
 }
 
-function setlanguage()
-{
+setlanguage() {
   is_grml2hd_noninteractive || /usr/sbin/grml-setkeyboard
   is_grml2hd_noninteractive || /usr/sbin/grml-setlang
 }
 
-function xconfig()
-{
+xconfig() {
   if [ -z "$GRML_SMALL" ] ; then
    if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
     if ! [ -f /etc/X11/xorg.conf ] ; then
@@ -180,8 +176,7 @@ as user to start the X." 8 60
   fi
 }
 
-function sethostname()
-{
+sethostname() {
   if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
     if [ -x /usr/sbin/grml-hostname ] ; then
        GRML2HD=1 grml-hostname # set GRML2HD=1 so we tell grml-hostname we are running inside grml2hd
@@ -192,8 +187,7 @@ function sethostname()
   fi
 }
 
-function newuser()
-{
+newuser() {
   if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
     NEWUSER="$(dialog --stdout --title "${PN}" --inputbox "Please enter username \
     (e.g. grml) for the user you want to use on your grml system:" 10 60 grml)"
@@ -249,8 +243,7 @@ function newuser()
   fi
 }
 
-function create_sudoers()
-{
+create_sudoers() {
   cat > /etc/sudoers << EOF
 # sudoers file.
 # This file MUST be edited with the "visudo" command as root.
@@ -294,8 +287,7 @@ secvpn  ALL=NOPASSWD: /usr/sbin/secvpn, /usr/sbin/pppd
 EOF
 }
 
-function install_lilo()
-{
+install_lilo() {
   lilo 1> /dev/null 2>/tmp/lilo.error
   if [ "$?" -eq 0 ]; then
     is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Lilo exited successfully" 5 60
@@ -310,8 +302,7 @@ Error:
   fi
 }
 
-function fix_sysvinit()
-{
+fix_sysvinit() {
   dpkg --purge grml-sysvinit 1>/dev/null 2>&1
   cp /sbin/init /etc 1>/dev/null 2>&1
   if [ -n "$GRML_SMALL" ] ; then
@@ -321,8 +312,7 @@ function fix_sysvinit()
   fi
 }
 
-function adjust_timezone()
-{
+adjust_timezone() {
   if grep -q -e utc -e gmt /proc/cmdline ; then
      sed -i 's/^UTC=.*/UTC=yes/' /etc/default/rcS
      if [ "$?" -eq 0 ]; then
@@ -343,14 +333,12 @@ function adjust_timezone()
   fi
 }
 
-function remove_unwanted_packages()
-{
+remove_unwanted_packages() {
   dpkg --purge grml-firefox 1>/dev/null 2>&1
   rm -rf /etc/skel/.mozilla/firefox 1>/dev/null 2>&1
 }
 
-function run_yaird()
-{
+run_yaird() {
   INITRD=/boot/initrd.img-$(uname -r)
 
   yaird -o $INITRD 1>/tmp/yaird.error 2>&1
@@ -366,8 +354,7 @@ Sorry." 0 0
   fi
 }
 
-function run_initramfs()
-{
+run_initramfs() {
   INITRD=/boot/initrd.img-$(uname -r)
   update-initramfs -c -t -k $(uname -r) 1>/tmp/initramfs.error 2>&1
 
@@ -382,8 +369,7 @@ Sorry. Continuing anyway, you might need to rerun update-initramfs on your own."
   fi
 }
 
-function create_initrd()
-{
+create_initrd() {
  # do we need an initrd?
  DEFAULT='--defaultno'
  # is the target a SCSI-/USB-device?
@@ -404,8 +390,7 @@ This is very important for systems which can not boot directly using the kernel.
  fi
 }
 
-function finalize()
-{
+finalize() {
   umount /proc
   umount /sys
   sync

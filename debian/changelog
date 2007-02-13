@@ -1,10 +1,12 @@
 grml2hd (0.9.3) unstable; urgency=low
 
-  * add function grubdevice() to get grub's syntax for /dev/ice.
-  * add function get_rootpartition() to use UUID for rootpartition
-  * some code cleanup
-  * use initrd by default now as root=UUID requires userspace
-    handling
+  * use UUID for root partition [via function get_rootpartition()],
+    this will prevent any failures due to IDE/libata and also improve
+    situation on external USB/firewire devices [Closes: issue93]
+  * use initrd/initramfs by default now as root=UUID requires
+    handling in userspace
+  * add functions for supporting grub (still working on that...)
+  * code cleanup: remove 'function'-keyword
   * use grml-hostname in non-interactive mode as well (supported
     by by grml-hostname of grml-scripts 0.9.16)
 
