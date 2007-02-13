@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 11:29:57 CET 2007 [mika]
+# Latest change: Die Feb 13 11:52:39 CET 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -486,8 +486,8 @@ get_rootpartition() {
   if [ -n "$PARTITION" ] ; then
      PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
      ROOTPARTITION="root=UUID=$PARTUUID"
-    fi
   else
+     echo "\$PARTITION not set, error.">&2
      return 1;
   fi
 }
