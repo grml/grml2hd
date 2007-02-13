@@ -387,11 +387,10 @@ $(cat /tmp/grub.error)
 }
 
 bootmanager_selection() {
-  GETBOOTMANAGER=$(dialog --stdout --title "$PN" --default-item $MBRDEFAULT \
-  --radiolist "Which bootmanager do you want to install?" 10 65 0 \
-          lilo   "install lilo on $PARTITION" on
-          grub  "install grub on partition $PARTITION" off \
-          ${ADDITIONAL_PARAMS})
+  GETBOOTMANAGER=$(dialog --stdout --title "$PN" --default-item lilo \
+                          --radiolist "Which bootmanager do you want to install?" 10 65 0 \
+                          lilo   "install lilo on $PARTITION" on \
+                          grub  "install grub on partition $PARTITION" off)
   [ $? -eq 0 ] || exit 20
 
   case "$GETBOOTMANAGER" in
