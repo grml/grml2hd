@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 13:56:59 CET 2007 [mika]
+# Latest change: Die Feb 13 14:18:10 CET 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -190,6 +190,16 @@ Please make sure to have enough free space. Continuing anyway..." 10 60
   fi
   if [ $? != 0 ]; then
      bailout 4
+  fi
+}
+
+get_rootpartition() {
+  if [ -n "$PARTITION" ] ; then
+     PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
+     ROOTPARTITION="UUID=$PARTUUID"
+  else
+     echo "\$PARTITION not set, error.">&2
+     return 1;
   fi
 }
 
@@ -392,11 +402,12 @@ copy_files() {
 }
 
 create_fstab() {
+  get_rootpartition # we need the UUID syntax for the partition
   # remount-ro seems to make problems at least when using XFS - check!
   if [[ $FILESYSTEM == ext* ]] ; then
-    echo "$PARTITION  /  $FILESYSTEM  errors=remount-ro  0 1" > $TARGET/etc/fstab
+    echo "$ROOTPARTITION  /  $FILESYSTEM  errors=remount-ro  0 1" > $TARGET/etc/fstab
   else
-    echo "$PARTITION  /  $FILESYSTEM  defaults 0 1" > $TARGET/etc/fstab
+    echo "$ROOTPARTITION  /  $FILESYSTEM  defaults 0 1" > $TARGET/etc/fstab
   fi
   cat /etc/fstab >> $TARGET/etc/fstab
 }
@@ -482,16 +493,6 @@ get_bootparams() {
   fi
 }
 
-get_rootpartition() {
-  if [ -n "$PARTITION" ] ; then
-     PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
-     ROOTPARTITION="root=UUID=$PARTUUID"
-  else
-     echo "\$PARTITION not set, error.">&2
-     return 1;
-  fi
-}
-
 lilo_sw_raid() {
  if ! is_grml2hd_noninteractive ; then
   if echo $PARTITION | grep -q '/dev/md' ; then
@@ -573,8 +574,8 @@ grub_install() {
   else
      if [ -n "$GRUBDEVICE" ] ; then
         cp /boot/grub/grml-template_menu.lst /boot/grub/menu.lst
-        sed -i "s/^# kopt=root=.*/# kopt=ROOTPARTITION ro/" /boot/grub/menu.lst
-        sed -i "s/^# groot=(*/# groot=${GRUBDEVICE}/"         /boot/grub/menu.lst
+        sed -i "s/^# kopt=root=.*/# kopt=root=${ROOTPARTITION} ro/" /boot/grub/menu.lst
+        sed -i "s/^# groot=.*/# groot=${GRUBDEVICE}/"         /boot/grub/menu.lst
         update-grub -y
      else
         echo "Error: could not find a grub device">&2
@@ -632,20 +633,20 @@ vga=normal
 image=/boot/vmlinuz-$UNAME
         label="$UNAME_SHORT"
         #append="video=vesafb:ypan,1024x768-16@60 ${LILOAPPEND}"
-        append="grml_from_hd $ROOTPARTITION ${LILOAPPEND}"
+        append="grml_from_hd root=$ROOTPARTITION ${LILOAPPEND}"
         read-only
         vga=0x0317
 #        initrd=ADJUSTME
 
 image=/boot/vmlinuz-$UNAME
         label="grml-debug"
-        append="debug log nocolor $ROOTPARTITION ${LILOAPPEND}"
+        append="debug log nocolor root=$ROOTPARTITION ${LILOAPPEND}"
         read-only
 #        initrd=ADJUSTME
 
 image=/boot/vmlinuz-$UNAME
         label="grml-nofb"
-        append="video=ofonly $ROOTPARTITION ${LILOAPPEND}"
+        append="video=ofonly root=$ROOTPARTITION ${LILOAPPEND}"
         read-only
 #        initrd=ADJUSTME
 
