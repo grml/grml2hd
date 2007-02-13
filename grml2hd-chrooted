@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 15:35:19 CET 2007 [mika]
+# Latest change: Die Feb 13 15:57:08 CET 2007 [mika]
 ################################################################################
 
 # source config:
@@ -382,6 +382,7 @@ $(cat /tmp/grub.error)
 
 " 0 0
         fi
+     fi
   fi
 }
 
