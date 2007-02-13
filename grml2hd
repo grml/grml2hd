@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 11:52:39 CET 2007 [mika]
+# Latest change: Die Feb 13 13:56:59 CET 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -49,7 +49,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='0.9.2'
+VERSION='0.9.3'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
@@ -542,7 +542,7 @@ grubdevice() {
 
   # create device.map
   if ! [ -f "$device_map" ] ; then
-     grub --device-map=/boot/grub/device.map | echo 'quit' 1>/dev/null
+     grub --device-map="$device_map" | echo 'quit' 1>/dev/null
   fi
 
   # taken from d-i's trunk/packages/arch/i386/grub-installer/grub-installer:
@@ -556,11 +556,31 @@ grubdevice() {
                     -e 's%.*/\(disc\|part\([0-9]*\)\)$%\2%' \
                     -e 's%.*c[0-7]d[0-9]*p*%%'`
   tmp_drive=$(grep -v '^#' $device_map | grep "$tmp_disk *$" | sed 's%.*\(([hf]d[0-9][a-g0-9,]*)\).*%\1%')
-  echo "$tmp_drive" | sed "s%)$%,`expr $tmp_part - 1`)%"
+  case $1 in
+     /dev/[sh]d[a-z]) # we expect something like '(hd0)'
+        GRUBDEVICE="$(echo "$tmp_drive")"
+        ;;
+      *) # we expect something like '(hd0,0)'
+        GRUBDEVICE="$(echo "$tmp_drive" | sed "s%)$%,`expr $tmp_part - 1`)%")"
+        ;;
+  esac
 }
 
 grub_install() {
-  update-grub -y
+  if ! [ -r /boot/grub/grml-template_menu.lst ] ; then
+     echo "Error: could not find /boot/grub/grml-template_menu.lst">&2
+     exit 1
+  else
+     if [ -n "$GRUBDEVICE" ] ; then
+        cp /boot/grub/grml-template_menu.lst /boot/grub/menu.lst
+        sed -i "s/^# kopt=root=.*/# kopt=ROOTPARTITION ro/" /boot/grub/menu.lst
+        sed -i "s/^# groot=(*/# groot=${GRUBDEVICE}/"         /boot/grub/menu.lst
+        update-grub -y
+     else
+        echo "Error: could not find a grub device">&2
+        exit 1
+     fi
+  fi
 }
 
 create_liloconfig() {
@@ -882,3 +902,4 @@ checkvalue $GRML2HD_FINALIZE && finalize
 rm -f $TMPFILE
 
 ## END OF FILE #################################################################
+# vim: ai filetype=sh expandtab
