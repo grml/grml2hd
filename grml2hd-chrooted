@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 16:15:10 CET 2007 [mika]
+# Latest change: Die Feb 13 16:31:45 CET 2007 [mika]
 ################################################################################
 
 # source config:
@@ -357,7 +357,9 @@ install_grub() {
      echo "\$BOOT_PARTITION not set, can not install grub.">&2
      exit 1
   fi
+
   grubdevice "$BOOT_PARTITION"
+
   if ! [ -r /boot/grub/grml-template_menu.lst ] ; then
      echo "Error: could not find /boot/grub/grml-template_menu.lst">&2
      return 1
@@ -368,9 +370,9 @@ install_grub() {
      else
         cp /boot/grub/grml-template_menu.lst /boot/grub/menu.lst
         sed -i "s/^# kopt=root=.*/# kopt=root=${ROOTPARTITION} ro/" /boot/grub/menu.lst
-        sed -i "s/^# groot=.*/# groot=${GRUBDEVICE}/"         /boot/grub/menu.lst
+        sed -i "s/^# groot=.*/# groot=${GRUBDEVICE}/" /boot/grub/menu.lst
 
-        update-grub -y
+        update-grub -y 1>/dev/null 2>/tmp/update-grub.error
         
         echo -en "root ${GRUBDEVICE}\nsetup ${GRUBSETUPDEVICE}\n" | grub install 1>/dev/null 2>/tmp/grub.error
 
@@ -390,7 +392,7 @@ $(cat /tmp/grub.error)
 }
 
 bootmanager_selection() {
-  GETBOOTMANAGER=$(dialog --stdout --title "$PN" --default-item lilo \
+  GETBOOTMANAGER=$(dialog --stdout --title "grml2hd" --default-item lilo \
                           --radiolist "Which bootmanager do you want to install?" 10 65 0 \
                           lilo  "install lilo on $PARTITION" on \
                           grub  "install grub on partition $PARTITION" off)

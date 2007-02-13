@@ -795,6 +795,7 @@ if ! is_grml2hd_noninteractive ; then
     *)
       BOOT_PARTITION="$GETMBR" ;;
   esac
+  echo "BOOT_PARTITION=$BOOT_PARTITION" >> $CONFIGTMP
 fi
 }
 
