@@ -1,6 +1,8 @@
 grml2hd (0.9.3) unstable; urgency=low
 
   * add function grubdevice() to get grub's syntax for /dev/ice.
+  * add function get_rootpartition() to use UUID for rootpartition
+  * some code cleanup
 
  -- Michael Prokop <mika@grml.org>  Sat, 20 Jan 2007 13:42:49 +0100
 
