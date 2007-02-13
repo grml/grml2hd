@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 15:57:08 CET 2007 [mika]
+# Latest change: Die Feb 13 16:15:10 CET 2007 [mika]
 ################################################################################
 
 # source config:
@@ -136,8 +136,7 @@ root_account() {
         export ROOTPW1=''
         export ROOTPW2=''
     else
-      $(dialog --stdout --title "${PN}" --msgbox  "The password for the root account was already set before.
-Thus this step will be skipped" 8 60)
+      $(dialog --stdout --title "${PN}" --msgbox  "The password for the root account was already set before. Thus this step will be skipped" 8 60)
     fi
   else
     # echo "root:$ROOTPASSWD" | chpasswd -m
@@ -354,6 +353,11 @@ grubdevice() {
 }
 
 install_grub() {
+  if [ -z "$BOOT_PARTITION" ] ; then
+     echo "\$BOOT_PARTITION not set, can not install grub.">&2
+     exit 1
+  fi
+  grubdevice "$BOOT_PARTITION"
   if ! [ -r /boot/grub/grml-template_menu.lst ] ; then
      echo "Error: could not find /boot/grub/grml-template_menu.lst">&2
      return 1
@@ -366,7 +370,6 @@ install_grub() {
         sed -i "s/^# kopt=root=.*/# kopt=root=${ROOTPARTITION} ro/" /boot/grub/menu.lst
         sed -i "s/^# groot=.*/# groot=${GRUBDEVICE}/"         /boot/grub/menu.lst
 
-        grubdevice "$BOOT_PARTITION"
         update-grub -y
         
         echo -en "root ${GRUBDEVICE}\nsetup ${GRUBSETUPDEVICE}\n" | grub install 1>/dev/null 2>/tmp/grub.error
@@ -449,7 +452,7 @@ create_initrd() {
     echo "XXX";
     update-initramfs -c -t -k $(uname -r) 1>/tmp/initramfs.error 2>&1
     echo "100") | \
-  dialog --title "${PN}" --gauge "Building initrd/initramfs..." 9 50 0
+  dialog --title "${PN}" --gauge "Building initrd/initramfs..." 7 50 0
 
   if [ "$?" -eq 0 ]; then
     sed -i "s#.*initrd=ADJUSTME#        initrd=$INITRD#g" /etc/lilo.conf
@@ -525,7 +528,11 @@ if checkvalue $CHROOT_INSTALL_BOOTMANAGER ; then
     echo "Running lilo..."
     echo "XXX";
     # install_lilo
-    [ -n "$USE_GRUB" ] && install_grub || install_lilo
+    if [ -n "$USE_GRUB" ] ; then
+       install_grub
+    else
+       install_lilo
+    fi
     echo "100") | \
   dialog --title "${PN}" --gauge "Installing bootmanager..." 9 50 0
 fi
