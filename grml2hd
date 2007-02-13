@@ -757,7 +757,7 @@ if ! is_grml2hd_noninteractive ; then
   for device in sda hda; do
     if [ /dev/$device != ${PARTITION%[0-9]} ]; then
       grep $device /proc/partitions > /dev/null
-      [ $? -eq 0 ] && ADDITIONAL_PARAMS=:$device:"install lilo into MBR of /dev/${device}":"off"
+      [ $? -eq 0 ] && ADDITIONAL_PARAMS=:$device:"install bootmanager into MBR of /dev/${device}":"off"
     fi
   done
   ADDITIONAL_PARAMS=${ADDITIONAL_PARAMS#:}

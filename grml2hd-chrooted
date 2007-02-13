@@ -293,7 +293,7 @@ install_lilo() {
   if [ "$?" -eq 0 ]; then
     is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Lilo exited successfully" 5 60
   else
-    dialog --stdout --title "${PN}" --msgbox "Lilo failed! Please fix manually.
+    dialog --stdout --title "${PN}" --msgbox "Installation of Lilo failed! Please fix manually.
 
 Error:
 
@@ -353,7 +353,7 @@ grubdevice() {
   esac
 }
 
-grub_install() {
+install_grub() {
   if ! [ -r /boot/grub/grml-template_menu.lst ] ; then
      echo "Error: could not find /boot/grub/grml-template_menu.lst">&2
      return 1
@@ -366,13 +366,42 @@ grub_install() {
         grubdevice "$BOOT_PARTITION"
         update-grub -y
         
-        echo -en "root ${GRUBDEVICE}\nsetup ${GRUBSETUPDEVICE}\n" | grub install
+        echo -en "root ${GRUBDEVICE}\nsetup ${GRUBSETUPDEVICE}\n" | grub install 1>/dev/null 2>/tmp/grub.error
 
+        if [ "$?" -eq 0 ]; then
+           is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Grub exited successfully" 5 60
+        else
+          dialog --stdout --title "${PN}" --msgbox "Installation of grub failed! Please fix manually.
+
+Error:
+
+`cat /tmp/grub.error
+
+" 0 0
+  fi
      else
         echo "Error: could not find a grub device">&2
         return 1
      fi
   fi
+}
+
+bootmanager_selection() {
+  GETBOOTMANAGER=$(dialog --stdout --title "$PN" --default-item $MBRDEFAULT \
+  --radiolist "Which bootmanager do you want to install?" 10 65 0 \
+          lilo   "install lilo on $PARTITION" on
+          grub  "install grub on partition $PARTITION" off \
+          ${ADDITIONAL_PARAMS})
+  [ $? -eq 0 ] || exit 20
+
+  case "$GETBOOTMANAGER" in
+    grub)
+      USE_GRUB='1'
+      ;;
+    *)
+      USE_GRUB=''
+  esac
+
 }
 
 fix_sysvinit() {
@@ -479,16 +508,19 @@ is_grml2hd_noninteractive && POSTEXECUTE # execute defined function in /etc/grml
 checkvalue $CHROOT_CREATE_INITRD && create_initrd
 
 # use status bar for lilo to provide feedback what's running...
-if checkvalue $CHROOT_INSTALL_LILO ; then
+if checkvalue $CHROOT_INSTALL_BOOTMANAGER ; then
+
+  bootmanager_selection
+
   ( echo "0" ;
     echo "42"
     echo "XXX";
     echo "Running lilo..."
     echo "XXX";
     # install_lilo
-    grub_install
+    [ -n "$USE_GRUB" ] && install_grub || install_lilo
     echo "100") | \
-  dialog --title "${PN}" --gauge "Running lilo..." 9 50 0
+  dialog --title "${PN}" --gauge "Installing bootmanager..." 9 50 0
 fi
 
 checkvalue $CHROOT_FINALIZE && finalize

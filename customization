@@ -104,8 +104,8 @@ CHROOT_REMOVE_PACKAGES_SERVER='yes'
 # create initrd through update-initramfs
 CHROOT_CREATE_INITRD='yes'
 
-# install lilo
-CHROOT_INSTALL_LILO='yes'
+# install bootmanager (grub/lilo)
+CHROOT_INSTALL_BOOTMANAGER='yes'
 
 # finalize installation (unmount /proc, /sys and sync)
 CHROOT_FINALIZE='yes'
