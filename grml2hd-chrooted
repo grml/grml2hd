@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 16:31:45 CET 2007 [mika]
+# Latest change: Die Feb 13 19:08:19 CET 2007 [mika]
 ################################################################################
 
 # source config:
@@ -358,7 +358,7 @@ install_grub() {
      exit 1
   fi
 
-  grubdevice "$BOOT_PARTITION"
+  grubdevice "$BOOT_PARTITION" 1>/dev/null
 
   if ! [ -r /boot/grub/grml-template_menu.lst ] ; then
      echo "Error: could not find /boot/grub/grml-template_menu.lst">&2
@@ -400,10 +400,10 @@ bootmanager_selection() {
 
   case "$GETBOOTMANAGER" in
     grub)
-      USE_GRUB='1'
+      export USE_GRUB='1'
       ;;
     *)
-      USE_GRUB=''
+      export USE_GRUB=''
   esac
 
 }
@@ -527,7 +527,7 @@ if checkvalue $CHROOT_INSTALL_BOOTMANAGER ; then
   ( echo "0" ;
     echo "42"
     echo "XXX";
-    echo "Running lilo..."
+    echo "Installing bootmanager..."
     echo "XXX";
     if [ -n "$USE_GRUB" ] ; then
        install_grub
