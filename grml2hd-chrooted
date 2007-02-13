@@ -441,13 +441,21 @@ remove_unwanted_packages() {
 
 create_initrd() {
   INITRD=/boot/initrd.img-$(uname -r)
-  update-initramfs -c -t -k $(uname -r) 1>/tmp/initramfs.error 2>&1
+
+  ( echo "0" ;
+    echo "42"
+    echo "XXX";
+    echo "Building initrd/initramfs..."
+    echo "XXX";
+    update-initramfs -c -t -k $(uname -r) 1>/tmp/initramfs.error 2>&1
+    echo "100") | \
+  dialog --title "${PN}" --gauge "Building initrd/initramfs..." 9 50 0
 
   if [ "$?" -eq 0 ]; then
     sed -i "s#.*initrd=ADJUSTME#        initrd=$INITRD#g" /etc/lilo.conf
   else
     dialog --msgbox "There was an error running initramfs for creating an initrd:
-`cat /tmp/initramfs.error`
+$(cat /tmp/initramfs.error)
 
 Sorry. Continuing anyway, you might need to rerun update-initramfs on your own." 0 0
   fi
