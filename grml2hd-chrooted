@@ -339,6 +339,7 @@ grubdevice() {
                     -e 's%.*/\(disc\|part\([0-9]*\)\)$%\2%' \
                     -e 's%.*c[0-7]d[0-9]*p*%%'`
   tmp_drive=$(grep -v '^#' $device_map | grep "$tmp_disk *$" | sed 's%.*\(([hf]d[0-9][a-g0-9,]*)\).*%\1%')
+  GRUBROOT="$(echo "$tmp_drive")"
   case $1 in
      /dev/[sh]d[a-z]) # we expect something like '(hd0)'
         GRUBDEVICE="$(echo "$tmp_drive")"
@@ -357,12 +358,12 @@ grubdevice() {
 }
 
 install_grub() {
-  if [ -z "$BOOT_PARTITION" ] ; then
-     echo "\$BOOT_PARTITION not set, can not install grub.">&2
+  if [ -z "$PARTITION" ] ; then
+     echo "\$PARTITION not set, can not install grub.">&2
      exit 1
   fi
 
-  grubdevice "$BOOT_PARTITION" 1>/dev/null 2>/tmp/grubdevice
+  grubdevice "$PARTITION" 1>/dev/null 2>/tmp/grubdevice
 
   get_rootpartition 1>/dev/null 2>/tmp/grub.rootpartition
 
