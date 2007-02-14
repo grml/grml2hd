@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 19:40:02 CET 2007 [mika]
+# Latest change: Mit Feb 14 11:36:30 CET 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -797,6 +797,7 @@ if ! is_grml2hd_noninteractive ; then
       BOOT_PARTITION="$GETMBR" ;;
   esac
   echo "BOOT_PARTITION=$BOOT_PARTITION" >> $CONFIGTMP
+  echo "USE_MBR=$USE_MBR" >> $CONFIGTMP
 fi
 }
 
