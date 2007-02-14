@@ -339,7 +339,6 @@ grubdevice() {
                     -e 's%.*/\(disc\|part\([0-9]*\)\)$%\2%' \
                     -e 's%.*c[0-7]d[0-9]*p*%%'`
   tmp_drive=$(grep -v '^#' $device_map | grep "$tmp_disk *$" | sed 's%.*\(([hf]d[0-9][a-g0-9,]*)\).*%\1%')
-  GRUBROOT="$(echo "$tmp_drive")"
   case $1 in
      /dev/[sh]d[a-z]) # we expect something like '(hd0)'
         GRUBDEVICE="$(echo "$tmp_drive")"
@@ -371,7 +370,7 @@ install_grub() {
      echo "Error: could not find /boot/grub/grml-template_menu.lst">&2
      return 1
   else
-     if [ -z "$GRUBDEVICE" ] ; then
+     if [ -z "$GRUBDEVICE" -o -z "$GRUBSETUPDEVICE" ] ; then
         echo "Error: could not find a grub device">&2
         return 1
      else
