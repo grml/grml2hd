@@ -382,10 +382,11 @@ install_grub() {
 
         update-grub -y 1>/dev/null 2>/tmp/update-grub.error
         
-        echo -en "root ${GRUBDEVICE}\nsetup ${GRUBSETUPDEVICE}\n" | grub install 1>/dev/null 2>/tmp/grub.error
+	echo -en "debug: root ${GRUBDEVICE}\nsetup ${GRUBSETUPDEVICE}\n" > /tmp/grub.debug
+        echo -en "root ${GRUBDEVICE}\nsetup ${GRUBSETUPDEVICE}\n" | grub install 1>/tmp/grub.install 2>/tmp/grub.error
 
         if [ "$?" -eq 0 ]; then
-           is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Grub exited successfully" 5 60
+           is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Installation of Grub exited successfully" 5 60
         else
           dialog --stdout --title "${PN}" --msgbox "Installation of grub failed! Please fix manually.
 
