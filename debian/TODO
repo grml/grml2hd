@@ -6,9 +6,7 @@ high priority
 
   - "mounting target" => mount several partitions to one target and
     don't run mkfs then but just copy grml to the target
-  - configuration system: enable specific dialogs only so
-    optimization for special grml flavours is possible
-  - lilo vs. grub dialog
+  - support SW-RAID for grub
 
 low priority
 ------------
@@ -17,6 +15,16 @@ low priority
     grml-small - find a solution how to install them
     automatically through grml2hd
   - set label (grml/grml-root) for partition where grml is installed to
+    -> deprecated by use of root=UUID=... - nor?
   - choose and mount /$DIRECTORY (via /etc/fstab)
   - make a small script which simply copies all files to a
     mounted partition (for experts only)
+
+testing
+-------
+
+  - lilo vs. grub dialog implemented => test several use cases
+  - configuration system: enable specific dialogs only so
+    optimization for special grml flavours is possible
+    => heavy testing, make sure dependencies of variables are
+       clarified and robust
