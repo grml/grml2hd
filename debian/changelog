@@ -5,12 +5,14 @@ grml2hd (0.9.3) unstable; urgency=low
     situation on external USB/firewire devices [Closes: issue93]
   * use initrd/initramfs by default now as root=UUID requires
     handling in userspace
-  * add functions for supporting grub (still working on that...)
-    => added grub to Depends.
+  * dialog for selection between lilo and grub:
+    - added functions for supporting grub [Closes: issue81]
+    - added grub to Depends
   * code cleanup: remove 'function'-keyword
   * use grml-hostname in non-interactive mode as well (supported
     by by grml-hostname of grml-scripts 0.9.16)
-  * Remove yaird from Depends as we really don't use it anymore.
+  * Remove yaird from Depends and all yaird-code as we really
+    don't (want to) use it anymore.
 
  -- Michael Prokop <mika@grml.org>  Sat, 20 Jan 2007 13:42:49 +0100
 
