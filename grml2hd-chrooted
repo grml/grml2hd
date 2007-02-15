@@ -352,7 +352,7 @@ grubdevice() {
 	if [ -z "$USE_MBR" ] ; then
 	   GRUBSETUPDEVICE="$(echo "$tmp_drive" | sed "s%)$%,`expr $tmp_part - 1`)%")"
 	else
-           GRUBSETUPDEVICE="$(echo "$tmp_drive")"
+           GRUBSETUPDEVICE='(hd0)'
         fi
         ;;
   esac

@@ -1,3 +1,9 @@
+grml2hd (0.9.4) unstable; urgency=low
+
+  * grub code: use '(hd0)' if USE_MBR is set. [Closes: issue123]
+
+ -- Michael Prokop <mika@grml.org>  Thu, 15 Feb 2007 14:11:05 +0100
+
 grml2hd (0.9.3) unstable; urgency=low
 
   * use UUID for root partition [via function get_rootpartition()],
