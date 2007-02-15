@@ -240,14 +240,19 @@ so you just have to adjust the configuration file itself.
 Known issues
 ------------
 
+grub and SW-RAID
+~~~~~~~~~~~~~~~~
+
+Installation of grub as bootmanager does not yet support installation on
+Software RAID devices.
+
 I can't boot my grml system because Lilo says LI L99 99 99...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You probably did not install lilo to master boot record (MBR) via e.g.
-'grml2hd /dev/hda1 -mbr /dev/hda' and don't have a bootmanager in your MBR.
-Solution: Install lilo to MBR. Example:
+You probably did not install lilo to master boot record (MBR) within grml2hd and
+don't have a bootmanager in your MBR.  Solution: Install lilo to MBR. Example:
 
-  sudo mount -o rw,dev,suid /mnt/hda1 # mount harddisk
+  sudo mount /mnt/hda1  # mount harddisk
   sudo chroot /mnt/hda1 # chroot into the grml-system
   vim -X /etc/lilo.conf # adjust the line containing the bootoption to 'boot=/dev/hda'
   lilo  # now run lilo again, leave chroot environment (exit) and reboot your system afterwards
@@ -270,11 +275,16 @@ is provided by an initial ramdisk. Please use the initrd support within
 grml2hd. To fix this issue please install a kernel with SCSI-device support
 in the chroot after running grml2hd:
 
-  sudo mount -o rw,dev,suid /mnt/hda1 # mount harddisk where grml is installed
-  sudo chroot /mnt/hda1               # chroot into the grml-system
+  sudo mount -o /mnt/hda1   # mount harddisk where grml is installed
+  sudo chroot /mnt/hda1     # chroot into the grml-system
   update-initramfs -u -t -k $(uname -r) # create initramfs
   vim -X /etc/lilo.conf               # adjust lilo for use with initrd
   lilo  # now run lilo again, leave chroot environment (exit) and reboot your system afterwards
+
+Further issues
+~~~~~~~~~~~~~~
+
+TODOs are documented at /usr/share/doc/grml2hd/TODO.
 
 Usage examples
 --------------
@@ -285,14 +295,6 @@ Install grml on /dev/sda4 and install lilo in the mbr of /dev/sda.
 
 Runs grml2hd in automatic (non-interactive) mode. Needs adjustment of
 /etc/grml2hd/config. Use with care!
-
-Known bugs / TODO
------------------
-
-Installation of grub as bootmanager does not yet support installation on
-Software RAID devices.
-
-TODO issues are documented at /usr/share/doc/grml2hd/TODO.
 
 [[X7]]
 Bugs
