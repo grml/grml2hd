@@ -230,25 +230,6 @@ If you are using such a feature you should know how to handle it. It won\'t
 help you if you get an interface within the installer but do not know
 how to handle it afterwards.
 
-Why is lilo the bootmanager?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Because it works.
-
-Can I get grub?
-~~~~~~~~~~~~~~~
-
-Yes, not (yet) via grml2hd but via installing it manually. Instructions:
-After installing grml via grml2hd adjust grub's configuration file menu.lst:
-
-  $EDITOR /boot/grub/menu.lst
-
-Then install grub (usage example for /dev/sda1):
-
-  # grub install
-  root (hd0,0)
-  setup (hd0)
-
 Is it possible to customize grml2hd?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -304,6 +285,14 @@ Install grml on /dev/sda4 and install lilo in the mbr of /dev/sda.
 
 Runs grml2hd in automatic (non-interactive) mode. Needs adjustment of
 /etc/grml2hd/config. Use with care!
+
+Known bugs / TODO
+-----------------
+
+Installation of grub as bootmanager does not yet support installation on
+Software RAID devices.
+
+TODO issues are documented at /usr/share/doc/grml2hd/TODO.
 
 [[X7]]
 Bugs
