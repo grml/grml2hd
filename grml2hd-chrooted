@@ -403,8 +403,8 @@ $(cat /tmp/grub.error)
 bootmanager_selection() {
   GETBOOTMANAGER=$(dialog --stdout --title "grml2hd" --default-item lilo \
                           --radiolist "Which bootmanager do you want to install?" 10 65 0 \
-                          lilo  "install lilo on $PARTITION" on \
-                          grub  "install grub on partition $PARTITION" off)
+                          lilo  "install lilo on $BOOT_PARTITION" on \
+                          grub  "install grub on partition $BOOT_PARTITION" off)
   [ $? -eq 0 ] || exit 20
 
   case "$GETBOOTMANAGER" in
