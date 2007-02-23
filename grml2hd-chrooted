@@ -534,7 +534,7 @@ is_grml2hd_noninteractive && POSTEXECUTE # execute defined function in /etc/grml
 
 checkvalue $CHROOT_CREATE_INITRD && create_initrd
 
-# use status bar for lilo to provide feedback what's running...
+# use status bar for lilo/grub to provide feedback what's running...
 if checkvalue $CHROOT_INSTALL_BOOTMANAGER ; then
 
   bootmanager_selection
