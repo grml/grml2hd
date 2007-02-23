@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Fre Feb 23 19:57:46 CET 2007 [mika]
+# Latest change: Fre Feb 23 22:44:48 CET 2007 [mika]
 ################################################################################
 
 PN='grml2hd'
@@ -376,15 +376,16 @@ install_grub() {
         echo "Error: could not find a grub device">&2
         return 1
      else
+        # avoid cp :`/boot/grub/grml-... menu.lst' are the same file
+        [ -L /boot/grub/menu.lst ] && rm -f /boot/grub/menu.lst
         cp /boot/grub/grml-template_menu.lst /boot/grub/menu.lst
+
         sed -i "s/^# kopt=root=.*/# kopt=root=${ROOTPARTITION} ro/" /boot/grub/menu.lst
         sed -i "s/^# groot=.*/# groot=${GRUBDEVICE}/" /boot/grub/menu.lst
 
         # if we have the symlink we get entries without initrd option in menu.lst
         # by update-grub, see http://bts.grml.org/grml/issue135
-        if [ -L /boot/vmlinuz ] ; then
-           rm -f /boot/vmlinuz
-        fi
+        [ -L /boot/vmlinuz ] && rm -f /boot/vmlinuz
 
         update-grub -y 1>/dev/null 2>/tmp/update-grub.error
 

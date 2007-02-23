@@ -4,6 +4,8 @@ grml2hd (0.9.5) unstable; urgency=low
     so we get rid of unusable entries in menu.lst. Thanks for
     help in debugging the issue, Robert Giebel!
     [Closes: issue135]
+  * Remove symlink /boot/grub/menu.lst if existenst to avoid
+    warning message during grub installation.
 
  -- Michael Prokop <mika@grml.org>  Fri, 23 Feb 2007 19:50:49 +0100
 
