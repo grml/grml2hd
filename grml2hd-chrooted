@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Mit Feb 14 11:10:53 CET 2007 [mika]
+# Latest change: Fre Feb 23 19:57:46 CET 2007 [mika]
 ################################################################################
 
 PN='grml2hd'
@@ -349,9 +349,9 @@ grubdevice() {
       *) # we expect something like '(hd0,0)'
         GRUBDEVICE="$(echo "$tmp_drive" | sed "s%)$%,`expr $tmp_part - 1`)%")"
         # make sure we don't install into MBR if $USE_MBR is not set
-	if [ -z "$USE_MBR" ] ; then
-	   GRUBSETUPDEVICE="$(echo "$tmp_drive" | sed "s%)$%,`expr $tmp_part - 1`)%")"
-	else
+        if [ -z "$USE_MBR" ] ; then
+           GRUBSETUPDEVICE="$(echo "$tmp_drive" | sed "s%)$%,`expr $tmp_part - 1`)%")"
+        else
            GRUBSETUPDEVICE='(hd0)'
         fi
         ;;
@@ -380,9 +380,15 @@ install_grub() {
         sed -i "s/^# kopt=root=.*/# kopt=root=${ROOTPARTITION} ro/" /boot/grub/menu.lst
         sed -i "s/^# groot=.*/# groot=${GRUBDEVICE}/" /boot/grub/menu.lst
 
+        # if we have the symlink we get entries without initrd option in menu.lst
+        # by update-grub, see http://bts.grml.org/grml/issue135
+        if [ -L /boot/vmlinuz ] ; then
+           rm -f /boot/vmlinuz
+        fi
+
         update-grub -y 1>/dev/null 2>/tmp/update-grub.error
-        
-	echo -en "debug: root ${GRUBDEVICE}\nsetup ${GRUBSETUPDEVICE}\n" > /tmp/grub.debug
+
+        echo -en "debug: root ${GRUBDEVICE}\nsetup ${GRUBSETUPDEVICE}\n" > /tmp/grub.debug
         echo -en "root ${GRUBDEVICE}\nsetup ${GRUBSETUPDEVICE}\n" | grub install 1>/tmp/grub.install 2>/tmp/grub.error
 
         if [ "$?" -eq 0 ]; then
