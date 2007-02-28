@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Fre Feb 23 22:44:48 CET 2007 [mika]
+# Latest change: Mit Feb 28 09:53:39 CET 2007 [mika]
 ################################################################################
 
 PN='grml2hd'
@@ -352,7 +352,7 @@ grubdevice() {
         if [ -z "$USE_MBR" ] ; then
            GRUBSETUPDEVICE="$(echo "$tmp_drive" | sed "s%)$%,`expr $tmp_part - 1`)%")"
         else
-           GRUBSETUPDEVICE='(hd0)'
+           GRUBSETUPDEVICE="$(echo "$tmp_drive" | sed "s%,[0-9]%%")"
         fi
         ;;
   esac

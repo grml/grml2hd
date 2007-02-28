@@ -1,3 +1,10 @@
+grml2hd (0.9.6) unstable; urgency=low
+
+  * Do not use static GRUBSETUPDEVICE='(hd0)' for MBR option but
+    calculate it dynamically as for other options as well.
+
+ -- Michael Prokop <mika@grml.org>  Wed, 28 Feb 2007 09:53:49 +0100
+
 grml2hd (0.9.5) unstable; urgency=low
 
   * Remove symlink /boot/vmlinuz when using grub as bootmanager
