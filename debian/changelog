@@ -1,3 +1,10 @@
+grml2hd (0.9.7) unstable; urgency=low
+
+  * Forgot to bump grml2hd version inside the script itself.
+    Fixed that for the grml-clt07 release.
+
+ -- Michael Prokop <mika@grml.org>  Wed, 28 Feb 2007 10:37:13 +0100
+
 grml2hd (0.9.6) unstable; urgency=low
 
   * Do not use static GRUBSETUPDEVICE='(hd0)' for MBR option but
