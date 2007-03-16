@@ -1,3 +1,9 @@
+grml2hd (0.9.8) unstable; urgency=low
+
+  * Adjust /home/$USER if /home/grml/.zdirs exists.
+
+ -- Michael Prokop <mika@grml.org>  Fri, 16 Mar 2007 16:09:23 +0100
+
 grml2hd (0.9.7) unstable; urgency=low
 
   * Forgot to bump grml2hd version inside the script itself.

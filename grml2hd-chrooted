@@ -219,6 +219,8 @@ newuser() {
     [ -f /etc/pcmcia/shared ]      && sed -i "s#/home/grml/#/home/${NEWUSER}/#g"  /etc/pcmcia/shared
     [ -f /etc/cups/printers.conf ] && sed -i "s#/home/grml#/home/$NEWUSER#g"      /etc/cups/printers.conf
     find /etc/skel/ -type f -exec sed -i "s#/home/grml/#/home/${NEWUSER}/#g" {} \;
+    # fix dirstack
+    [ -r /home/grml/.zdirs ] && sed -i "s#/home/grml#/home/$NEWUSER#g" /home/grml/.zdirs 2>/dev/null
     mv /home/grml /home/"$NEWUSER"
   fi
 
