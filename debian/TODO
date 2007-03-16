@@ -7,6 +7,8 @@ high priority
   - support SW-RAID for grub
   - "mounting target" => mount several partitions to one target and
     don't run mkfs then but just copy grml to the target
+    -> added support for GRML2HD_CREATE_FILESYSTEM, a first step
+       to support this feature
   - test cases for customization of grml2hd via the file
     /etc/grml2hd/customization => make sure all relevant variables
     are present where needed
@@ -15,8 +17,6 @@ low priority
 ------------
 
   - artwork for grub bootloader ("splash" image like present within lilo)
-  - set label (grml/grml-root) for partition where grml is installed to
-    -> deprecated by use of root=UUID=... - nor?
   - choose and mount /$DIRECTORY (via /etc/fstab)
   - make a small script which simply copies all files to a
     mounted partition (for experts only)
