@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Mit Feb 28 09:53:39 CET 2007 [mika]
+# Latest change: Fre Mär 16 21:46:10 CET 2007 [mika]
 ################################################################################
 
 PN='grml2hd'
@@ -410,20 +410,28 @@ $(cat /tmp/grub.error)
 }
 
 bootmanager_selection() {
-  GETBOOTMANAGER=$(dialog --stdout --title "grml2hd" --default-item lilo \
-                          --radiolist "Which bootmanager do you want to install?" 10 65 0 \
-                          lilo  "install lilo on $BOOT_PARTITION" on \
-                          grub  "install grub on partition $BOOT_PARTITION" off)
-  [ $? -eq 0 ] || exit 20
+  # in non-interactive mode we use lilo by default, unless $BOOT_MANAGER is set to grub
+  if is_grml2hd_noninteractive ; then
+     if [ "$BOOT_MANAGER" = "grub" ] ; then
+        export USE_GRUB='1'
+     else
+        export USE_GRUB=''
+     fi
+  else # running in interactive mode:
+     GETBOOTMANAGER=$(dialog --stdout --title "grml2hd" --default-item lilo \
+                             --radiolist "Which bootmanager do you want to install?" 10 65 0 \
+                             lilo  "install lilo on $BOOT_PARTITION" on \
+                             grub  "install grub on partition $BOOT_PARTITION" off)
+     [ $? -eq 0 ] || exit 20
 
-  case "$GETBOOTMANAGER" in
-    grub)
-      export USE_GRUB='1'
-      ;;
-    *)
-      export USE_GRUB=''
-  esac
-
+     case "$GETBOOTMANAGER" in
+       grub)
+         export USE_GRUB='1'
+         ;;
+       *)
+         export USE_GRUB=''
+     esac
+  fi
 }
 
 fix_sysvinit() {
@@ -454,6 +462,12 @@ adjust_timezone() {
      else
         is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Specified timezone [${KTZ}] could not be found, sorry." 5 60
      fi
+  fi
+}
+
+adjust_services() {
+  if [ -x /usr/sbin/grml-setservices ] ; then
+     is_grml2hd_noninteractive || /usr/sbin/grml-setservices
   fi
 }
 
@@ -495,6 +509,7 @@ checkvalue $CHROOT_INITIALIZE     && initialize
 checkvalue $CHROOT_SETHOSTNAME    && sethostname
 checkvalue $CHROOT_SETLANGUAGE    && setlanguage
 checkvalue $CHROOT_ADJUSTTIMEZONE && adjust_timezone
+checkvalue $CHROOT_ADJUSTSERVICES && adjust_services
 checkvalue $CHROOT_XCONFIG        && xconfig
 checkvalue $CHROOT_ROOT_ACCOUNT   && root_account
 checkvalue $CHROOT_NEWUSER        && newuser

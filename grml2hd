@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Mit Feb 28 10:37:08 CET 2007 [mika]
+# Latest change: Fre Mär 16 21:39:55 CET 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -49,7 +49,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='0.9.7'
+VERSION='0.9.8'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
@@ -267,13 +267,15 @@ Are you sure you want to continue?" 10 60
    fi
   fi
   umount -l $TARGET 1>>$LOGFILE 2>&1 # make sure $TARGET is not mounted! lazy unmount to be sure...
-  echo "Creating $FILESYSTEM filesystem on $PARTITION" 1>> $LOGFILE
-  dialog --title "${PN}" --infobox "
+  if checkvalue $GRML2HD_CREATE_FILESYSTEM  ; then
+     echo "Creating $FILESYSTEM filesystem on $PARTITION" 1>> $LOGFILE
+     dialog --title "${PN}" --infobox "
 Creating $FILESYSTEM filesystem on $PARTITION" 5 60
-  $MKFS $MKFSOPTIONS $PARTITION 1>>$LOGFILE 2>&1 || return 1
-  if [ -n "$TUNE2FS" ] ; then
-    echo "Disabling automatic filesystem check on $PARTITION via tune2fs" 1>>$LOGFILE
-    tune2fs -c0 -i0 $PARTITION 1>>$LOGFILE 2>&1
+$MKFS $MKFSOPTIONS $PARTITION 1>>$LOGFILE 2>&1 || return 1
+     if [ -n "$TUNE2FS" ] ; then
+       echo "Disabling automatic filesystem check on $PARTITION via tune2fs" 1>>$LOGFILE
+       tune2fs -c0 -i0 $PARTITION 1>>$LOGFILE 2>&1
+     fi
   fi
   mkdir $TARGET 1>>$LOGFILE 2>&1
   mount -t $FILESYSTEM -o rw,dev,suid $PARTITION $TARGET 1>>$LOGFILE 2>&1 || return 1

@@ -1,6 +1,11 @@
 grml2hd (0.9.8) unstable; urgency=low
 
+  * Do not prompt for bootmanager selection if running in automatic
+    installation mode. [Closes: issue156]
   * Adjust /home/$USER if /home/grml/.zdirs exists.
+  * Support /usr/sbin/grml-setservices.
+  * Run mkfs/tune2fs only if $GRML2HD_CREATE_FILESYSTEM (a new
+    variable) is set.
 
  -- Michael Prokop <mika@grml.org>  Fri, 16 Mar 2007 16:09:23 +0100
 

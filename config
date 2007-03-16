@@ -30,6 +30,10 @@ PARTITION=""         # empty by default to avoid accidents
 # e.g.: "/dev/hda1"  -> don't touch mbr but write into partition only
 BOOT_PARTITION=""    # empty by default to avoid accidents
 
+# which bootmanager should be installed:
+# supported values: 'grub' and 'lilo' (lilo is default)
+BOOT_MANAGER="lilo"
+
 # which filesystem should be used for installation:
 # e.g.: "ext3"
 # valid values: ext3, ext2, jfs, xfs, reiserfs, reiser4

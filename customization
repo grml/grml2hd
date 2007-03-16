@@ -3,7 +3,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Don Nov 16 20:43:26 CET 2006 [mika]
+# Latest change: Fre Mär 16 21:40:33 CET 2007 [mika]
 ################################################################################
 # Notice: this file allows customized execution of grml2hd.
 # The variables correspond with the function used in grml2hd -
@@ -12,6 +12,9 @@
 ################################################################################
 
 ## First of all configure the stuff in grml2hd itself
+
+# run mkfs/tune2fs on the target partition?
+GRML2HD_CREATE_FILESYSTEM='yes'
 
 # check for root-permissions
 GRML2HD_CHECK4ROOT='yes'
@@ -76,6 +79,9 @@ CHROOT_SETLANGUAGE='yes'
 
 # adjust /etc/default/rcS according to bootoption utc/gmt and /etc/localtime according to bootoption tz
 CHROOT_ADJUSTTIMEZONE='yes'
+
+# adjust some important settings of /etc/runlevel.conf via dialog interface
+CHROOT_ADJUSTSERVICES='yes'
 
 # ask for generation of /etc/X11/xorg.conf via grml-x if /etc/X11/xorg.conf not yet present
 CHROOT_XCONFIG='yes'
