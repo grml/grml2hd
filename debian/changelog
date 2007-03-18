@@ -1,3 +1,9 @@
+grml2hd (0.9.9) unstable; urgency=low
+
+  * root_account(): check for empty password field as well.
+
+ -- Michael Prokop <mika@grml.org>  Sun, 18 Mar 2007 18:07:12 +0100
+
 grml2hd (0.9.8) unstable; urgency=low
 
   * Do not prompt for bootmanager selection if running in automatic

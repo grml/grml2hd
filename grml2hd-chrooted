@@ -118,7 +118,7 @@ setpassword() {
 root_account() {
   if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
     PASSWD=$(cat /etc/shadow |gawk -F: '/root/{print $2}')
-    if [ "$PASSWD" = "*" ]; then
+    if [ "$PASSWD" = "*" -o -z "$PASSWD" ]; then
       ROOTPW1='PW1'
       ROOTPW2='PW2'
       while [ "$ROOTPW1" != "$ROOTPW2" ]; do
