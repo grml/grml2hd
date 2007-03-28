@@ -1,3 +1,10 @@
+grml2hd (0.9.11) unstable; urgency=low
+
+  * Do not use /usr/lib/grub/i386-pc/stage1 as static symlink but
+    generatic symlink inside grml2hd-chrooted if not yet present.
+
+ -- Michael Prokop <mika@grml.org>  Wed, 28 Mar 2007 20:31:40 +0200
+
 grml2hd (0.9.10) unstable; urgency=low
 
   * Bumb grml2hd version in grml2hd itself.

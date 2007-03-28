@@ -389,6 +389,18 @@ install_grub() {
         # by update-grub, see http://bts.grml.org/grml/issue135
         [ -L /boot/vmlinuz ] && rm -f /boot/vmlinuz
 
+	# make sure we have everything we need for grub-installation
+	if ! [ -r /boot/grub/stage1 ] ; then
+	   if [ $(dpkg --print-architecture) = amd64 ] ; then
+	      ln -sf /usr/lib/grub/x86_64-pc/stage1 /boot/grub/stage1
+	      ln -sf /usr/lib/grub/x86_64-pc/stage2 /boot/grub/stage2
+	   fi
+	   if [ $(dpkg --print-architecture) = i386 ] ; then
+	      ln -sf /usr/lib/grub/i386-pc/stage1 /boot/grub/stage1
+	      ln -sf /usr/lib/grub/i386-pc/stage2 /boot/grub/stage2
+	   fi
+	fi
+
         update-grub -y 1>/dev/null 2>/tmp/update-grub.error
 
         echo -en "debug: root ${GRUBDEVICE}\nsetup ${GRUBSETUPDEVICE}\n" > /tmp/grub.debug
