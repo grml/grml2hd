@@ -264,6 +264,7 @@ Please use a programm like cfdisk to set the according partition type of ${PARTI
 
 Exiting..." 11 60
     bailout 7
+  fi
 }
 
 initialize() {
