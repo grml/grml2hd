@@ -635,6 +635,8 @@ $MEMTEST
 # label=HURD
 
 EOF
+# avoid '/etc/lilo.conf should be writeable only for root' problem when using wrong umask
+chmod 600 $TARGET/etc/lilo.conf
 }
 
 getfs() {
