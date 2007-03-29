@@ -2,6 +2,11 @@ grml2hd (0.9.12) unstable; urgency=low
 
   * Do not forget to copy 64bit directories as well.
     Thanks for debugging and notifying, gebi!
+  * check4partition(): check partition type via fdisk so we
+    don't support installation on partition types other than
+    Linux and Linux LVM. This should user errors like installing
+    grml on a NTFS partition which fails when running lilo then.
+    Thanks for notifying, jimmy!
 
  -- Michael Prokop <mika@grml.org>  Thu, 29 Mar 2007 11:11:50 +0200
 
