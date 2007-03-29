@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Mit Mär 28 20:40:41 CEST 2007 [mika]
+# Latest change: Don Mär 29 11:12:20 CEST 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -49,7 +49,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='0.9.11'
+VERSION='0.9.12'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
@@ -337,6 +337,15 @@ copy_files() {
     echo "Copying /lib";
     echo "XXX";
     cp -a lib $TARGET 1>>$LOGFILE 2>&1
+    if [ -r lib64 ] ; then
+       echo "25"
+       echo "XXX";
+       echo "Copying 64bit stuff";
+       echo "XXX";
+       [ -r lib32 ] && cp -a lib32 $TARGET 1>>$LOGFILE 2>&1
+       [ -r lib64 ] && cp -a lib64 $TARGET 1>>$LOGFILE 2>&1
+       [ -r emul ]  && cp -a emul $TARGET 1>>$LOGFILE 2>&1
+    fi
     echo "30"
     echo "XXX";
     echo "Copying /media";

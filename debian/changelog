@@ -1,3 +1,10 @@
+grml2hd (0.9.12) unstable; urgency=low
+
+  * Do not forget to copy 64bit directories as well.
+    Thanks for debugging and notifying, gebi!
+
+ -- Michael Prokop <mika@grml.org>  Thu, 29 Mar 2007 11:11:50 +0200
+
 grml2hd (0.9.11) unstable; urgency=low
 
   * Do not use /usr/lib/grub/i386-pc/stage1 as static symlink but
