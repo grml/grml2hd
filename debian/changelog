@@ -5,6 +5,7 @@ grml2hd (0.9.13) unstable; urgency=low
   * Do not use partition type check if $SWRAID is set.
   * Added notice regarding 'grub does not work for SWRAID yet'.
   * Make sure /etc/lilo.conf has mode 600.
+  * Do not use root=UUID=... for SWRAID.
 
  -- Michael Prokop <mika@grml.org>  Thu, 29 Mar 2007 12:12:31 +0200
 
