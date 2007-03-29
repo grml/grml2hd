@@ -197,12 +197,12 @@ get_rootpartition() {
   if [ -n "$PARTITION" ] ; then
      # do not use root=UUID=... when using SW-RAID to avoid the:
      # '/dev/disk/by-uuid/<uuid> does not exist. Dropping to a shell!'-problem
-     if [ -n "$SWRAID" ] ; then
-        ROOTPARTITION="$PARTITION"
-     else
+     # if [ -n "$SWRAID" ] ; then
+     #   ROOTPARTITION="$PARTITION"
+     # else
         PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
         ROOTPARTITION="UUID=$PARTUUID"
-     fi
+     # fi
   else
      echo "\$PARTITION not set, error.">&2
      return 1;
