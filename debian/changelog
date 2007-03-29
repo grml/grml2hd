@@ -1,3 +1,9 @@
+grml2hd (0.9.13) unstable; urgency=low
+
+  * Support 'Linux raid autodetect' within check4partition as well.
+
+ -- Michael Prokop <mika@grml.org>  Thu, 29 Mar 2007 12:12:31 +0200
+
 grml2hd (0.9.12) unstable; urgency=low
 
   * Do not forget to copy 64bit directories as well.

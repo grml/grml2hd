@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Don Mär 29 11:12:20 CEST 2007 [mika]
+# Latest change: Don Mär 29 12:12:49 CEST 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -49,7 +49,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='0.9.12'
+VERSION='0.9.13'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
@@ -254,7 +254,7 @@ Exiting..." 11 60
     bailout 7
   fi
 
-  fdisk -l 2>/dev/null | grep $PARTITION | grep -qe 'Linux$' -qe 'Linux LVM$'
+  fdisk -l 2>/dev/null | grep $PARTITION | grep -qe 'Linux$' -qe 'Linux LVM$' -qe 'Linux raid autodetect$'
   if [ $? != 0 ]; then
     dialog --title "${PN}" --msgbox "Error: $PARTITION does not seem to be a Linux or LVM partition.
 
