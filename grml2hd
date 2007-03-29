@@ -254,16 +254,18 @@ Exiting..." 11 60
     bailout 7
   fi
 
-  fdisk -l 2>/dev/null | grep $PARTITION | grep -qe 'Linux$' -qe 'Linux LVM$' -qe 'Linux raid autodetect$'
-  if [ $? != 0 ]; then
-    dialog --title "${PN}" --msgbox "Error: $PARTITION does not seem to be a Linux or LVM partition.
-
-Installing grml on a partition type other than Linux or LVM might cause serious problems.
-
-Please use a programm like cfdisk to set the according partition type of ${PARTITION} and restart grml2hd.
-
-Exiting..." 11 60
-    bailout 7
+  if [ -z "$SWRAID" ] ; then
+    fdisk -l 2>/dev/null | grep $PARTITION | grep -qe 'Linux$' -qe 'Linux LVM$' -qe 'Linux raid autodetect$'
+    if [ $? != 0 ]; then
+      dialog --title "${PN}" --msgbox "Error: $PARTITION does not seem to be a Linux or LVM partition.
+  
+  Installing grml on a partition type other than Linux or LVM might cause serious problems.
+  
+  Please use a programm like cfdisk to set the according partition type of ${PARTITION} and restart grml2hd.
+  
+  Exiting..." 11 60
+      bailout 7
+    fi
   fi
 }
 

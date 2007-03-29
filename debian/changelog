@@ -2,6 +2,7 @@ grml2hd (0.9.13) unstable; urgency=low
 
   * Support 'Linux raid autodetect' within check4partition as well.
   * Fix syntax error.
+  * Do not use partition type check if $SWRAID is set.
 
  -- Michael Prokop <mika@grml.org>  Thu, 29 Mar 2007 12:12:31 +0200
 
