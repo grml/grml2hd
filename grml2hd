@@ -533,6 +533,9 @@ raid-extra-boot=${SWRAID}
 
 Everything looks OK so far. Continuing.
 
+Please notice that installation of grub is not yet support for
+software RAID inside grml2hd yet.
+
 " 13 70
     else
       dialog --stdout --title "${PN}" --defaultno --yesno "You are installing grml to ${PARTITION} which seems
