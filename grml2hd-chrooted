@@ -429,7 +429,8 @@ $(cat /tmp/grub.error)
 
 bootmanager_selection() {
   # in non-interactive mode we use lilo by default, unless $BOOT_MANAGER is set to grub
-  if is_grml2hd_noninteractive ; then
+  # our grub code within grml2hd does not support SWRAID yet, so use lilo
+  if is_grml2hd_noninteractive -o -n "$SWRAID" ; then
      if [ "$BOOT_MANAGER" = "grub" ] ; then
         export USE_GRUB='1'
      else
@@ -453,8 +454,11 @@ bootmanager_selection() {
 }
 
 fix_sysvinit() {
-  dpkg --purge grml-sysvinit 1>/dev/null 2>&1
-  cp /sbin/init /etc 1>/dev/null 2>&1
+  # purge grml-sysvinit only if it's present:
+  if dpkg --list grml-sysvinit | grep -q '^ii' ; then
+     dpkg --purge grml-sysvinit 1>/dev/null 2>&1
+     cp /sbin/init /etc 1>/dev/null 2>&1
+  fi
   if [ -n "$GRML_SMALL" ] ; then
      cp /etc/runlevel.conf.hdinstall.small /etc/runlevel.conf
   else

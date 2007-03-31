@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Don Mär 29 12:12:49 CEST 2007 [mika]
+# Latest change: Sam Mär 31 23:18:59 CEST 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -49,7 +49,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='0.9.13'
+VERSION='0.9.14'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
@@ -266,11 +266,11 @@ Exiting..." 11 60
     fdisk -l 2>/dev/null | grep $PARTITION | grep -qe 'Linux$' -qe 'Linux LVM$' -qe 'Linux raid autodetect$'
     if [ $? != 0 ]; then
       dialog --title "${PN}" --msgbox "Error: $PARTITION does not seem to be a Linux, LVM or RAID partition.
-  
+
   Installing grml on a partition type other than Linux or LVM might cause serious problems.
-  
+
   Please use a programm like cfdisk to set the according partition type of ${PARTITION} and restart grml2hd.
-  
+
   Exiting..." 11 60
       bailout 7
     fi
@@ -731,7 +731,8 @@ if [ -n "$GRML2HD_NONINTERACTIVE" ] ; then
 fi
 
 welcome_screen() {
-  is_grml2hd_noninteractive || ( dialog --stdout --msgbox "Welcome to ${PN} ${VERSION}!
+  if ! is_grml2hd_noninteractive ; then
+     dialog --yes-label Continue --no-label Quit --yesno "Welcome to ${PN} ${VERSION}!
 
 ${PN} can install grml to your harddisk.
 
@@ -752,7 +753,16 @@ subscribe to the grml-user mailinglist (see http://grml.org/mailinglist/)!
 
 Please give us feedback to improve the installer!
 http://grml.org/contact/    contact (at) grml.org
-" 0 0 )
+" 0 0
+
+  retval=$?
+  case $retval in
+      (0)   # everything ok
+            ;;
+      (1)   echo "Cancel pressed." ; bailout 1 ;;
+      (255) echo "ESC pressed."    ; bailout 255 ;;
+  esac
+  fi
 }
 
 grmlsmall_fixes() {
