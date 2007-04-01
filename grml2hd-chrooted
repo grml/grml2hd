@@ -310,12 +310,12 @@ get_rootpartition() {
   if [ -n "$PARTITION" ] ; then
      # do not use root=UUID=... when using SW-RAID to avoid the:
      # '/dev/disk/by-uuid/<uuid> does not exist. Dropping to a shell!'-problem
-     # if [ -n "$SWRAID" ] ; then
-     #    ROOTPARTITION="$PARTITION"
-     # else
+     if [ -n "$SWRAID" ] ; then
+        ROOTPARTITION="$PARTITION"
+     else
         PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
         ROOTPARTITION="UUID=$PARTUUID"
-     # fi
+     fi
   else
      echo "\$PARTITION not set, error.">&2
      return 1;
@@ -430,7 +430,11 @@ $(cat /tmp/grub.error)
 bootmanager_selection() {
   # in non-interactive mode we use lilo by default, unless $BOOT_MANAGER is set to grub
   # our grub code within grml2hd does not support SWRAID yet, so use lilo
-  if is_grml2hd_noninteractive -o -n "$SWRAID" ; then
+  if [ -n "$SWRAID" ] ; then
+     USE_GRUB=''
+     return 0
+  fi
+  if is_grml2hd_noninteractive ; then
      if [ "$BOOT_MANAGER" = "grub" ] ; then
         export USE_GRUB='1'
      else

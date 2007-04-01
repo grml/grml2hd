@@ -3,8 +3,13 @@ grml2hd (0.9.14) unstable; urgency=low
   * Update code for removing of grml-sysvinit as we don't need
     grml-sysvinit anymore.
   * Do not prompt for bootmanager if using SW-RAID as we don't
-    support grub yet.
+    support grub yet. (See issue122 for further details.)
   * Provide 'Quit'-button in welcome screen. [Closes: issue192]
+  * Do not use root=UUID with SWRAID (even though it works with
+    packages from grml) to prevent errors with b0rken udev
+    and mdadm from Debian.
+  * Use /dev/disk/by-uuid/* in /etc/fstab and root=UUID in kernel
+    cmdline. [Testing: issue191]
 
  -- Michael Prokop <mika@grml.org>  Sat, 31 Mar 2007 23:08:33 +0200
 

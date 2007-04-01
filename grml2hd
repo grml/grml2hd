@@ -198,13 +198,13 @@ get_rootpartition() {
      # do not use root=UUID=... when using SW-RAID to avoid the:
      # '/dev/disk/by-uuid/<uuid> does not exist. Dropping to a shell!'-problem
      # Notice: problem does not exist when using udev 0.107-0grml2 and
-     # mdadm 2.6.1-1~exp.3.grml01 so deactivate code therefore
-     # if [ -n "$SWRAID" ] ; then
-     #   ROOTPARTITION="$PARTITION"
-     # else
+     # mdadm 2.6.1-1~exp.3.grml01, anyway - make sure nobody falls into the trap
+     if [ -n "$SWRAID" ] ; then
+        ROOTPARTITION="$PARTITION"
+     else
         PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
         ROOTPARTITION="UUID=$PARTUUID"
-     # fi
+     fi
   else
      echo "\$PARTITION not set, error.">&2
      return 1;
@@ -436,12 +436,15 @@ copy_files() {
 }
 
 create_fstab() {
-  get_rootpartition # we need the UUID syntax for the partition
-  # remount-ro seems to make problems at least when using XFS - check!
+  # remount-ro seems to make problems at least when using XFS!
+  # we need the UUID syntax for the partition, but don't use root=UUI= syntax
+  # but /dev/disk/by* instead, this avoids problems with programs not being
+  # aware of root=UUID= syntax
+  PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
   if [[ $FILESYSTEM == ext* ]] ; then
-    echo "$ROOTPARTITION  /  $FILESYSTEM  errors=remount-ro  0 1" > $TARGET/etc/fstab
+    echo "/dev/disk/by-uuid/$PARTUUID  /  $FILESYSTEM  errors=remount-ro  0 1" > $TARGET/etc/fstab
   else
-    echo "$ROOTPARTITION  /  $FILESYSTEM  defaults 0 1" > $TARGET/etc/fstab
+    echo "/dev/disk/by-uuid/$PARTUUID  /  $FILESYSTEM  defaults 0 1" > $TARGET/etc/fstab
   fi
   cat /etc/fstab >> $TARGET/etc/fstab
 }
