@@ -192,7 +192,11 @@ sethostname() {
 newuser() {
   if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
     NEWUSER="$(dialog --stdout --title "${PN}" --inputbox "Please enter username \
-    (e.g. grml) for the user you want to use on your grml system:" 10 60 grml)"
+(e.g. grml) for the main user you want to use on your grml system.
+
+Please notice, that the user has some administrative rights on a few commands using the sudo mechanism.
+If you want to change that behaviour please adjust sudo setup via running visudo as root.
+" 15 60 grml)"
     REALNAME="$(dialog --stdout --title "${PN}" --inputbox "Your real name (eg'John GRML User'):" 10 60)"
   fi
 

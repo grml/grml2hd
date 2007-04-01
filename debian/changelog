@@ -1,3 +1,11 @@
+grml2hd (0.9.16) unstable; urgency=low
+
+  * Inform user about sudo permissions of new user.
+  * The root=UUID + /dev/disk/* code works fine so far, closing
+    the bugreport therefore. [Closes: issue191]
+
+ -- Michael Prokop <mika@grml.org>  Sun,  1 Apr 2007 17:22:46 +0200
+
 grml2hd (0.9.15) unstable; urgency=low
 
   * Do not use root=UUID with SWRAID (even though it works with
