@@ -1,3 +1,10 @@
+grml2hd (0.9.17) unstable; urgency=low
+
+  * Do not check whether root password has been set already.
+    (This should prevent problems with customized grml versions.)
+
+ -- Michael Prokop <mika@grml.org>  Sat, 14 Apr 2007 17:59:37 +0200
+
 grml2hd (0.9.16) unstable; urgency=low
 
   * Inform user about sudo permissions of new user.

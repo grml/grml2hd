@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Fre Mär 16 21:46:10 CET 2007 [mika]
+# Latest change: Sam Apr 14 17:59:22 CEST 2007 [mika]
 ################################################################################
 
 PN='grml2hd'
@@ -117,29 +117,24 @@ setpassword() {
 
 root_account() {
   if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
-    PASSWD=$(cat /etc/shadow |gawk -F: '/root/{print $2}')
-    if [ "$PASSWD" = "*" -o -z "$PASSWD" ]; then
-      ROOTPW1='PW1'
-      ROOTPW2='PW2'
-      while [ "$ROOTPW1" != "$ROOTPW2" ]; do
-        ROOTPW1=$(dialog --stdout --title "${PN}" --passwordbox \
-        "Please enter the password for the root account:" 10 60)
-        ROOTPW2=$(dialog --stdout --title "${PN}" --passwordbox \
-        "Please enter the password for the root account again for \
-        confirmation:" 10 60)
+     ROOTPW1='PW1'
+     ROOTPW2='PW2'
+     while [ "$ROOTPW1" != "$ROOTPW2" ]; do
+       ROOTPW1=$(dialog --stdout --title "${PN}" --passwordbox \
+       "Please enter the password for the root account:" 10 60)
+       ROOTPW2=$(dialog --stdout --title "${PN}" --passwordbox \
+       "Please enter the password for the root account again for \
+       confirmation:" 10 60)
 
-        if [ "$ROOTPW1" != "$ROOTPW2" ]; then
-          $(dialog --stdout --title "${PN}" --ok-label \
-          "Retry" --msgbox "Passwords do not match!" 10 60)
-        fi
-      done
-        # echo "root:$ROOTPW1" | chpasswd -m
-        setpassword root $ROOTPW1 false
-        export ROOTPW1=''
-        export ROOTPW2=''
-    else
-      $(dialog --stdout --title "${PN}" --msgbox  "The password for the root account was already set before. Thus this step will be skipped" 8 60)
-    fi
+       if [ "$ROOTPW1" != "$ROOTPW2" ]; then
+         $(dialog --stdout --title "${PN}" --ok-label \
+         "Retry" --msgbox "Passwords do not match!" 10 60)
+       fi
+     done
+       # echo "root:$ROOTPW1" | chpasswd -m
+       setpassword root $ROOTPW1 false
+       export ROOTPW1=''
+       export ROOTPW2=''
   else
     # echo "root:$ROOTPASSWD" | chpasswd -m
     setpassword root $ROOTPASSWD false
