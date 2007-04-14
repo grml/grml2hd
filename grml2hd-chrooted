@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Sam Apr 14 17:59:22 CEST 2007 [mika]
+# Latest change: Sam Apr 14 18:49:48 CEST 2007 [mika]
 ################################################################################
 
 PN='grml2hd'
@@ -334,7 +334,7 @@ grubdevice() {
 
   # create device.map
   if ! [ -f "$device_map" ] ; then
-     grub --device-map="$device_map" | echo 'quit' 1>/dev/null 2>/tmp/grub.device-map
+     echo 'quit' | grub --device-map="$device_map" 1>/dev/null 2>/tmp/grub.device-map
   fi
 
   # taken from d-i's trunk/packages/arch/i386/grub-installer/grub-installer:
