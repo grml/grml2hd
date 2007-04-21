@@ -387,7 +387,7 @@ install_grub() {
         [ -L /boot/grub/menu.lst ] && rm -f /boot/grub/menu.lst
         cp /boot/grub/grml-template_menu.lst /boot/grub/menu.lst
 
-        sed -i "s/^# kopt=root=.*/# kopt=root=${ROOTPARTITION} ro/" /boot/grub/menu.lst
+        sed -i "s/^# kopt=root=.*/# kopt=root=${ROOTPARTITION} ro ${BOOTOPTIONS_APPEND} ${BOOT_APPEND}/" /boot/grub/menu.lst
         sed -i "s/^# groot=.*/# groot=${GRUBDEVICE}/" /boot/grub/menu.lst
 
         # if we have the symlink we get entries without initrd option in menu.lst

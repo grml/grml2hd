@@ -619,14 +619,14 @@ vga=normal
 image=/boot/vmlinuz-$UNAME
         label="$UNAME_SHORT"
         #append="video=vesafb:ypan,1024x768-16@60 ${BOOTOPTIONS_APPEND}"
-        append="grml_from_hd root=$ROOTPARTITION ${BOOTOPTIONS_APPEND}"
+        append="grml_from_hd root=$ROOTPARTITION ${BOOTOPTIONS_APPEND} ${BOOT_APPEND}"
         read-only
         vga=0x0317
 #        initrd=ADJUSTME
 
 image=/boot/vmlinuz-$UNAME
         label="grml-debug"
-        append="debug log nocolor root=$ROOTPARTITION ${BOOTOPTIONS_APPEND}"
+        append="debug log nocolor root=$ROOTPARTITION ${BOOTOPTIONS_APPEND} ${BOOT_APPEND}"
         read-only
 #        initrd=ADJUSTME
 

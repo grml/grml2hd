@@ -34,6 +34,10 @@ BOOT_PARTITION=""    # empty by default to avoid accidents
 # supported values: 'grub' and 'lilo' (lilo is default)
 BOOT_MANAGER="lilo"
 
+# Additional bootparameters that should be applied to the kernel
+# e.g.: "pci=nomsi"
+BOOT_APPEND=""
+
 # which filesystem should be used for installation:
 # e.g.: "ext3"
 # valid values: ext3, ext2, jfs, xfs, reiserfs, reiser4
