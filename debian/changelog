@@ -1,3 +1,10 @@
+grml2hd (0.9.19) unstable; urgency=low
+
+  [Alexander Wirt]
+  * Add BOOT_APPEND parameter and fix appends for grub.
+
+ -- Michael Prokop <mika@grml.org>  Sat, 21 Apr 2007 10:28:07 +0200
+
 grml2hd (0.9.18) unstable; urgency=low
 
   * Reorder pipe for grub --device-map..., otherwise grub installation
