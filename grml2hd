@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Son Apr 29 13:52:35 CEST 2007 [mika]
+# Latest change: Son Mai 13 13:01:49 CEST 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -49,7 +49,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='0.9.20'
+VERSION='1.0.0'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
