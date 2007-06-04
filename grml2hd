@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Son Mai 13 13:01:49 CEST 2007 [mika]
+# Latest change: Die Jun 05 00:03:57 CEST 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -178,12 +178,18 @@ Please make sure to have enough free memory. Continuing anyway..." 15 70
 }
 
 check4space() {
-  PARTITION_NAME=${PARTITION#/*/}
-  SPACE_PARTITION=$(grep /proc/partitions -e "${PARTITION_NAME}$" |gawk '{print $3}')
+  if [ -n "$PARTITION_IS_LVM_DEVICE" ] ; then
+     SPACE_PARTITION="$(lvdisplay --units m $PARTITION | grep 'LV Size' | \
+                        gawk '{print $3}' | gawk -F. '{ print $1}' 2>&1)000"
+     PARTITION_NAME=${PARTITION}
+  else
+     PARTITION_NAME=${PARTITION#/*/}
+     SPACE_PARTITION=$(grep /proc/partitions -e "${PARTITION_NAME}$" | gawk '{print $3}')
+  fi
   SPACE_PARTITION_MB=$[$SPACE_PARTITION/1024]
   if [ $SPACE_PARTITION_MB -lt $SPACE_REQUIRED_MB ]; then
-    dialog --title "${PN}" --yes-label "Continue" --no-label "Cancel" --yesno \
-    "Warning: $SPACE_REQUIRED_MB MB free space \
+     dialog --title "${PN}" --yes-label "Continue" --no-label "Cancel" --yesno \
+     "Warning: $SPACE_REQUIRED_MB MB free space \
 are required. $PARTITION_NAME has only $SPACE_PARTITION_MB MB.
 
 Please make sure to have enough free space. Continuing anyway..." 10 60
@@ -263,8 +269,9 @@ Exiting..." 11 60
   fi
 
   if [ -z "$SWRAID" ] ; then
-    fdisk -l 2>/dev/null | grep $PARTITION | grep -qe 'Linux$' -qe 'Linux LVM$' -qe 'Linux raid autodetect$'
-    if [ $? != 0 ]; then
+    fdisk -l 2>/dev/null | grep $PARTITION | grep -qe 'Linux$' -qe 'Linux LVM$' -qe 'Linux raid autodetect$' && RC=0
+    lvdisplay $PARTITION 1>/dev/null 2>&1 && RC=0
+    if [ $RC != 0 ]; then
       dialog --title "${PN}" --msgbox "Error: $PARTITION does not seem to be a Linux, LVM or RAID partition.
 
   Installing grml on a partition type other than Linux or LVM might cause serious problems.
@@ -731,6 +738,10 @@ finalize() {
 # if config file is present and we are running the non-interactive installation then source it:
 if [ -n "$GRML2HD_NONINTERACTIVE" ] ; then
    [ -r /etc/grml2hd/config ] && . /etc/grml2hd/config
+fi
+
+if [ -x /sbin/lvdisplay ] ; then
+   lvdisplay $PARTITION 1>/dev/null 2>&1 && PARTITION_IS_LVM_DEVICE=1 || PARTITION_IS_LVM_DEVICE=''
 fi
 
 welcome_screen() {

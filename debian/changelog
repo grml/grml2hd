@@ -1,3 +1,9 @@
+grml2hd (1.0.1) unstable; urgency=low
+
+  * Support installation on LVM devices. [Testing: issue217]
+
+ -- Michael Prokop <mika@grml.org>  Tue, 05 Jun 2007 00:04:34 +0200
+
 grml2hd (1.0.0) unstable; urgency=low
 
   * Bump grml2hd version for new stable version.
