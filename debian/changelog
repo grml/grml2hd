@@ -1,3 +1,11 @@
+grml2hd (1.0.2) unstable; urgency=low
+
+  * grml2hd-bootparams: do not mention just lilo but generalize
+    formulation and mention grub as well. Thanks for reporting,
+    Sebastian Andres!
+
+ -- Michael Prokop <mika@grml.org>  Thu, 21 Jun 2007 17:22:02 +0200
+
 grml2hd (1.0.1) unstable; urgency=low
 
   * Support installation on LVM devices. [Testing: issue217]

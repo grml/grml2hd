@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika(at)grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Feb 13 15:38:00 CET 2007 [mika]
+# Latest change: Don Jun 21 17:21:33 CEST 2007 [mika]
 ################################################################################
 
 LANG=C
@@ -77,16 +77,17 @@ interface()
 
 This script checks for the boot parameters you used for booting
 the grml system. If there were any important options found
-they will be activated in the following menu.
+they will be activated in this menu.
 
 If you do not know what to do at this stage just continue!
 
 If you want to adjust boot parameters manually please edit the
-append-line in /etc/lilo.conf. See
+append-line in /etc/lilo.conf if you are using lilo or
+/boot/grub/menu.lst when using grub. See
 /usr/share/doc/kernel-doc-`uname -r`/Documentation/kernel-parameters.txt.gz
 for details about kernel parameters.
 
-Set the boot parameters for kernel via append-line of lilo:
+Set the boot parameters for kernel via bootmanager (lilo/grub):
 " 0 0 0 \
   noapic 'disable buggy APIC interrupt routing' $NOAPIC \
   acpi=force 'force usage of ACPI' $ACPI_FORCE \
