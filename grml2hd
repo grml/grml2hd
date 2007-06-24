@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Don Jun 21 17:21:59 CEST 2007 [mika]
+# Latest change: Son Jun 24 15:40:55 CEST 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -49,7 +49,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='1.0.2'
+VERSION='1.0.3'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
@@ -619,6 +619,9 @@ bmp-timer=540p,50p,125,0,190
 
 install=bmp
 prompt
+# compact makes LILO read the hard drive faster. Normally you want this,
+# but some older systems might hang. Remove it if yours is one of these.
+compact
 timeout=50
 map=/boot/map
 vga=normal
