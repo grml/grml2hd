@@ -22,8 +22,11 @@ timeout		10
 # Hides the menu by default (press ESC to see the menu)
 #hiddenmenu
 
-# Pretty colours
+## Pretty colours
 #color cyan/blue white/blue
+
+## Bootsplash
+#splashimage=(hd0,0)/boot/grub/debian.xpm.gz
 
 ## password ['--md5'] passwd
 # If used in the first section of a menu file, disable all interactive editing

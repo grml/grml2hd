@@ -1,3 +1,9 @@
+grml2hd (1.0.4) unstable; urgency=low
+
+  * grml-template_menu.lst: add a usage example for splashimage
+
+ -- Michael Prokop <mika@grml.org>  Tue, 26 Jun 2007 00:12:51 +0200
+
 grml2hd (1.0.3) unstable; urgency=low
 
   * Use compact option in /etc/lilo.conf. (Thanks for the hint, gebi)
