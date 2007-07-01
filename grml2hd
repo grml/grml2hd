@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Son Jun 24 15:40:55 CEST 2007 [mika]
+# Latest change: Son Jul 01 18:24:59 CEST 2007 [mika]
 ################################################################################
 
 LANG='C'
@@ -49,7 +49,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='1.0.3'
+VERSION='1.0.4'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
@@ -228,8 +228,17 @@ Please select another partition in the following dialog!" 6 60
          DEFAULT_PARTITION=${PARTITION#/*/}
       fi
     fi
+    # assume LVM=/dev/mapper/... as target partition
+    if [ -n "$LVM" ] ; then
+       if [ -b "$LVM" ] ; then
+          if [ -x /sbin/lvdisplay ] ; then
+             lvdisplay $LVM 1>/dev/null 2>&1 && PARTITION_IS_LVM_DEVICE=1 || PARTITION_IS_LVM_DEVICE=''
+          fi
+          SPACE=$(lvdisplay $LVM | awk '/LV Size/ {print $3$4}')
+          PART=$(echo $LVM $SPACE)
+       fi
     # fdisk does not list software raid partitions as we need it
-    if [ -n "$SWRAID" ] ; then
+    elif [ -n "$SWRAID" ] ; then
        PART=$(for device in /dev/md[0-9]* ; do
                   dev=${device##/dev/}
                   if grep -q "$dev" /proc/partitions ; then
@@ -249,7 +258,8 @@ Please make sure you have an existing partition. Exiting." 0 0 ; bailout 5
 
     if SELECTED_PARTITION=$(dialog --stdout --default-item "$DEFAULT_PARTITION" --menu Partitions 0 0 0 \
                             $(echo $PART)) ; then
-       PARTITION="/dev/$SELECTED_PARTITION"
+       PARTITION="${SELECTED_PARTITION##/dev/}"
+       PARTITION="/dev/$PARTITION"
     else
       bailout 6
     fi
@@ -743,7 +753,7 @@ if [ -n "$GRML2HD_NONINTERACTIVE" ] ; then
    [ -r /etc/grml2hd/config ] && . /etc/grml2hd/config
 fi
 
-if [ -x /sbin/lvdisplay ] ; then
+if [ -x /sbin/lvdisplay -a -n "$PARTITION" ] ; then
    lvdisplay $PARTITION 1>/dev/null 2>&1 && PARTITION_IS_LVM_DEVICE=1 || PARTITION_IS_LVM_DEVICE=''
 fi
 
@@ -833,7 +843,7 @@ if ! is_grml2hd_noninteractive ; then
   [[ $PARTITION == *md* ]] && MBRPART=$PARTITION || MBRPART="${PARTITION%[0-9]}"
 
   GETMBR=$(dialog --stdout --title "$PN" --default-item $MBRDEFAULT \
-          --radiolist "Where do you want to install the bootmanager?" 10 65 0 \
+          --radiolist "Where do you want to install the bootmanager?" 0 0 0 \
           mbr   "install bootmanager into MBR of $MBRPART" $MBR \
           partition  "install bootmanager into partition $PARTITION" $PART \
           ${ADDITIONAL_PARAMS})

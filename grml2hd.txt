@@ -33,6 +33,10 @@ special software packages.
 
 Install grml on raid array /dev/md0 and install mbr as well.
 
+  LVM='/dev/mapper/grml2hd-lvm' grml2hd
+
+Install grml on a logical volume (LVM).
+
 Introduction
 ------------
 
@@ -108,6 +112,18 @@ environment variable provides the option for the raid-extra-boot option in
 raid array have to be statically compiled into the kernel, otherwise
 automatic assembling won't work and assembling has to be done in userland
 (won't work for SW-RAID on root partitions then of course).
+
+grml2hd with Logical Volumes (LVM)
+----------------------------------
+
+You can configure LVM as you prefer it to (see 'grml-tips lvm' for some basic
+instructions) and use a logical volume as installation target. Usage example:
+
+  mkfs.ext3 /dev/hda1  # make sure /dev/hda1 is of partition type 8E / Linux LVM
+  pvcreate /dev/hda1
+  vgcreate grml2hd /dev/hda1
+  lvcreate -n rootlv -L1000 grml2hd
+  LVM=/dev/mapper/grml2hd-rootlv grml2hd
 
 grml2hd with encrypted partitions.
 ----------------------------------
