@@ -205,7 +205,7 @@ get_rootpartition() {
      # '/dev/disk/by-uuid/<uuid> does not exist. Dropping to a shell!'-problem
      # Notice: problem does not exist when using udev 0.107-0grml2 and
      # mdadm 2.6.1-1~exp.3.grml01, anyway - make sure nobody falls into the trap
-     if [ -n "$SWRAID" ] ; then
+     if [ -n "$SWRAID" -o -n "$LVM" ] ; then
         ROOTPARTITION="$PARTITION"
      else
         PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
