@@ -3,6 +3,7 @@ grml2hd (1.0.4) unstable; urgency=low
   * grml-template_menu.lst: add a usage example for splashimage
   * Support LVM also in interactive mode via LVM environment variable.
     Usage example: 'LVM=/dev/mapper/grml2hd-lvm grml2hd'
+    [Closes: issue217]
 
  -- Michael Prokop <mika@grml.org>  Sun, 01 Jul 2007 18:35:06 +0200
 
