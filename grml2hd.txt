@@ -119,7 +119,7 @@ grml2hd with Logical Volumes (LVM)
 You can configure LVM as you prefer it to (see 'grml-tips lvm' for some basic
 instructions) and use a logical volume as installation target. Usage example:
 
-  mkfs.ext3 /dev/hda1  # make sure /dev/hda1 is of partition type 8E / Linux LVM
+  # make sure /dev/hda1 is of partition type 8E / Linux LVM!
   pvcreate /dev/hda1
   vgcreate grml2hd /dev/hda1
   lvcreate -n rootlv -L1000 grml2hd
