@@ -453,15 +453,25 @@ copy_files() {
 }
 
 create_fstab() {
-  # remount-ro seems to make problems at least when using XFS!
-  # we need the UUID syntax for the partition, but don't use root=UUI= syntax
-  # but /dev/disk/by* instead, this avoids problems with programs not being
-  # aware of root=UUID= syntax
-  PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
-  if [[ $FILESYSTEM == ext* ]] ; then
-    echo "/dev/disk/by-uuid/$PARTUUID  /  $FILESYSTEM  errors=remount-ro  0 1" > $TARGET/etc/fstab
+  # do not use UUID syntax when using LVM
+  if [ -n "$LVM" ] ; then
+     # remount-ro seems to make problems at least when using XFS
+     if [[ $FILESYSTEM == ext* ]] ; then
+        echo "$LVM  /  $FILESYSTEM  errors=remount-ro  0 1" > $TARGET/etc/fstab
+     else
+        echo "$LVM  /  $FILESYSTEM  defaults 0 1" > $TARGET/etc/fstab
+     fi
   else
-    echo "/dev/disk/by-uuid/$PARTUUID  /  $FILESYSTEM  defaults 0 1" > $TARGET/etc/fstab
+     # we need the UUID syntax for the partition, but don't use root=UUI= syntax
+     # but /dev/disk/by* instead, this avoids problems with programs not being
+     # aware of root=UUID= syntax
+     PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
+     # remount-ro seems to make problems at least when using XFS
+     if [[ $FILESYSTEM == ext* ]] ; then
+       echo "/dev/disk/by-uuid/$PARTUUID  /  $FILESYSTEM  errors=remount-ro  0 1" > $TARGET/etc/fstab
+     else
+       echo "/dev/disk/by-uuid/$PARTUUID  /  $FILESYSTEM  defaults 0 1" > $TARGET/etc/fstab
+     fi
   fi
   cat /etc/fstab >> $TARGET/etc/fstab
 }
