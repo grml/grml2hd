@@ -307,9 +307,9 @@ $(cat /tmp/lilo.error)
 
 get_rootpartition() {
   if [ -n "$PARTITION" ] ; then
-     # do not use root=UUID=... when using SW-RAID to avoid the:
+     # do not use root=UUID=... when using SW-RAID or LVM to avoid the:
      # '/dev/disk/by-uuid/<uuid> does not exist. Dropping to a shell!'-problem
-     if [ -n "$SWRAID" ] ; then
+     if [ -n "$SWRAID" -o -n "$LVM" ] ; then
         ROOTPARTITION="$PARTITION"
      else
         PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
