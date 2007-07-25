@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Son Apr 29 13:35:20 CEST 2007 [mika]
+# Latest change: Mit Jul 25 13:13:24 CEST 2007 [mika]
 ################################################################################
 
 PN='grml2hd'
@@ -371,7 +371,13 @@ install_grub() {
      exit 1
   fi
 
-  grubdevice "$PARTITION" 1>/dev/null 2>/tmp/grubdevice
+  # /dev/mapper/* isn't available in /boot/grub/device.map:
+  if [ -n "$LVM" ] ; then
+     GRUBDEVICE="$BOOT_PARTITION"
+     GRUBSETUPDEVICE="$BOOT_PARTITION"
+  else
+     grubdevice "$PARTITION" 1>/dev/null 2>/tmp/grubdevice
+  fi
 
   get_rootpartition 1>/dev/null 2>/tmp/grub.rootpartition
 
@@ -387,8 +393,8 @@ install_grub() {
         [ -L /boot/grub/menu.lst ] && rm -f /boot/grub/menu.lst
         cp /boot/grub/grml-template_menu.lst /boot/grub/menu.lst
 
-        sed -i "s/^# kopt=root=.*/# kopt=root=${ROOTPARTITION} ro ${BOOTOPTIONS_APPEND} ${BOOT_APPEND}/" /boot/grub/menu.lst
-        sed -i "s/^# groot=.*/# groot=${GRUBDEVICE}/" /boot/grub/menu.lst
+        sed -i "s|^# kopt=root=.*|# kopt=root=${ROOTPARTITION} ro ${BOOTOPTIONS_APPEND} ${BOOT_APPEND}|" /boot/grub/menu.lst
+        sed -i "s|^# groot=.*|# groot=${GRUBDEVICE}|" /boot/grub/menu.lst
 
         # if we have the symlink we get entries without initrd option in menu.lst
         # by update-grub, see http://bts.grml.org/grml/issue135
@@ -454,6 +460,29 @@ bootmanager_selection() {
          export USE_GRUB=''
      esac
   fi
+
+  if [ -x /sbin/dmraid ] ; then
+     if dmraid -r "$BOOT_PARTITION" | grep -q ok ; then
+        dialog --title "${PN}" --msgbox "Warning: $BOOT_PARTITION seems to have a dmraid signature.
+
+There might be problems with booting your systems due to the
+presense of the dmraid signature. Please fix it manually
+removing the dmraid signature running:
+
+dmraid -r $BOOT_PARTITION -E
+
+and reinstalling the bootmanager then.
+
+Usage example if your system is installed on /dev/sda3 and
+you want grub on /dev/sda:
+
+mount /mnt/sda3
+grub-install --recheck --root-directory /mnt/sda3 /dev/sda
+
+"
+     fi
+  fi
+
 }
 
 fix_sysvinit() {

@@ -1,3 +1,12 @@
+grml2hd (1.0.5) unstable; urgency=low
+
+  * make sure the sed command does not fail when using /dev/ice
+    syntax inside the replacement
+  * when using LVM do not run grubdevice $PARTITION [Testing: issue243]
+  * check for dmraid signatures (needs some testing in reallife)
+
+ -- Michael Prokop <mika@grml.org>  Wed, 25 Jul 2007 13:13:50 +0200
+
 grml2hd (1.0.4) unstable; urgency=low
 
   * grml-template_menu.lst: add a usage example for splashimage
