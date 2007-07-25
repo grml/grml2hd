@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Mit Jul 25 13:13:24 CEST 2007 [mika]
+# Latest change: Mit Jul 25 14:12:12 CEST 2007 [mika]
 ################################################################################
 
 PN='grml2hd'
@@ -434,11 +434,13 @@ $(cat /tmp/grub.error)
 
 bootmanager_selection() {
   # in non-interactive mode we use lilo by default, unless $BOOT_MANAGER is set to grub
-  # our grub code within grml2hd does not support SWRAID yet, so use lilo
-  if [ -n "$SWRAID" ] ; then
+  # our grub code within grml2hd does not support SWRAID and LVM yet, so use lilo
+  if [ -n "$SWRAID" -o -n "$LVM" ] ; then
      USE_GRUB=''
      return 0
+     LVM_BOOT='\n\nWarning: installation of grub not supported when using SW-RAID and/or LVM!'
   fi
+
   if is_grml2hd_noninteractive ; then
      if [ "$BOOT_MANAGER" = "grub" ] ; then
         export USE_GRUB='1'
@@ -447,8 +449,8 @@ bootmanager_selection() {
      fi
   else # running in interactive mode:
      GETBOOTMANAGER=$(dialog --stdout --title "grml2hd" --default-item lilo \
-                             --radiolist "Which bootmanager do you want to install?" 10 65 0 \
-                             lilo  "install lilo on $BOOT_PARTITION" on \
+                             --radiolist "Which bootmanager do you want to install?$LVM_BOOT" 0 0 0 \
+                             lilo  "install lilo on partition $BOOT_PARTITION" on \
                              grub  "install grub on partition $BOOT_PARTITION" off)
      [ $? -eq 0 ] || exit 20
 
