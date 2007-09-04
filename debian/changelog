@@ -1,3 +1,12 @@
+grml2hd (1.0.6) unstable; urgency=low
+
+  * Use --insecure for passwordbox so user gets feedback when
+    typing password (it's '***' of course and not plaintext).
+  * Adjust copy_files() for use with live-initramfs.
+  * Purge live-initramfs in remove_unwanted_packages().
+
+ -- Michael Prokop <mika@grml.org>  Tue,  4 Sep 2007 13:08:37 +0200
+
 grml2hd (1.0.5) unstable; urgency=low
 
   * make sure the sed command does not fail when using /dev/ice

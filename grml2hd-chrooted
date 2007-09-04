@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Mit Jul 25 14:12:12 CEST 2007 [mika]
+# Latest change: Die Sep 04 20:47:27 CEST 2007 [mika]
 ################################################################################
 
 PN='grml2hd'
@@ -120,9 +120,9 @@ root_account() {
      ROOTPW1='PW1'
      ROOTPW2='PW2'
      while [ "$ROOTPW1" != "$ROOTPW2" ]; do
-       ROOTPW1=$(dialog --stdout --title "${PN}" --passwordbox \
+       ROOTPW1=$(dialog --insecure --stdout --title "${PN}" --passwordbox \
        "Please enter the password for the root account:" 10 60)
-       ROOTPW2=$(dialog --stdout --title "${PN}" --passwordbox \
+       ROOTPW2=$(dialog --insecure --stdout --title "${PN}" --passwordbox \
        "Please enter the password for the root account again for \
        confirmation:" 10 60)
 
@@ -227,8 +227,8 @@ If you want to change that behaviour please adjust sudo setup via running visudo
     USERPW1='PW1'
     USERPW2='PW2'
     while [ "$USERPW1" != "$USERPW2" ]; do
-      USERPW1=$(dialog --stdout --title "${PN}" --passwordbox "Please enter the password for user $NEWUSER:" 10 60)
-      USERPW2=$(dialog --stdout --title "${PN}" --passwordbox "Please enter the password for user $NEWUSER again for confirmation:" 10 60)
+      USERPW1=$(dialog --insecure --stdout --title "${PN}" --passwordbox "Please enter the password for user $NEWUSER:" 10 60)
+      USERPW2=$(dialog --insecure --stdout --title "${PN}" --passwordbox "Please enter the password for user $NEWUSER again for confirmation:" 10 60)
 
       if [ "$USERPW1" != "$USERPW2" ]; then
         $(dialog --stdout --title "${PN}" --ok-label \
@@ -529,6 +529,7 @@ adjust_services() {
 
 remove_unwanted_packages() {
   dpkg --purge grml-firefox 1>/dev/null 2>&1
+  dpkg --purge live-initramfs 1>/dev/null 2>&1
   rm -rf /etc/skel/.mozilla/firefox 1>/dev/null 2>&1
 }
 

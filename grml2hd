@@ -327,7 +327,139 @@ that $PARTITION is not in use/mounted. Exiting."
   bailout 9
 }
 
-copy_files() {
+# new grml version:
+copy_files_initramfs() {
+  cd /
+  ( echo "0" ;
+    cp -a backups $TARGET 1>>$LOGFILE 2>&1
+    echo "2"
+    echo "XXX";
+    echo "Copying /bin";
+    echo "XXX";
+    cp -a bin $TARGET 1>>$LOGFILE 2>&1
+    echo "6"
+    echo "XXX";
+    echo "Copying /boot";
+    echo "XXX";
+    cp -a boot $TARGET 1>>$LOGFILE 2>&1
+    echo "8"
+    echo "XXX";
+    echo "Copying /cdrom";
+    echo "XXX";
+    cp -a cdrom $TARGET 1>>$LOGFILE 2>&1
+    echo "9"
+    echo "XXX";
+    echo "Copying /dev";
+    echo "XXX";
+    cp -a dev $TARGET 1>>$LOGFILE 2>&1
+    echo "10"
+    echo "XXX";
+    echo "Copying /etc";
+    echo "XXX";
+    cp -a etc $TARGET 1>>$LOGFILE 2>&1
+    echo "15"
+    echo "XXX";
+    echo "Copying /floppy";
+    echo "XXX";
+    cp -a floppy $TARGET 1>>$LOGFILE 2>&1
+    echo "16"
+    echo "XXX";
+    echo "Copying /home";
+    echo "XXX";
+    cp -a home $TARGET 1>>$LOGFILE 2>&1
+#    echo "20"
+#    echo "XXX";
+#    echo "Copying /initrd";
+#    echo "XXX";
+#    cp -a initrd $TARGET 1>>$LOGFILE 2>&1
+    echo "21"
+    echo "XXX";
+    echo "Copying /lib";
+    echo "XXX";
+    cp -a lib $TARGET 1>>$LOGFILE 2>&1
+    if [ -r lib64 ] ; then
+       echo "25"
+       echo "XXX";
+       echo "Copying 64bit stuff";
+       echo "XXX";
+       [ -r lib32 ] && cp -a lib32 $TARGET 1>>$LOGFILE 2>&1
+       [ -r lib64 ] && cp -a lib64 $TARGET 1>>$LOGFILE 2>&1
+       [ -r emul ]  && cp -a emul $TARGET 1>>$LOGFILE 2>&1
+    fi
+    echo "30"
+    echo "XXX";
+    echo "Copying /media";
+    echo "XXX";
+    cp -a media $TARGET 1>>$LOGFILE 2>&1
+    mkdir $TARGET/mnt 1>>$LOGFILE 2>&1
+#    echo "32"
+#    echo "XXX";
+#    echo "Copying /mnt";
+#    echo "XXX";
+#    cp -a mnt $TARGET 1>>$LOGFILE 2>&1
+    echo "34"
+    echo "XXX";
+    echo "Copying /none";
+    echo "XXX";
+    cp -a none $TARGET 1>>$LOGFILE 2>&1
+    echo "35"
+    echo "XXX";
+    echo "Copying /opt";
+    echo "XXX";
+    cp -a opt $TARGET 1>>$LOGFILE 2>&1
+    echo "36"
+    echo "XXX";
+    echo "Copying /root";
+    echo "XXX";
+    cp -a root $TARGET 1>>$LOGFILE 2>&1
+    echo "37"
+    echo "XXX";
+    echo "Copying /sbin";
+    echo "XXX";
+    cp -a sbin $TARGET 1>>$LOGFILE 2>&1
+#    echo "40"
+#    echo "XXX";
+#    echo "Copying /selinux";
+#    echo "XXX";
+#    cp -a selinux $TARGET 1>>$LOGFILE 2>&1
+    echo "40"
+    echo "XXX";
+    echo "Copying /swap";
+    echo "XXX";
+    cp -a swap $TARGET 1>>$LOGFILE 2>&1
+    echo "41"
+    echo "XXX";
+    echo "Copying /tmp";
+    echo "XXX";
+    cp -a tmp $TARGET 1>>$LOGFILE 2>&1
+    echo "42"
+    echo "XXX";
+    echo "Copying /usr\n(Notice: this takes a while - be patient!)";
+    echo "XXX";
+    cp -a usr $TARGET 1>>$LOGFILE 2>&1
+    echo "80"
+    echo "XXX";
+    echo "Copying /var";
+    echo "XXX";
+    cp -a var $TARGET 1>>$LOGFILE 2>&1
+    echo "95"
+    echo "XXX";
+    echo "Creating /sys, /proc, /tmp and fixing permissions...";
+    echo "XXX";
+    mkdir -m  755 ${TARGET}/sys  ; chown root.root ${TARGET}/sys
+    mkdir -m  555 ${TARGET}/proc ; chown root.root ${TARGET}/proc
+#    mkdir -m 1777 ${TARGET}/tmp  ; chown root.root ${TARGET}/tmp
+    chmod 755 ${TARGET}/home/
+    chmod 750 ${TARGET}/home/*
+    echo "100") | \
+  dialog --title "${PN}" --gauge "Copying files to $PARTITION" 9 50 0
+  is_grml2hd_noninteractive || dialog --msgbox "Copying files was successful!" 5 50
+
+  # /UNIONFS/dev is not correct, we need to copy /dev
+  rsync --progress -auv $SOURCE/dev/ $TARGET/dev/ 1>>$LOGFILE 2>&1
+}
+# old grml version:
+copy_files_linuxrc() {
   cd /UNIONFS
   ( echo "0" ;
     cp -a backups $TARGET 1>>$LOGFILE 2>&1
@@ -909,7 +1041,13 @@ if checkvalue $GRML2HD_INITIALIZE ; then
    initialize || initialize_error
 fi
 
-checkvalue $GRML2HD_COPY_FILES && copy_files
+if checkvalue $GRML2HD_COPY_FILES ; then
+  if [ -d /UNIONFS ] ; then
+     copy_files_linuxrc
+  else
+     copy_files_initramfs
+  fi
+fi
 
 if checkvalue $GRML2HD_IS_GRML_SMALL ; then
    is_grml_small && grmlsmall_fixes
