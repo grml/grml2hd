@@ -371,6 +371,10 @@ install_grub() {
      exit 1
   fi
 
+  # make sure we don't have a /etc/lilo.conf present if using grub
+  # as several Debian packages might think we use lilo
+  [ -r /etc/lilo.conf ] && mv -f /etc/lilo.conf /etc/lilo.conf.unused
+
   # /dev/mapper/* isn't available in /boot/grub/device.map:
   if [ -n "$LVM" ] ; then
      GRUBDEVICE="$BOOT_PARTITION"

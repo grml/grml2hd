@@ -1,3 +1,11 @@
+grml2hd (1.0.7) unstable; urgency=low
+
+  * Rename /etc/lilo.conf to /etc/lilo.conf.unused if using Grub.
+    This should avoid unwanted execution of lilo in several
+    Debian packages.
+
+ -- Michael Prokop <mika@grml.org>  Sat, 29 Sep 2007 11:25:17 +0200
+
 grml2hd (1.0.6) unstable; urgency=low
 
   * Use --insecure for passwordbox so user gets feedback when
