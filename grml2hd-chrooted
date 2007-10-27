@@ -148,28 +148,29 @@ setlanguage() {
 }
 
 xconfig() {
-  if [ -z "$GRML_SMALL" ] ; then
-   if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
-    if ! [ -f /etc/X11/xorg.conf ] ; then
-    dialog --stdout --title "${PN}" --defaultno --yesno "You do not have the configuration file /etc/X11/xorg.conf
+  if [ -z "$GRML_SMALL" -a -x /usr/bin/grml-x ] ; then
+     if [ -n "$GRML2HD_NONINTERACTIVE" ] ; then
+        # running grml in noninteractive mode and if $GRMLX is set:
+        [ -n "$GRMLX" ] && grml-x -force -nostart fluxbox 1>/dev/null 2>&1
+     else
+        if ! [ -f /etc/X11/xorg.conf ] ; then
+           dialog --stdout --title "${PN}" --defaultno --yesno "You do not have the configuration file /etc/X11/xorg.conf
 for running the X window system. It is recommended to create
 the file when running the live-CD system. grml-x can create
 the file according to your hardware for you.
 
 Create /etc/X11/xorg.conf?" 12 70
-     if [[ $? == 0 ]]; then
-      SUCCESS=''
-      grml-x -force -nostart fluxbox 1>/dev/null && SUCCESS='1'
-     fi
-     if ! [ -z "$SUCCESS" ] ; then
-      is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Running grml-x was successful and you should have a
+           if [[ $? == 0 ]]; then
+              SUCCESS=''
+              grml-x -force -nostart fluxbox 1>/dev/null && SUCCESS='1'
+           fi
+           if ! [ -z "$SUCCESS" ] ; then
+              is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Running grml-x was successful and you should have a
 working X window system now. Run 'startx ~/.xinitrc'
 as user to start the X." 8 60
-     fi
-    fi
-   else # running grml in noninteractive mode and $GRMLX is set
-     [ -n "$GRMLX" ] && grml-x -force -nostart fluxbox 1>/dev/null 2>&1
-   fi
+           fi
+        fi # [ -f /etc/X11/xorg.conf ]
+     fi # GRML2HD_NONINTERACTIVE
   fi
 }
 

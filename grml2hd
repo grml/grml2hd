@@ -938,7 +938,7 @@ grmlsmall_fixes() {
   is_grml2hd_noninteractive || dialog --stdout --msgbox "Notice: You are running grml-small.
 
 grml-small includes some hacks to get all the software inside
-the ~55MB ISO. Therefore grml2hd has to run some fixes.
+the small ISO. Therefore grml2hd has to run some fixes.
 
 For example all the documentation has been removed - several
 packages are not completely installed. If you want to reinstall
@@ -948,12 +948,16 @@ update/upgrade afterwards. This tip is present in the grml-wiki
 as well: http://wiki.grml.org/doku.php?id=tips
 " 15 70
   SUCCESS=''
-  cp /cdrom/boot/isolinux/linux26 $TARGET/boot/vmlinuz-${UNAME} 1>>$LOGFILE 2>&1 && SUCCESS='1'
+  if ! [ -f "$TARGET/boot/vmlinuz-${UNAME}" ] ; then
+     cp /cdrom/boot/isolinux/linux26 $TARGET/boot/vmlinuz-${UNAME} 1>>$LOGFILE 2>&1 && SUCCESS='1'
+  else
+     SUCCESS=1
+  fi
   mkdir -p $TARGET/usr/man        1>>$LOGFILE 2>&1
   mkdir -p $TARGET/usr/share/doc  1>>$LOGFILE 2>&1
   mkdir -p $TARGET/usr/share/info 1>>$LOGFILE 2>&1
   mkdir -p $TARGET/usr/share/man  1>>$LOGFILE 2>&1
-  if ! [ -z "$SUCCESS" ] ; then
+  if [ -n "$SUCCESS" ] ; then
     is_grml2hd_noninteractive || dialog --stdout --msgbox "Running fixes for grml-small was successful." 5 60
   else
     is_grml2hd_noninteractive || dialog --stdout --msgbox "There was an error running the fixes. Sorry, exiting." 5 60 ; bailout 12
