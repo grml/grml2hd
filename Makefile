@@ -18,6 +18,8 @@ man-stamp: grml2hd.txt
 	# notice: docbook-xsl 1.71.0.dfsg.1-1 is broken! make sure you use 1.68.1.dfsg.1-0.2!
 	cp grml2hd.8 grml2hd.8.tmp
 	uniq grml2hd.8.tmp > grml2hd.8
+	# ugly hack to avoid '.sp' at the end of a sentence or paragraph:
+	sed -i 's/\.sp//' grml2hd.8
 	rm grml2hd.8.tmp
 	touch man-stamp
 
