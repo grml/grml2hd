@@ -1,3 +1,9 @@
+grml2hd (1.1.0) unstable; urgency=low
+
+  * Fix small typo in grml2hd-bootparams (thanks, a1i).
+
+ -- Michael Prokop <mika@grml.org>  Fri, 21 Dec 2007 23:45:18 +0100
+
 grml2hd (1.0.9) unstable; urgency=low
 
   [ Michael Prokop ]
