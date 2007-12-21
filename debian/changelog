@@ -1,8 +1,12 @@
 grml2hd (1.0.9) unstable; urgency=low
 
+  [ Michael Prokop ]
   * Fix manpage handling of xsltproc.
 
- -- Michael Prokop <mika@grml.org>  Thu, 06 Dec 2007 23:54:09 +0100
+  [ Alexander Wirt ]
+  * Fix typo on grml2hd-bootparams
+
+ -- Alexander Wirt <formorer@debian.org>  Fri, 21 Dec 2007 23:44:25 +0100
 
 grml2hd (1.0.8) unstable; urgency=low
 

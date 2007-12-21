@@ -96,7 +96,7 @@ Set the boot parameters for kernel via bootmanager (lilo/grub):
   acpi=off 'completely disable ACPI' $ACPI_OFF \
   acpi=noirq 'disable PCI IRQ routing of ACPI' $ACPI_NOIRQ \
   noirqbalance 'disable kernel irq balancing' $NOIRQ \
-  nopcmcia 'avoide startup of PCMCIA services' $NOPCMIA \
+  nopcmcia 'avoid startup of PCMCIA services' $NOPCMIA \
   nodma 'disable Direct Memory Access' $NODMA \
   pci=noacpi 'disable ACPI for PCI maps' $PCINOACPI \
   pci=biosirq 'use PCI BIOS calls to get interrupt routing table' $PCIBIOS \
