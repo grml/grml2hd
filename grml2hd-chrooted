@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Die Sep 04 20:47:27 CEST 2007 [mika]
+# Latest change: Mit Feb 20 18:26:22 CET 2008 [mika]
 ################################################################################
 
 PN='grml2hd'
@@ -200,6 +200,10 @@ If you want to change that behaviour please adjust sudo setup via running visudo
   [ -r /home/grml/.gkrellm2/user-config ]  && sed -i "s#/home/grml#/home/$NEWUSER#g" /home/grml/.gkrellm2/user-config  2>/dev/null
   [ -r /home/grml/.gkrellm2/theme_config ] && sed -i "s#/home/grml#/home/$NEWUSER#g" /home/grml/.gkrellm2/theme_config 2>/dev/null
   [ -d /home/grml/.idesktop ] && sed -i "s#/home/grml#/home/$NEWUSER#g" /home/grml/.idesktop/*.lnk 2>/dev/null
+
+  if [ -r /etc/grml/autoconfig ] ; then
+     sed -i "s/CONFIG_FSTAB_USER=.*/CONFIG_FSTAB_USER='$NEWUSER'/" /etc/grml/autoconfig
+  fi
 
   su -s /bin/sh grml -c "rsync -Ha --ignore-existing /etc/skel/ /home/grml/"
 

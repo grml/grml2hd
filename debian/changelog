@@ -1,3 +1,10 @@
+grml2hd (1.1.1) unstable; urgency=low
+
+  * Adjust CONFIG_FSTAB_USER in /etc/grml/autoconfig when
+    setting username in grml2hd. [Closing: issue390]
+
+ -- Michael Prokop <mika@grml.org>  Wed, 20 Feb 2008 18:25:52 +0100
+
 grml2hd (1.1.0) unstable; urgency=low
 
   * Fix small typo in grml2hd-bootparams (thanks, a1i).
