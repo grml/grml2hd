@@ -1,3 +1,10 @@
+grml2hd (1.1.2) unstable; urgency=low
+
+  * Get rid of the setpassword() perl function (seem to be broken)
+    and make sure to use 'shadowconfig on' instead.
+
+ -- Michael Prokop <mika@grml.org>  Tue, 26 Aug 2008 18:16:29 +0200
+
 grml2hd (1.1.1) unstable; urgency=low
 
   * Adjust CONFIG_FSTAB_USER in /etc/grml/autoconfig when

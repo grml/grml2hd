@@ -4,7 +4,7 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Mit Feb 20 18:26:22 CET 2008 [mika]
+# Latest change: Tue Aug 26 18:13:13 CEST 2008 [mika]
 ################################################################################
 
 PN='grml2hd'
@@ -56,66 +56,9 @@ is_grml2hd_noninteractive() {
   fi
 }
 
-setpassword() {
-# Set a password, via chpasswd.
-# Use perl rather than echo, to avoid the password
-# showing in the process table. (However, this is normally
-# only called when first booting the system, when root has no
-# password at all, so that should be an unnecessary precaution).
-#
-# Pass in three arguments: the user, the password, and 'true' if the
-# password has been pre-crypted (by preseeding).
-#
-# Taken from /var/lib/dpkg/info/passwd.config
-        SETPASSWD_PW="$2"
-        export SETPASSWD_PW
-
-        # This is very annoying. chpasswd cannot handle generating md5
-        # passwords as it is not PAM-aware. Thus, I have to work around
-        # that by crypting the password myself if md5 is used.
-        USE_MD5=1
-        export USE_MD5
-
-        if [ "$3" = true ]; then
-                PRECRYPTED=1
-        else
-                PRECRYPTED=''
-        fi
-        export PRECRYPTED
-        LC_ALL=C LANGUAGE=C LANG=C perl -e '
-                sub CreateCryptSalt {
-                        my $md5 = shift;
-
-                        my @valid = split(//, "./0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-                        my ($in, $out);
-
-                        my $cryptsaltlen = ($md5 ? 8 : 2);
-
-                        open (F, "</dev/urandom") || die "No /dev/urandom found!";
-                        foreach (1..$cryptsaltlen) {
-                                read(F, $in, 1);
-                                $out .= $valid[ord($in) % ($#valid + 1)];
-                        }
-                        close F;
-                        return ($md5 ? "\$1\$$out\$" : $out);
-                }
-
-                open(P,"| chpasswd -e");
-                if ($ENV{PRECRYPTED}) {
-                        print P shift().":$ENV{SETPASSWD_PW}\n";
-                } else {
-                        print P shift().":".
-                                crypt($ENV{SETPASSWD_PW}, CreateCryptSalt($ENV{USE_MD5})).
-                                "\n";
-                }
-                close P;
-        ' "$1"
-        SETPASSWD_PW=''
-        USE_MD5=''
-        PRECRYPTED=''
-}
-
 root_account() {
+  shadowconfig on
+
   if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
      ROOTPW1='PW1'
      ROOTPW2='PW2'
@@ -131,13 +74,11 @@ root_account() {
          "Retry" --msgbox "Passwords do not match!" 10 60)
        fi
      done
-       # echo "root:$ROOTPW1" | chpasswd -m
-       setpassword root $ROOTPW1 false
+       echo root:"$ROOTPW1" | chpasswd -m
        export ROOTPW1=''
        export ROOTPW2=''
   else
-    # echo "root:$ROOTPASSWD" | chpasswd -m
-    setpassword root $ROOTPASSWD false
+    echo "root:$ROOTPASSWD" | chpasswd -m
     export ROOTPASSWD=''
   fi
 }
@@ -240,13 +181,11 @@ If you want to change that behaviour please adjust sudo setup via running visudo
         "Retry" --msgbox "Passwords do not match!" 10 60)
       fi
     done
-    # echo "$NEWUSER:$USERPW1" | chpasswd -m
-    setpassword $NEWUSER $USERPW1 false
+    echo "$NEWUSER:$USERPW1" | chpasswd -m
     export USERPW1=''
     export USERPW2=''
   else
-    # echo "$NEWUSER:$USERPASSWD" | chpasswd -m
-    setpassword $NEWUSER $USERPASSWD false
+    echo "$NEWUSER:$USERPASSWD" | chpasswd -m
     export USERPASSWD=''
   fi
 }
