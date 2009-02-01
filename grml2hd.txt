@@ -58,7 +58,7 @@ cluster of computers (e.g. a computer lab). There are two possibilities to
 run grml2hd in automatic mode.  But: Do *not* use the grml2hd
 non-interactive mode if you do not know what you are doing!
 
-Automatic installation trough running grml system
+Automatic installation through running grml system
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Configuration of the automatic installation is done via the configuration file
@@ -72,7 +72,7 @@ Automatic installation through booting grml
 
 You can install grml without even booting it before. If you do not know
 your system very well we recommend booting grml before running grml2hd. If
-everything works as intented and you want to install grml on many computers
+everything works as intended and you want to install grml on many computers
 at the same time you can do this via entering only some few words on the
 bootprompt or use grml2hd via
 link:http://grml.org/terminalserver/[grml-terminalserver].
@@ -86,7 +86,7 @@ Configuration is done via boot options:
 
 Usage example for booting and installing grml on partition /dev/hda4:
 
-   grml2hd partion=/dev/hda4 mbr=/dev/hda filesystem=ext3 user=mika
+   grml2hd partition=/dev/hda4 mbr=/dev/hda filesystem=ext3 user=mika
 
 Passwords of user root and user are "grml" - please adjust after harddisk
 installation!
@@ -161,7 +161,7 @@ Make sure the device you want to use for your /home-partition is not
 mounted. Then initialize the partition you want to use as encrypted /home
 using grml-crypt. Important: this will destroy all data on /home!
 grml-crypt is a wrapper around cryptsetup-luks, you will be able to use the
-partition with every linux distribution which supports cryptsetup-luks.
+partition with every Linux distribution which supports cryptsetup-luks.
 
 The following example demonstrates how to use /dev/hda5 as an encrypted
 /home partition:
