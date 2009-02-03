@@ -30,7 +30,7 @@ is_grml2hd_noninteractive() {
   if [ -n "$GRML2HD_NONINTERACTIVE" ] ; then
      return 0 # we are running automatic installation
   else
-     return 1 # we are running interactive installatio
+     return 1 # we are running interactive installation
   fi
 }
 
@@ -166,7 +166,7 @@ check4mem() {
     dialog --title "${PN}" --yes-label "Continue" --no-label "Cancel" --yesno \
     "Warning: you have $(( $RAM / 1024 )) MB of RAM, $(( $MEM / 1024 )) MB free memory at all.
 
-Package management inside grml2hd very probably will need more than 64MB of free memory to work proberly.
+Package management inside grml2hd very probably will need more than 64MB of free memory to work properly.
 
 If you do not have enough RAM you can manually add a swap-partition now (swapon /dev/partition) to hopefully have enough free memory for grml2hd.
 
@@ -218,7 +218,7 @@ get_rootpartition() {
 }
 
 partition_select() {
-  # Partitions and Blocksize
+  # partitions and blocksize
   if ! is_grml2hd_noninteractive ; then
     if [ -n "$PARTITION" ] ; then
       if ! [ -b "$PARTITION" ] ; then
@@ -272,7 +272,7 @@ check4partition() {
   if [ $? != 0 ]; then
     dialog --title "${PN}" --msgbox "Error: $PARTITION does not seem to be an existing partition.
 
-Please use a programm like cfdisk to create partition ${PARTITION} and restart grml2hd.
+Please use a program like cfdisk to create partition ${PARTITION} and restart grml2hd.
 
 Exiting..." 11 60
     bailout 7
@@ -286,7 +286,7 @@ Exiting..." 11 60
 
   Installing grml on a partition type other than Linux or LVM might cause serious problems.
 
-  Please use a programm like cfdisk to set the according partition type of ${PARTITION} and restart grml2hd.
+  Please use a program like cfdisk to set the according partition type of ${PARTITION} and restart grml2hd.
 
   Exiting..." 11 60
       bailout 7
@@ -594,7 +594,7 @@ create_fstab() {
         echo "$LVM  /  $FILESYSTEM  defaults 0 1" > $TARGET/etc/fstab
      fi
   else
-     # we need the UUID syntax for the partition, but don't use root=UUI= syntax
+     # we need the UUID syntax for the partition, but don't use root=UUID= syntax
      # but /dev/disk/by* instead, this avoids problems with programs not being
      # aware of root=UUID= syntax
      PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
@@ -868,7 +868,7 @@ finalize() {
 
   You have a harddisk installation of GRML now! Enjoy.
 
-  If you want to reconfigure the basesystem of grml take a
+  If you want to reconfigure the base system of grml take a
   look at the script 'grml-autoconfig'. To configure network
   run 'grml-network' or edit /etc/network/interfaces manually.
 
