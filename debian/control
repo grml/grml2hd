@@ -6,8 +6,8 @@ Uploaders: Andreas "Jimmy" Gredler <jimmy@grml.org>
 Build-Depends: debhelper (>= 4.0.0), asciidoc, xsltproc, docbook-xsl
 Standards-Version: 3.8.0
 Homepage: http://grml.org/grml2hd/
-XS-Vcs-hg: http://hg.grml.org/grml2hd/
-XS-Vcs-Browser: http://hg.grml.org/grml2hd/
+Vcs-git: git://git.grml.org/grml2hd.git
+Vcs-Browser: http://git.grml.org/?p=grml2hd.git
 
 Package: grml2hd
 Architecture: all
