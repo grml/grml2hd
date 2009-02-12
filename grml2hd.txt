@@ -59,7 +59,7 @@ run grml2hd in automatic mode.  But: Do *not* use the grml2hd
 non-interactive mode if you do not know what you are doing!
 
 Automatic installation through running grml system
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Configuration of the automatic installation is done via the configuration file
 /etc/grml2hd/config. To activate automatic mode you have to set the environment
