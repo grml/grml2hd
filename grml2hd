@@ -49,7 +49,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='1.1.3'
+VERSION='1.1.4'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
@@ -652,7 +652,7 @@ l6:6:wait:/etc/init.d/grml-reboot
 # l6:6:wait:/etc/init.d/rc 6
 
 # What to do when CTRL-ALT-DEL is pressed.
-ca::ctrlaltdel:/etc/init.d/grml-halt
+ca::ctrlaltdel:/etc/init.d/grml-reboot
 
 # Action on special keypress (ALT-UpArrow).
 kb::kbrequest:/bin/echo "Keyboard Request -- edit /etc/inittab to let this work."
