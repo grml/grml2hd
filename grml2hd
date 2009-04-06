@@ -4,7 +4,6 @@
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Tue Aug 26 18:16:22 CEST 2008 [mika]
 ################################################################################
 
 LANG='C'
@@ -49,7 +48,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='1.1.4'
+VERSION='1.2.0'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
@@ -617,7 +616,6 @@ create_inittab() {
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Sam Sep 16 23:29:53 CEST 2006 [mika]
 ################################################################################
 
 # grml ${GRMLVERSION} installed with $PN $VERSION on ${YDATE}
@@ -703,7 +701,7 @@ raid-extra-boot=${SWRAID}
 
 Everything looks OK so far. Continuing.
 
-Please notice that installation of grub is not yet support for
+Please note that installation of grub is not yet support for
 software RAID inside grml2hd yet.
 
 " 13 70
@@ -819,10 +817,9 @@ getfs() {
 Please make sure that the partition itself is available (check e.g. via cfdisk)!" 14 78 5 \
           ext3   "the default on most Linux systems (recommended)" on \
           ext2   "ext3 without journaling" off \
-          xfs    "journaling file system by SGI (notice: problems with lilo)" off \
+          xfs    "journaling file system by SGI (note: problems with lilo)" off \
           jfs    "the journaled file system by IBM" off \
           reiserfs   "fs for use with huge numbers of small files" off)
-#          reiser4   "the new version of reiserfs (very experimental!)" off)
    if [ $? != 0 ]; then
      bailout 11
    fi
@@ -844,9 +841,6 @@ Please make sure that the partition itself is available (check e.g. via cfdisk)!
   fi
   if [[ $FILESYSTEM == reiserfs ]] ; then
     MKFSOPTIONS='-f'
-  fi
-  if [[ $FILESYSTEM == reiser4 ]] ; then
-    MKFSOPTIONS='-y'
   fi
 }
 
@@ -901,7 +895,7 @@ fi
 
 welcome_screen() {
   if ! is_grml2hd_noninteractive ; then
-     dialog --yes-label Continue --no-label Quit --yesno "Welcome to ${PN} ${VERSION}!
+     dialog --title "$PN" --yes-label Continue --no-label Quit --yesno "Welcome to ${PN} ${VERSION}!
 
 ${PN} can install grml to your harddisk.
 
@@ -931,6 +925,20 @@ http://grml.org/contact/    contact (at) grml.org
       (1)   echo "Cancel pressed." ; bailout 1 ;;
       (255) echo "ESC pressed."    ; bailout 255 ;;
   esac
+
+  dialog --title "$PN" --yes-label Continue --no-label Quit --defaultno --yesno "Important note!
+
+grml is NOT a Linux distribution for newbies and should
+be installed to hard disk only if really know what
+you are doing (or don't care about maintainability, seriously).
+
+  * Are you used to work with Debian/unstable?
+  * Do you know how to report bugs to Debian?
+  * Are you aware of the differences between plain Debian and grml?
+
+Please install grml only if can answer ALL question with YES.
+Are you sure you want to continue?
+  " 0 0
   fi
 }
 
@@ -1062,21 +1070,6 @@ checkvalue $GRML2HD_CREATE_INITTAB && create_inittab
 checkvalue $GRML2HD_GET_BOOTPARAMS && get_bootparams
 checkvalue $GRML2HD_CREATE_LILOCONFIG && create_liloconfig
 checkvalue $GRML2HD_CALL_CHROOT && call_chroot
-
-# reiser4 :-(
- if [[ $FILESYSTEM == reiser4 ]] ; then
-  dialog --stdout --msgbox "Important notice!
-Installing grml on reiser4 requires a reboot and running lilo again.
-
-Please reboot and rerun lilo using:
-
-mount -t reiser4 -o rw,suid,dev $PARTITION /mnt/test
-chroot /mnt/test lilo
-
-If this fails try it once more.
-Sorry for any inconvenience caused." 15 70
-fi
-
 checkvalue $GRML2HD_FINALIZE && finalize
 
 rm -f $TMPFILE

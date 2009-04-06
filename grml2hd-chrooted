@@ -4,7 +4,6 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>, (c) Andreas Gredler <jimmy@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Tue Aug 26 18:13:13 CEST 2008 [mika]
 ################################################################################
 
 PN='grml2hd'
@@ -131,7 +130,7 @@ newuser() {
     NEWUSER="$(dialog --stdout --title "${PN}" --inputbox "Please enter username \
 (e.g. grml) for the main user you want to use on your grml system.
 
-Please notice, that the user has some administrative rights on a few commands using the sudo mechanism.
+Please note that the user has some administrative rights on a few commands using the sudo mechanism.
 If you want to change that behaviour please adjust sudo setup via running visudo as root.
 " 15 60 grml)"
     REALNAME="$(dialog --stdout --title "${PN}" --inputbox "Your real name (eg'John GRML User'):" 10 60)"

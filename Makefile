@@ -15,7 +15,7 @@ man-stamp: grml2hd.txt
 	sed -i 's/<emphasis role="strong">/<emphasis role="bold">/' grml2hd.xml
 	xsltproc /usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl grml2hd.xml
 	# ugly hack to avoid duplicate empty lines in manpage
-	# notice: docbook-xsl 1.71.0.dfsg.1-1 is broken! make sure you use 1.68.1.dfsg.1-0.2!
+	# note: docbook-xsl 1.71.0.dfsg.1-1 is broken! make sure you use 1.68.1.dfsg.1-0.2!
 	cp grml2hd.8 grml2hd.8.tmp
 	uniq grml2hd.8.tmp > grml2hd.8
 	# ugly hack to avoid '.sp' at the end of a sentence or paragraph:

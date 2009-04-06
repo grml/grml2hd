@@ -3,7 +3,6 @@
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>
 # Bug-Reports:   see http://grml.org/bugs/
 # License:       This file is licensed under the GPL v2.
-# Latest change: Thu Apr 27 17:29:07 CEST 2006 [mika]
 ################################################################################
 
 # username of user which should be used by default on grml system:
@@ -40,15 +39,13 @@ BOOT_APPEND=""
 
 # which filesystem should be used for installation:
 # e.g.: "ext3"
-# valid values: ext3, ext2, jfs, xfs, reiserfs, reiser4
-# notice: reiser4 only supported with grml >= 0.5
-#         reiser4 has problems with lilo/booting, it's *very* experimental
-#         reiser4, jfs and xfs not supported with grml-small
+# valid values: ext3, ext2, jfs, xfs, reiserfs
+# note: jfs and xfs not supported with grml-small
 FILESYSTEM="ext3"
 
 # run grml-x to create /etc/X11/xorg.conf?
-# notice: does not work with grml-small as there does not exist a X window system
-#         setting it won't affect it
+# note: does not work with grml-small as there does not exist a X window system
+#       setting it won't affect it
 GRMLX='yes'
 
 # commands which should be run right before main installation

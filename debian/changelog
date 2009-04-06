@@ -1,3 +1,13 @@
+grml2hd (1.2.0) unstable; urgency=low
+
+  * Add new dialog displaying information for Debian/unstable newbies.
+  * Replace 'notice' with 'note'.
+  * Remove all reiser4 references.
+  * Dump standard version to 3.8.1 (no further changes).
+  * Drop all 'Latest changes' lines.
+
+ -- Michael Prokop <mika@grml.org>  Mon, 06 Apr 2009 17:05:19 +0200
+
 grml2hd (1.1.4) unstable; urgency=low
 
   * /etc/inittab: instead of poweroff let's reboot when Ctrl-Alt-Del
