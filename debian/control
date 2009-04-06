@@ -15,5 +15,12 @@ Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, lilo, grub, grml-autoconfig, initramfs-tools, file-rc, grml-scripts (>= 0.7-19)
 Suggests: grml2hd-utils, grml-x, jfsutils, xfsprogs, reiserfsprogs
 Description: make a harddisk installation of grml
- grml2hd is a script that installs grml on your harddisk.
+ grml2hd is a script that installs a running grml system
+ on your hard disk. It just copies the running system
+ and does some further magic (adjust user setup, install
+ bootloader,..) to get a working harddisk installation of
+ grml.
+ Please do NOT use grml2hd if you aren't an experienced
+ Debian/unstable user. Thanks!
+ .
  Use it with care! Also take a look at grml2hd-utils.
