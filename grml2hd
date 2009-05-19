@@ -48,7 +48,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='1.2.0'
+VERSION='1.2.1'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
@@ -928,15 +928,15 @@ http://grml.org/contact/    contact (at) grml.org
 
   dialog --title "$PN" --yes-label Continue --no-label Quit --defaultno --yesno "Important note!
 
-grml is NOT a Linux distribution for newbies and should
-be installed to hard disk only if really know what
+grml2hd does NOT provide a Linux distribution for newbies and
+grml should be installed to hard disk only if really know what
 you are doing (or don't care about maintainability, seriously).
 
   * Are you used to work with Debian/unstable?
   * Do you know how to report bugs to Debian?
   * Are you aware of the differences between plain Debian and grml?
 
-Please install grml only if can answer ALL question with YES.
+Please install grml only if can answer ALL questions with YES.
 Are you sure you want to continue?
   " 0 0
   fi

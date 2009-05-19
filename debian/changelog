@@ -1,3 +1,9 @@
+grml2hd (1.2.1) unstable; urgency=low
+
+  * Minor spelling fixes.
+
+ -- Michael Prokop <mika@grml.org>  Tue, 19 May 2009 20:51:29 +0200
+
 grml2hd (1.2.0) unstable; urgency=low
 
   * Add new dialog displaying information for Debian/unstable newbies.
