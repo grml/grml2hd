@@ -1,3 +1,12 @@
+grml2hd (1.2.2) unstable; urgency=low
+
+  * Fix chpasswd handling as option '-m' isn't available anymore.
+  * Mount /dev and /dev/pts to target system before chrooting
+    into it. Otherwise it will hang with 'cannot open tty-output'
+    under GNU screen.
+
+ -- Michael Prokop <mika@grml.org>  Sat, 30 May 2009 23:09:08 +0200
+
 grml2hd (1.2.1) unstable; urgency=low
 
   * Minor spelling fixes.

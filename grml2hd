@@ -48,7 +48,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='1.2.1'
+VERSION='1.2.2'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
@@ -845,7 +845,11 @@ Please make sure that the partition itself is available (check e.g. via cfdisk)!
 }
 
 call_chroot() {
+  mount --bind /dev     $TARGET/dev
+  mount --bind /dev/pts $TARGET/dev/pts
   chroot $TARGET grml2hd-chrooted
+  umount -l $TARGET/dev/pts
+  umount -l $TARGET/dev
 }
 
 finalize() {

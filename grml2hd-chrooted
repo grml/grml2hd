@@ -73,11 +73,19 @@ root_account() {
          "Retry" --msgbox "Passwords do not match!" 10 60)
        fi
      done
-       echo root:"$ROOTPW1" | chpasswd -m
+       if chpasswd --help 2>&1 | grep -q -- '-m,' ; then
+         echo root:"$ROOTPW1" | chpasswd -m
+       else
+         echo root:"$ROOTPW1" | chpasswd
+       fi
        export ROOTPW1=''
        export ROOTPW2=''
   else
-    echo "root:$ROOTPASSWD" | chpasswd -m
+    if chpasswd --help 2>&1 | grep -q -- '-m,' ; then
+      echo "root:$ROOTPASSWD" | chpasswd -m
+    else
+      echo "root:$ROOTPASSWD" | chpasswd
+    fi
     export ROOTPASSWD=''
   fi
 }
@@ -148,16 +156,16 @@ If you want to change that behaviour please adjust sudo setup via running visudo
   su -s /bin/sh grml -c "rsync -Ha --ignore-existing /etc/skel/ /home/grml/"
 
   if ! [ "$NEWUSER" == grml ] ; then
-    sed -i "s/grml/$NEWUSER/g"      /etc/aliases
-    sed -i "s/grml/$NEWUSER/g"      /etc/sudoers
     sed -i "s/grml User/$REALNAME/" /etc/passwd
     sed -i "s/grml/$NEWUSER/g"      /etc/passwd
     sed -i "s/grml/$NEWUSER/g"      /etc/group
     sed -i "s/grml/$NEWUSER/g"      /etc/shadow
     sed -i "s/grml/$NEWUSER/g"      /etc/gshadow
-    sed -i "s/grml/$NEWUSER/g"      /etc/grml/screen_multisession
     sed -i "s/uid=[a-z]*/uid=$NEWUSER/g"  /etc/fstab
     sed -i "s/gid=[a-z]*/gid=$NEWUSER/g"  /etc/fstab
+    [ -f /etc/grml/screen_multisession ] && sed -i "s/grml/$NEWUSER/g" /etc/grml/screen_multisession
+    [ -f /etc/aliases ]            && sed -i "s/grml/$NEWUSER/g" /etc/aliases
+    [ -f /etc/sudoers ]            && sed -i "s/grml/$NEWUSER/g"      /etc/sudoers
     [ -f /etc/automount.sh ]       && sed -i "s/=grml/=$NEWUSER/g"    /etc/automount.sh
     [ -f /etc/samba/smb.conf ]     && sed -i "s#/home/grml#/home/${NEWUSER}#g"    /etc/samba/smb.conf
     [ -f /etc/pcmcia/shared ]      && sed -i "s#/home/grml/#/home/${NEWUSER}/#g"  /etc/pcmcia/shared
@@ -180,11 +188,19 @@ If you want to change that behaviour please adjust sudo setup via running visudo
         "Retry" --msgbox "Passwords do not match!" 10 60)
       fi
     done
-    echo "$NEWUSER:$USERPW1" | chpasswd -m
+    if chpasswd --help 2>&1 | grep -q -- '-m,' ; then
+      echo "$NEWUSER:$USERPW1" | chpasswd -m
+    else
+      echo "$NEWUSER:$USERPW1" | chpasswd
+    fi
     export USERPW1=''
     export USERPW2=''
   else
-    echo "$NEWUSER:$USERPASSWD" | chpasswd -m
+    if chpasswd --help 2>&1 | grep -q -- '-m,' ; then
+      echo "$NEWUSER:$USERPASSWD" | chpasswd -m
+    else
+      echo "$NEWUSER:$USERPASSWD" | chpasswd
+    fi
     export USERPASSWD=''
   fi
 }
