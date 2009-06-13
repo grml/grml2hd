@@ -1,3 +1,10 @@
+grml2hd (1.2.3) unstable; urgency=low
+
+  * grml2hd-bootparams: replace speakup_synth with speakup.synth.
+    Thanks to Michael Whapples for the bugreport. [Testing: issue689]
+
+ -- Michael Prokop <mika@grml.org>  Sat, 13 Jun 2009 02:24:54 +0200
+
 grml2hd (1.2.2) unstable; urgency=low
 
   * Fix chpasswd handling as option '-m' isn't available anymore.

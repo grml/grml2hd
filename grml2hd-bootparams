@@ -37,8 +37,8 @@ if checkbootparam "brltty" ; then
   BRLTTY_OPTS="=$(getbootparam brltty)"
 fi
 
-if checkbootparam "speakup_synth" ; then
-  SPEAKUP_OPTS="=$(getbootparam speakup_synth)"
+if checkbootparam "speakup.synth" ; then
+  SPEAKUP_OPTS="=$(getbootparam speakup.synth)"
 fi
 
 if checkbootparam "resume" ; then
@@ -66,7 +66,7 @@ get_value "pci=assign-busses"  && PCIASSIGN="on"  || PCIASSIGN="off"
 get_value "irqpoll"            && IRQPOLL="on"    || IRQPOLL="off"
 get_value "resume"             && RESUME="on"     || RESUME="off"
 get_value "brltty"             && BRLTTY="on"     || BRLTTY="off"
-get_value "speakup_synth"      && SPEAKUP="on"    || SPEAKUP="off"
+get_value "speakup.synth"      && SPEAKUP="on"    || SPEAKUP="off"
 get_value "swspeak"            && SWSPEAK="on"    || SWSPEAK="off"
 
 # main program
@@ -103,7 +103,7 @@ Set the boot parameters for kernel via bootmanager (lilo/grub):
   irqpoll 'when an interrupt is not handled search in all handlers' $IRQPOLL \
   resume$RESUME_OPTS 'specify swap partition to resume from' $RESUME \
   brltty$BRLTTY_OPTS 'start Braille-Terminal (no X)' $BRLTTY \
-  speakup_synth$SPEAKUP_OPTS 'use speakup kernel module with given hardware type' $SPEAKUP \
+  speakup.synth$SPEAKUP_OPTS 'use speakup kernel module with given hardware type' $SPEAKUP \
   swspeak 'use software synthesizer through speakup' $SWSPEAK \
   2>$TMPFILE
 }
