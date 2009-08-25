@@ -6,8 +6,9 @@ grml2hd (1.2.4) unstable; urgency=low
 
   [ Michael Prokop ]
   * Bump Standards-Version to 3.8.3 (no further changes).
+  * Bump Compat-Version to 5.
 
- -- Michael Prokop <mika@grml.org>  Tue, 25 Aug 2009 22:25:57 +0200
+ -- Michael Prokop <mika@grml.org>  Tue, 25 Aug 2009 22:29:14 +0200
 
 grml2hd (1.2.3) unstable; urgency=low
 
