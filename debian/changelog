@@ -1,3 +1,14 @@
+grml2hd (1.2.4) unstable; urgency=low
+
+  [ Andreas Gredler ]
+  * Fix "grml2hd does not quit on second dialog" issue.
+    [Closes: issue727]
+
+  [ Michael Prokop ]
+  * Bump Standards-Version to 3.8.3 (no further changes).
+
+ -- Michael Prokop <mika@grml.org>  Tue, 25 Aug 2009 22:25:57 +0200
+
 grml2hd (1.2.3) unstable; urgency=low
 
   * grml2hd-bootparams: replace speakup_synth with speakup.synth.
