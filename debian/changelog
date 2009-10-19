@@ -1,10 +1,9 @@
-grml2hd (1.2.5) UNRELEASED; urgency=low
+grml2hd (1.2.5) unstable; urgency=low
 
-  [ Ulrich Dangel ]
-  * Fix grub support in non interactive mode
-    [Closes: issue 707]
+  * Fix grub support in non-interactive mode.
+    [Closes: issue707]
 
- -- Ulrich Dangel <uli@spamt.net>  Mon, 19 Oct 2009 23:55:57 +0200
+ -- Ulrich Dangel <mru@grml.org>  Mon, 19 Oct 2009 23:55:57 +0200
 
 grml2hd (1.2.4) unstable; urgency=low
 
