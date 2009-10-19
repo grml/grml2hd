@@ -1038,9 +1038,13 @@ if ! is_grml2hd_noninteractive ; then
     *)
       BOOT_PARTITION="$GETMBR" ;;
   esac
+fi
+
+case "$BOOT_PARTITION" in
+    /dev/[h,s]d[a-z]) USE_MBR=1 ;;
+esac
   echo "BOOT_PARTITION=$BOOT_PARTITION" >> $CONFIGTMP
   echo "USE_MBR=$USE_MBR" >> $CONFIGTMP
-fi
 }
 
 # now run the functions:
