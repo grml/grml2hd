@@ -1,3 +1,9 @@
+grml2hd (1.2.6) unstable; urgency=low
+
+  * Use bash in shebang line so it works with dash as well.
+
+ -- Michael Prokop <mika@grml.org>  Thu, 22 Oct 2009 02:04:25 +0200
+
 grml2hd (1.2.5) unstable; urgency=low
 
   * Fix grub support in non-interactive mode.

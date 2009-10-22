@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Filename:      grml2hd
 # Purpose:       install grml to harddisk
 # Authors:       grml-team (grml.org), (c) Andreas Gredler <jimmy@grml.org>, Michael Prokop <mika@grml.org>
@@ -48,7 +48,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='1.2.5'
+VERSION='1.2.6'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
