@@ -817,6 +817,7 @@ getfs() {
           --radiolist "Which filesystem do you want to use on $PARTITION on your grml system?
 Please make sure that the partition itself is available (check e.g. via cfdisk)!" 14 78 5 \
           ext3   "the default on most Linux systems (recommended)" on \
+          ext4   "successor to ext3" off \
           ext2   "ext3 without journaling" off \
           xfs    "journaling file system by SGI (note: problems with lilo)" off \
           jfs    "the journaled file system by IBM" off \
