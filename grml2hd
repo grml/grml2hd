@@ -702,8 +702,8 @@ raid-extra-boot=${SWRAID}
 
 Everything looks OK so far. Continuing.
 
-Please note that installation of grub is not yet support for
-software RAID inside grml2hd yet.
+Please note that installation of grub is not supported
+for software RAID inside grml2hd yet.
 
 " 13 70
     else
@@ -882,9 +882,6 @@ finalize() {
 
   Do you have any further questions? Bug reports? Feedback?
   Do not hesitate to contact us! http://grml.org/contact/
-
-  Please consider donation if you like grml!
-  http://grml.org/donations/
 
   Now reboot the system to use the harddisk installation.
 " 0 0
