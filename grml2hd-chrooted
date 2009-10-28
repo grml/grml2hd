@@ -99,7 +99,7 @@ xconfig() {
   if [ -z "$GRML_SMALL" -a -x /usr/bin/grml-x ] ; then
      if [ -n "$GRML2HD_NONINTERACTIVE" ] ; then
         # running grml in noninteractive mode and if $GRMLX is set:
-        [ -n "$GRMLX" ] && grml-x -force -nostart fluxbox 1>/dev/null 2>&1
+        [ -n "$GRMLX" ] && grml-x -force -nostart fluxbox >/dev/null 2>&1
      else
         if ! [ -f /etc/X11/xorg.conf ] ; then
            dialog --stdout --title "${PN}" --defaultno --yesno "You do not have the configuration file /etc/X11/xorg.conf
@@ -110,7 +110,7 @@ the file according to your hardware for you.
 Create /etc/X11/xorg.conf?" 12 70
            if [[ $? == 0 ]]; then
               SUCCESS=''
-              grml-x -force -nostart fluxbox 1>/dev/null && SUCCESS='1'
+              grml-x -force -nostart fluxbox >/dev/null && SUCCESS='1'
            fi
            if ! [ -z "$SUCCESS" ] ; then
               is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Running grml-x was successful and you should have a
@@ -250,7 +250,7 @@ EOF
 }
 
 install_lilo() {
-  lilo 1> /dev/null 2>/tmp/lilo.error
+  lilo > /dev/null 2>/tmp/lilo.error
   if [ "$?" -eq 0 ]; then
     is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Lilo exited successfully" 5 60
   else
@@ -293,7 +293,12 @@ grubdevice() {
 
   # create device.map
   if ! [ -f "$device_map" ] ; then
-     echo 'quit' | grub --device-map="$device_map" 1>/dev/null 2>/tmp/grub.device-map
+    # grub2:
+    if which grub-mkdevicemap >/dev/null 2>&1 ; then
+      grub-mkdevicemap --device-map="$device_map" >/dev/null 2>/tmp/grub.device-map
+    else
+      echo 'quit' | grub --device-map="$device_map" >/dev/null 2>/tmp/grub.device-map
+    fi
   fi
 
   # taken from d-i's trunk/packages/arch/i386/grub-installer/grub-installer:
@@ -324,25 +329,9 @@ grubdevice() {
   esac
 }
 
-install_grub() {
-  if [ -z "$PARTITION" ] ; then
-     echo "\$PARTITION not set, can not install grub.">&2
-     exit 1
-  fi
-
-  # make sure we don't have a /etc/lilo.conf present if using grub
-  # as several Debian packages might think we use lilo
-  [ -r /etc/lilo.conf ] && mv -f /etc/lilo.conf /etc/lilo.conf.unused
-
-  # /dev/mapper/* isn't available in /boot/grub/device.map:
-  if [ -n "$LVM" ] ; then
-     GRUBDEVICE="$BOOT_PARTITION"
-     GRUBSETUPDEVICE="$BOOT_PARTITION"
-  else
-     grubdevice "$PARTITION" 1>/dev/null 2>/tmp/grubdevice
-  fi
-
-  get_rootpartition 1>/dev/null 2>/tmp/grub.rootpartition
+install_grub_legacy()
+{
+  get_rootpartition >/dev/null 2>/tmp/grub.rootpartition
 
   if ! [ -r /boot/grub/grml-template_menu.lst ] ; then
      echo "Error: could not find /boot/grub/grml-template_menu.lst">&2
@@ -363,35 +352,84 @@ install_grub() {
         # by update-grub, see http://bts.grml.org/grml/issue135
         [ -L /boot/vmlinuz ] && rm -f /boot/vmlinuz
 
-	# make sure we have everything we need for grub-installation
-	if ! [ -r /boot/grub/stage1 ] ; then
-	   if [ $(dpkg --print-architecture) = amd64 ] ; then
-	      ln -sf /usr/lib/grub/x86_64-pc/stage1 /boot/grub/stage1
-	      ln -sf /usr/lib/grub/x86_64-pc/stage2 /boot/grub/stage2
-	   fi
-	   if [ $(dpkg --print-architecture) = i386 ] ; then
-	      ln -sf /usr/lib/grub/i386-pc/stage1 /boot/grub/stage1
-	      ln -sf /usr/lib/grub/i386-pc/stage2 /boot/grub/stage2
-	   fi
-	fi
+        # make sure we have everything we need for grub-installation
+        if ! [ -r /boot/grub/stage1 ] ; then
+           if [ $(dpkg --print-architecture) = amd64 ] ; then
+              ln -sf /usr/lib/grub/x86_64-pc/stage1 /boot/grub/stage1
+              ln -sf /usr/lib/grub/x86_64-pc/stage2 /boot/grub/stage2
+           fi
+           if [ $(dpkg --print-architecture) = i386 ] ; then
+              ln -sf /usr/lib/grub/i386-pc/stage1 /boot/grub/stage1
+              ln -sf /usr/lib/grub/i386-pc/stage2 /boot/grub/stage2
+           fi
+        fi
 
-        update-grub -y 1>/dev/null 2>/tmp/update-grub.error
+        update-grub -y >/dev/null 2>/tmp/update-grub.error
 
         echo -en "debug: root ${GRUBDEVICE}\nsetup ${GRUBSETUPDEVICE}\n" > /tmp/grub.debug
-        echo -en "root ${GRUBDEVICE}\nsetup ${GRUBSETUPDEVICE}\n" | grub install 1>/tmp/grub.install 2>/tmp/grub.error
+        echo -en "root ${GRUBDEVICE}\nsetup ${GRUBSETUPDEVICE}\n" | grub install
 
-        if [ "$?" -eq 0 ]; then
-           is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Installation of Grub exited successfully" 5 60
-        else
-          dialog --stdout --title "${PN}" --msgbox "Installation of grub failed! Please fix manually.
+     fi
+  fi
+}
+
+install_grub2()
+{
+  # append bootoptions:
+  if ! [ -r /etc/default/grub ] ; then
+    echo "Error: /etc/default/grub not present.">&2
+  else
+    if [ -n "$BOOTOPTIONS_APPEND" ] || [ -n "$BOOT_APPEND" ] ; then
+      # string already present?
+      if grep -q '^GRUB_CMDLINE_LINUX=' /etc/default/grub ; then
+        sed -i "s|^GRUB_CMDLINE_LINUX=.*|#GRUB_CMDLINE_LINUX=\"${BOOTOPTIONS_APPEND} ${BOOT_APPEND}\"|" /etc/default/grub
+      else # append:
+        echo "GRUB_CMDLINE_LINUX=\"${BOOTOPTIONS_APPEND} ${BOOT_APPEND}\"" >> /etc/default/grub
+      fi
+    fi
+  fi
+
+  update-grub >/dev/null 2>/tmp/update-grub.error
+
+  grub-install "$BOOT_PARTITION" >/dev/null 2>/tmp/grub.error
+}
+
+install_grub() {
+  if [ -z "$PARTITION" ] ; then
+     echo "\$PARTITION not set, can not install grub.">&2
+     exit 1
+  fi
+
+  # make sure we don't have a /etc/lilo.conf present if using grub
+  # as several Debian packages might think we use lilo
+  [ -r /etc/lilo.conf ] && mv -f /etc/lilo.conf /etc/lilo.conf.unused
+
+  # /dev/mapper/* isn't available in /boot/grub/device.map:
+  if [ -n "$LVM" ] ; then
+     GRUBDEVICE="$BOOT_PARTITION"
+     GRUBSETUPDEVICE="$BOOT_PARTITION"
+  else
+     grubdevice "$PARTITION" >/dev/null 2>/tmp/grubdevice
+  fi
+
+  # grub2:
+  if which grub-mkdevicemap >/dev/null 2>&1 ; then
+    install_grub2 >/tmp/grub.install 2>/tmp/grub.error
+  else # grub1:
+    install_grub_legacy >/tmp/grub.install 2>/tmp/grub.error
+  fi
+
+  if [ "$?" -eq 0 ]; then
+     is_grml2hd_noninteractive || \
+     dialog --stdout --title "${PN}" --msgbox "Installation of Grub exited successfully" 5 60
+  else
+     dialog --stdout --title "${PN}" --msgbox "Installation of Grub failed! Please fix manually.
 
 Error:
 
 $(cat /tmp/grub.error)
 
 " 0 0
-        fi
-     fi
   fi
 }
 
@@ -453,8 +491,8 @@ grub-install --recheck --root-directory /mnt/sda3 /dev/sda
 fix_sysvinit() {
   # purge grml-sysvinit only if it's present:
   if dpkg --list grml-sysvinit | grep -q '^ii' ; then
-     dpkg --purge grml-sysvinit 1>/dev/null 2>&1
-     cp /sbin/init /etc 1>/dev/null 2>&1
+     dpkg --purge grml-sysvinit >/dev/null 2>&1
+     cp /sbin/init /etc >/dev/null 2>&1
   fi
   if [ -n "$GRML_SMALL" ] ; then
      cp /etc/runlevel.conf.hdinstall.small /etc/runlevel.conf
@@ -491,9 +529,9 @@ adjust_services() {
 }
 
 remove_unwanted_packages() {
-  dpkg --purge grml-firefox 1>/dev/null 2>&1
-  # dpkg --purge live-initramfs 1>/dev/null 2>&1
-  rm -rf /etc/skel/.mozilla/firefox 1>/dev/null 2>&1
+  dpkg --purge grml-firefox >/dev/null 2>&1
+  # dpkg --purge live-initramfs >/dev/null 2>&1
+  rm -rf /etc/skel/.mozilla/firefox >/dev/null 2>&1
 }
 
 create_initrd() {
@@ -504,7 +542,7 @@ create_initrd() {
     echo "XXX";
     echo "Building initrd/initramfs..."
     echo "XXX";
-    update-initramfs -c -t -k $(uname -r) 1>/tmp/initramfs.error 2>&1
+    update-initramfs -c -t -k $(uname -r) >/tmp/initramfs.error 2>&1
     echo "100") | \
   dialog --title "${PN}" --gauge "Building initrd/initramfs..." 9 50 0
 

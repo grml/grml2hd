@@ -684,6 +684,7 @@ get_bootparams() {
   if ! is_grml2hd_noninteractive ; then
     grml2hd-bootparams
     BOOTOPTIONS_APPEND=$(cat /tmp/bootappendline)
+    echo "BOOTOPTIONS_APPEND=\"$BOOTOPTIONS_APPEND\"" >> "$CONFIGTMP"
   fi
 }
 

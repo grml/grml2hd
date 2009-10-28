@@ -10,7 +10,7 @@ LANG=C
 LC_ALL=C
 PN=$(basename "$0")
 TMPFILE=$(mktemp)
-CMDLINE="$(cat /proc/cmdline)"
+CMDLINE="$(cat /proc/cmdline 2>/dev/null)"
 
 # same for strings
 stringinstring(){
