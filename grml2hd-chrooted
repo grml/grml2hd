@@ -382,8 +382,9 @@ install_grub2()
     if [ -n "$BOOTOPTIONS_APPEND" ] || [ -n "$BOOT_APPEND" ] ; then
       # string already present?
       if grep -q '^GRUB_CMDLINE_LINUX=' /etc/default/grub ; then
-        sed -i "s|^GRUB_CMDLINE_LINUX=.*|#GRUB_CMDLINE_LINUX=\"${BOOTOPTIONS_APPEND} ${BOOT_APPEND}\"|" /etc/default/grub
+        sed -i "s|^GRUB_CMDLINE_LINUX=\"\(.*\)\"|GRUB_CMDLINE_LINUX=\"\1 ${BOOTOPTIONS_APPEND} ${BOOT_APPEND}\"|" /etc/default/grub
       else # append:
+        echo "# appended by grml2hd:" >> /etc/default/grub
         echo "GRUB_CMDLINE_LINUX=\"${BOOTOPTIONS_APPEND} ${BOOT_APPEND}\"" >> /etc/default/grub
       fi
     fi

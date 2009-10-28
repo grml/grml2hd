@@ -1066,6 +1066,7 @@ checkvalue $GRML2HD_CHECK4SPACE && check4space
 checkvalue $GRML2HD_CHECK4MBR && check4mbr
 checkvalue $GRML2HD_LILO_SW_RAID && lilo_sw_raid
 checkvalue $GRML2HD_GETFS && getfs
+checkvalue $GRML2HD_GET_BOOTPARAMS && get_bootparams
 
 if checkvalue $GRML2HD_INITIALIZE ; then
    initialize || initialize_error
@@ -1085,7 +1086,6 @@ fi
 
 checkvalue $GRML2HD_CREATE_FSTAB && create_fstab
 checkvalue $GRML2HD_CREATE_INITTAB && create_inittab
-checkvalue $GRML2HD_GET_BOOTPARAMS && get_bootparams
 checkvalue $GRML2HD_CREATE_LILOCONFIG && create_liloconfig
 checkvalue $GRML2HD_CALL_CHROOT && call_chroot
 checkvalue $GRML2HD_FINALIZE && finalize
