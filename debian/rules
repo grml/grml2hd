@@ -31,8 +31,8 @@ install: build
 
 	# Add here commands to install the package into debian/grml2hd.
 	$(INSTALL_EXECUTABLES) grml2hd            debian/grml2hd/usr/sbin/
-	$(INSTALL_EXECUTABLES) grml2hd-chrooted   debian/grml2hd/usr/sbin/
-	$(INSTALL_EXECUTABLES) grml2hd-bootparams debian/grml2hd/usr/bin/
+	$(INSTALL_EXECUTABLES) grml2hd-bootparams debian/grml2hd/usr/share/grml2hd/
+	$(INSTALL_EXECUTABLES) grml2hd-chrooted   debian/grml2hd/usr/share/grml2hd/
 	$(INSTALL_FILES) grml.bmp                 debian/grml2hd/usr/share/grml2hd/
 	$(INSTALL_FILES) grml.bmp.conf            debian/grml2hd/usr/share/grml2hd/
 	$(INSTALL_FILES) bootscreen.bmp           debian/grml2hd/usr/share/grml2hd/
@@ -52,8 +52,6 @@ binary-indep: install
 	dh_installchangelogs 
 	dh_installdocs debian/TODO
 	dh_installman grml2hd.8
-	dh_link /usr/share/man/man8/grml2hd.8.gz /usr/share/man/man8/grml2hd-bootparams.8.gz
-	dh_link /usr/share/man/man8/grml2hd.8.gz /usr/share/man/man8/grml2hd-chrooted.8.gz
 	dh_compress
 	mkdir -p $(CURDIR)/debian/grml2hd/usr/share/lintian/overrides/
 	cp -av debian/overrides $(CURDIR)/debian/grml2hd/usr/share/lintian/overrides/grml2hd

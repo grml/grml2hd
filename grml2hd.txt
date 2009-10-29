@@ -212,13 +212,13 @@ Files
 Configuration file for automatic installation via grml2hd. You do not
 need to adjust this file if you do not want to run the automatic installation.
 
-  /usr/sbin/grml2hd-chrooted
+  /usr/share/grml2hd/grml2hd-chrooted
 
 A small helper script, that executes a few commands in the harddisk
 installation. You'll never need this script, it's only useful for the
-grml2hd script.
+grml2hd script itself.
 
-  /usr/bin/grml2hd-bootparams
+  /usr/share/grml2hd/grml2hd-bootparams
 
 A small helper script that reads kernel's command line and displays a menu
 of boot parameters which should be used for lilo's append line.  The script
