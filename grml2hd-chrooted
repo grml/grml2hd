@@ -437,10 +437,18 @@ $(cat /tmp/grub.error)
 bootmanager_selection() {
   # in non-interactive mode we use lilo by default, unless $BOOT_MANAGER is set to grub
   # our grub code within grml2hd does not support SWRAID and LVM yet, so use lilo
-  if [ -n "$SWRAID" -o -n "$LVM" ] ; then
-     USE_GRUB=''
-     return 0
-     LVM_BOOT='\n\nWarning: installation of grub not supported when using SW-RAID and/or LVM!'
+  #if [ -n "$SWRAID" -o -n "$LVM" ] ; then
+  #   USE_GRUB=''
+  #   return 0
+  #   LVM_BOOT='\n\nWarning: installation of grub not supported when using SW-RAID and/or LVM!'
+  #fi
+
+  # grub2 can not be installed to PBR:
+  if [ -z "$USE_MBR" ] ; then
+    GRUB_MBR_INFO='\n
+Warning: installation of grub2 is not possible within a partition!
+You will have to manually fix grub installation then. Check out
+http://grub.enbug.org/Grub2LiveCdInstallGuide for details.'
   fi
 
   if is_grml2hd_noninteractive ; then
@@ -451,7 +459,7 @@ bootmanager_selection() {
      fi
   else # running in interactive mode:
      GETBOOTMANAGER=$(dialog --stdout --title "grml2hd" --default-item lilo \
-                             --radiolist "Which bootmanager do you want to install?$LVM_BOOT" 0 0 0 \
+                             --radiolist "Which bootmanager do you want to install?$GRUB_MBR_INFO" 0 0 0 \
                              lilo  "install lilo on partition $BOOT_PARTITION" on \
                              grub  "install grub on partition $BOOT_PARTITION" off)
      [ $? -eq 0 ] || exit 20
@@ -601,9 +609,7 @@ checkvalue $CHROOT_ADJUSTSERVICES && adjust_services
 if checkvalue $CHROOT_REMOVE_PACKAGES_SERVER ; then
    if [ -z "$NOSWREMOVAL" ] ; then
       if ! is_grml2hd_noninteractive ; then
-         if [ -z "$GRML_SMALL" ] ; then
-            [ -r /usr/sbin/remove-packages-server ] && /usr/sbin/remove-packages-server
-         fi
+         [ -r /usr/sbin/remove-packages-server ] && /usr/sbin/remove-packages-server
       fi
    fi
 fi
