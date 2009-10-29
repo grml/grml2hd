@@ -396,6 +396,8 @@ install_grub2()
     fi
   fi
 
+  grub-mkdevicemap >/dev/null 2>/tmp/grub.device-map.error
+
   update-grub >/dev/null 2>/tmp/update-grub.error
 
   grub-install "$BOOT_PARTITION" >/dev/null 2>/tmp/grub.error
