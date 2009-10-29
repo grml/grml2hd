@@ -39,8 +39,8 @@ BOOT_APPEND=""
 
 # which filesystem should be used for installation:
 # e.g.: "ext3"
-# valid values: ext3, ext2, jfs, xfs, reiserfs
-# note: jfs and xfs not supported with grml-small
+# valid values: ext3, ext4, ext2, jfs, xfs, reiserfs
+# note: jfs is not supported with grml-small
 FILESYSTEM="ext3"
 
 # run grml-x to create /etc/X11/xorg.conf?
@@ -55,9 +55,7 @@ GRMLX='yes'
 #   apt-get -o Acquire::HTTP::Timeout=1 -y --force-yes update
 #   apt-get -y --force-yes install jfsutils
 # }
-function PREEXECUTE() {
-  echo "running preexecute function"
-}
+function PREEXECUTE() { ; }
 
 # commands which should be run right before finishing installation
 # e.g.:
@@ -71,8 +69,6 @@ function PREEXECUTE() {
 #   ntpdate time.tugraz.at
 # }
 # function POSTEXECUTE() { ; }
-function POSTEXECUTE() {
-  echo "running postexecute function"
-}
+function POSTEXECUTE() { ; }
 
 ## END OF FILE #################################################################
