@@ -12,7 +12,7 @@ Vcs-Browser: http://git.grml.org/?p=grml2hd.git
 
 Package: grml2hd
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, lilo, grub, grml-autoconfig, initramfs-tools, file-rc, grml-scripts (>= 0.7-19)
+Depends: ${shlibs:Depends}, ${misc:Depends}, lilo, grub, grml-autoconfig, initramfs-tools, file-rc, grml-scripts (>= 0.7-19), grml-core
 Suggests: grml2hd-utils, grml-x, jfsutils, xfsprogs, reiserfsprogs
 Description: make a harddisk installation of grml
  grml2hd is a script that installs a running grml system

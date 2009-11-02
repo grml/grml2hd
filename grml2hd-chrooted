@@ -14,6 +14,8 @@ if [ -z "$GRML2HD" ] ; then
   exit 1
 fi
 
+. /usr/lib/grml/core.sh
+
 # source config:
 if ! [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
    [ -r /etc/grml2hd/config ] && . /etc/grml2hd/config
@@ -519,7 +521,7 @@ fix_sysvinit() {
 }
 
 adjust_timezone() {
-  if grep -q -e utc -e gmt /proc/cmdline ; then
+  if checkbootparam utc || checkbootparam gmt ; then
      sed -i 's/^UTC=.*/UTC=yes/' /etc/default/rcS
      if [ "$?" -eq 0 ]; then
         is_grml2hd_noninteractive ||  dialog --stdout --title "${PN}" --msgbox "Adjusted timezone for UTC as requested via bootoption." 5 60

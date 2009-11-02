@@ -10,28 +10,8 @@ LANG=C
 LC_ALL=C
 PN=$(basename "$0")
 TMPFILE=$(mktemp)
-CMDLINE="$(cat /proc/cmdline 2>/dev/null)"
 
-# same for strings
-stringinstring(){
-  case "$2" in *$1*) return 0;; esac
-  return 1
-}
-
-# Reread boot command line; echo last parameter's argument or return false.
-getbootparam(){
-  stringinstring " $1=" "$CMDLINE" || return 1
-  result="${CMDLINE##*$1=}"
-  result="${result%%[ 	]*}"
-  echo "$result"
-  return 0
-}
-
-# Check boot commandline for specified option
-checkbootparam(){
-  stringinstring " $1" "$CMDLINE"
-  return "$?"
-}
+. /usr/lib/grml/core.sh
 
 if checkbootparam "brltty" ; then
   BRLTTY_OPTS="=$(getbootparam brltty)"
@@ -45,29 +25,24 @@ if checkbootparam "resume" ; then
   RESUME_OPTS="=$(getbootparam resume)"
 fi
 
-# helper functions
-get_value()
-{
-  grep -q $* /proc/cmdline && return 0 || return 1
-}
 
-get_value "noapic"             && NOAPIC="on"     || NOAPIC="off"
-get_value "acpi=force"         && ACPI_FORCE="on" || ACPI_FORCE="off"
-get_value "nolapic"            && NOLAPIC="on"    || NOLAPIC="off"
-get_value "lapic"              && LAPIC="on"      || LAPIC="off"
-get_value "acpi=off"           && ACPI_OFF="on"   || ACPI_OFF="off"
-get_value "acpi=noirq"         && ACPI_NOIRQ="on" || ACPI_NOIRQ="off"
-get_value "noirqbalance"       && NOIRQ="on"      || NOIRQ="off"
-get_value "nopcmcia"           && NOPCMIA="on"    || NOPCMIA="off"
-get_value "nodma"              && NODMA="on"      || NODMA="off"
-get_value "pci=noacpi"         && PCINOACPI="on"  || PCINOACPI="off"
-get_value "pci=biosirq"        && PCIBIOS="on"    || PCIBIOS="off"
-get_value "pci=assign-busses"  && PCIASSIGN="on"  || PCIASSIGN="off"
-get_value "irqpoll"            && IRQPOLL="on"    || IRQPOLL="off"
-get_value "resume"             && RESUME="on"     || RESUME="off"
-get_value "brltty"             && BRLTTY="on"     || BRLTTY="off"
-get_value "speakup.synth"      && SPEAKUP="on"    || SPEAKUP="off"
-get_value "swspeak"            && SWSPEAK="on"    || SWSPEAK="off"
+checkbootparam "noapic"             && NOAPIC="on"     || NOAPIC="off"
+checkbootparam "acpi=force"         && ACPI_FORCE="on" || ACPI_FORCE="off"
+checkbootparam "nolapic"            && NOLAPIC="on"    || NOLAPIC="off"
+checkbootparam "lapic"              && LAPIC="on"      || LAPIC="off"
+checkbootparam "acpi=off"           && ACPI_OFF="on"   || ACPI_OFF="off"
+checkbootparam "acpi=noirq"         && ACPI_NOIRQ="on" || ACPI_NOIRQ="off"
+checkbootparam "noirqbalance"       && NOIRQ="on"      || NOIRQ="off"
+checkbootparam "nopcmcia"           && NOPCMIA="on"    || NOPCMIA="off"
+checkbootparam "nodma"              && NODMA="on"      || NODMA="off"
+checkbootparam "pci=noacpi"         && PCINOACPI="on"  || PCINOACPI="off"
+checkbootparam "pci=biosirq"        && PCIBIOS="on"    || PCIBIOS="off"
+checkbootparam "pci=assign-busses"  && PCIASSIGN="on"  || PCIASSIGN="off"
+checkbootparam "irqpoll"            && IRQPOLL="on"    || IRQPOLL="off"
+checkbootparam "resume"             && RESUME="on"     || RESUME="off"
+checkbootparam "brltty"             && BRLTTY="on"     || BRLTTY="off"
+checkbootparam "speakup.synth"      && SPEAKUP="on"    || SPEAKUP="off"
+checkbootparam "swspeak"            && SWSPEAK="on"    || SWSPEAK="off"
 
 # main program
 interface()
