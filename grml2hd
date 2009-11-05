@@ -21,8 +21,8 @@ is_grml_small() {
   grep -q small /etc/grml_version && return 0 || return 1
 }
 
-is_grml_usb() {
-  grep -q usb /etc/grml_version && return 0 || return 1
+is_grml_medium() {
+  grep -q medium /etc/grml_version && return 0 || return 1
 }
 
 is_grml2hd_noninteractive() {
@@ -48,7 +48,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='1.3.2'
+VERSION='1.3.3'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
@@ -59,8 +59,8 @@ ARGUMENTS="$*"
 SOURCE=/
 TARGET='/mnt/grml'
 SPACE_REQUIRED_MB=2700
-is_grml_small && SPACE_REQUIRED_MB=250
-is_grml_usb   && SPACE_REQUIRED_MB=1400
+is_grml_small  && SPACE_REQUIRED_MB=350
+is_grml_medium && SPACE_REQUIRED_MB=700
 CONFIGTMP='/etc/grml2hd/grml2hdtmp'
 [ -w $CONFIGTMP ] && echo -n "" > $CONFIGTMP
 YDATE=$(date -R)
