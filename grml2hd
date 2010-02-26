@@ -48,7 +48,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='1.3.3'
+VERSION='1.3.4'
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
@@ -207,7 +207,7 @@ get_rootpartition() {
      if [ -n "$SWRAID" -o -n "$LVM" ] ; then
         ROOTPARTITION="$PARTITION"
      else
-        PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
+        PARTUUID="$(blkid -s UUID -o value $PARTITION)"
         ROOTPARTITION="UUID=$PARTUUID"
      fi
   else
@@ -596,7 +596,7 @@ create_fstab() {
      # we need the UUID syntax for the partition, but don't use root=UUID= syntax
      # but /dev/disk/by* instead, this avoids problems with programs not being
      # aware of root=UUID= syntax
-     PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
+     PARTUUID="$(blkid -s UUID -o value $PARTITION)"
      # remount-ro seems to make problems at least when using XFS
      if [[ $FILESYSTEM == ext* ]] ; then
        echo "/dev/disk/by-uuid/$PARTUUID  /  $FILESYSTEM  errors=remount-ro  0 1" > $TARGET/etc/fstab

@@ -277,7 +277,7 @@ get_rootpartition() {
      if [ -n "$SWRAID" -o -n "$LVM" ] ; then
         ROOTPARTITION="$PARTITION"
      else
-        PARTUUID="$(/lib/udev/vol_id -u $PARTITION)"
+        PARTUUID="$(blkid -s UUID -o value $PARTITION)"
         ROOTPARTITION="UUID=$PARTUUID"
      fi
   else
