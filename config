@@ -55,7 +55,9 @@ GRMLX='yes'
 #   apt-get -o Acquire::HTTP::Timeout=1 -y --force-yes update
 #   apt-get -y --force-yes install jfsutils
 # }
-function PREEXECUTE() { ; }
+function PREEXECUTE() {
+   :
+}
 
 # commands which should be run right before finishing installation
 # e.g.:
@@ -69,6 +71,8 @@ function PREEXECUTE() { ; }
 #   ntpdate time.tugraz.at
 # }
 # function POSTEXECUTE() { ; }
-function POSTEXECUTE() { ; }
+function POSTEXECUTE() {
+   :
+}
 
 ## END OF FILE #################################################################
