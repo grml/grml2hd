@@ -50,18 +50,16 @@ GRMLX='yes'
 
 # commands which should be run right before main installation
 # e.g.:
-# function PREEXECUTE() {
+# PREEXECUTE() {
 #   echo -e "o\nn\np\n1\n\n$size\nt\n7\na\n1\nw\n" | fdisk /dev/hda
 #   apt-get -o Acquire::HTTP::Timeout=1 -y --force-yes update
 #   apt-get -y --force-yes install jfsutils
 # }
-function PREEXECUTE() {
-   :
-}
+PREEXECUTE() { :; }
 
 # commands which should be run right before finishing installation
 # e.g.:
-# function POSTEXECUTE() {
+# POSTEXECUTE() {
 #   echo "Running update: "
 #     apt-get -o Acquire::HTTP::Timeout=1 -y --force-yes update
 #    apt-get -y --force-yes upgrade
@@ -70,9 +68,6 @@ function PREEXECUTE() {
 #   echo "Europe/Vienna" > /etc/timezone && echo "done"
 #   ntpdate time.tugraz.at
 # }
-# function POSTEXECUTE() { ; }
-function POSTEXECUTE() {
-   :
-}
+POSTEXECUTE() { :; }
 
 ## END OF FILE #################################################################
