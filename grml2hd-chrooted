@@ -400,7 +400,7 @@ install_grub2()
 
   update-grub >/dev/null 2>/tmp/update-grub.error
 
-  grub-install "$BOOT_PARTITION" >/dev/null 2>/tmp/grub.error
+  grub-install --force "$BOOT_PARTITION" >/dev/null 2>/tmp/grub.error
 }
 
 install_grub() {
@@ -451,14 +451,6 @@ bootmanager_selection() {
   #   LVM_BOOT='\n\nWarning: installation of grub not supported when using SW-RAID and/or LVM!'
   #fi
 
-  # grub2 can not be installed to PBR:
-  if [ -z "$USE_MBR" ] ; then
-    GRUB_MBR_INFO='\n
-Warning: installation of grub2 is not possible within a partition!
-You will have to manually fix grub installation then. Check out
-http://grub.enbug.org/Grub2LiveCdInstallGuide for details.'
-  fi
-
   if is_grml2hd_noninteractive ; then
      if [ "$BOOT_MANAGER" = "grub" ] ; then
         export USE_GRUB='1'
@@ -467,7 +459,7 @@ http://grub.enbug.org/Grub2LiveCdInstallGuide for details.'
      fi
   else # running in interactive mode:
      GETBOOTMANAGER=$(dialog --stdout --title "grml2hd" --default-item lilo \
-                             --radiolist "Which bootmanager do you want to install?$GRUB_MBR_INFO" 0 0 0 \
+                             --radiolist "Which bootmanager do you want to install?" 0 0 0 \
                              lilo  "install lilo on partition $BOOT_PARTITION" on \
                              grub  "install grub on partition $BOOT_PARTITION" off)
      [ $? -eq 0 ] || exit 20

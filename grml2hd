@@ -1009,10 +1009,7 @@ if ! is_grml2hd_noninteractive ; then
   [[ $PARTITION == *md* ]] && MBRPART=$PARTITION || MBRPART="${PARTITION%[0-9]}"
 
   GETMBR=$(dialog --stdout --title "$PN" --default-item $MBRDEFAULT \
-          --radiolist 'Where do you want to install the bootmanager?
-
-Notice: installation of grub2 in a partition is NOT possible!
-So choose mbr when you plan to install grub.' 0 0 0 \
+          --radiolist 'Where do you want to install the bootmanager?' 0 0 0 \
           mbr   "install bootmanager into MBR of $MBRPART" $MBR \
           partition  "install bootmanager into partition $PARTITION" $PART \
           ${ADDITIONAL_PARAMS})
