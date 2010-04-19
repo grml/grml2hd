@@ -400,7 +400,14 @@ install_grub2()
 
   update-grub >/dev/null 2>/tmp/update-grub.error
 
-  grub-install --force "$BOOT_PARTITION" >/dev/null 2>/tmp/grub.error
+  # if installing to MBR we can call grub-install with defaults
+  if [ -n "$USE_MBR" ] ; then
+    grub-install         "$BOOT_PARTITION" >/dev/null 2>/tmp/grub.error
+  else
+    # but when not installing to MBR we have to force grub-install
+    # because of the blocklists warning
+    grub-install --force "$BOOT_PARTITION" >/dev/null 2>/tmp/grub.error
+  fi
 }
 
 install_grub() {
