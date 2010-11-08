@@ -504,19 +504,6 @@ grub-install --recheck --root-directory /mnt/sda3 /dev/sda
 
 }
 
-fix_sysvinit() {
-  # purge grml-sysvinit only if it's present:
-  if dpkg --list grml-sysvinit | grep -q '^ii' ; then
-     dpkg --purge grml-sysvinit >/dev/null 2>&1
-     cp /sbin/init /etc >/dev/null 2>&1
-  fi
-  if [ -n "$GRML_SMALL" ] ; then
-     cp /etc/runlevel.conf.hdinstall.small /etc/runlevel.conf
-  else
-     cp /etc/runlevel.conf.hdinstall       /etc/runlevel.conf
-  fi
-}
-
 adjust_timezone() {
   if grep -q -e utc -e gmt /proc/cmdline ; then
      sed -i 's/^UTC=.*/UTC=yes/' /etc/default/rcS
@@ -590,13 +577,6 @@ checkvalue $CHROOT_NEWUSER        && newuser
   ( echo "0" ;
     checkvalue $CHROOT_CREATE_SUDOERS && create_sudoers
     echo "42"
-    if checkvalue $CHROOT_FIX_SYSVINIT ; then
-      echo "XXX";
-      echo "Fixing sysvinit for usage with harddisk installation (purging grml-sysvinit).";
-      echo "XXX";
-      fix_sysvinit
-      echo "76"
-    fi
     if checkvalue $CHROOT_REMOVE_UNWANTED_PACKAGES ; then
       echo "XXX";
       echo "Removing unwanted packages which are not necessary on harddisk installation.";
