@@ -105,7 +105,7 @@ xconfig() {
   if [ -z "$GRML_SMALL" -a -x /usr/bin/grml-x ] ; then
      if [ -n "$GRML2HD_NONINTERACTIVE" ] ; then
         # running grml in noninteractive mode and if $GRMLX is set:
-        [ -n "$GRMLX" ] && grml-x -force -nostart fluxbox >/dev/null 2>&1
+        [ -n "$GRMLX" ] && grml-x --force --nostart fluxbox >/dev/null 2>&1
      else
         if ! [ -f /etc/X11/xorg.conf ] ; then
            dialog --stdout --title "${PN}" --defaultno --yesno "You do not have the configuration file /etc/X11/xorg.conf
@@ -116,7 +116,7 @@ the file according to your hardware for you.
 Create /etc/X11/xorg.conf?" 12 70
            if [[ $? == 0 ]]; then
               SUCCESS=''
-              grml-x -force -nostart fluxbox >/dev/null && SUCCESS='1'
+              grml-x --force --nostart fluxbox >/dev/null && SUCCESS='1'
            fi
            if ! [ -z "$SUCCESS" ] ; then
               is_grml2hd_noninteractive || dialog --stdout --title "${PN}" --msgbox "Running grml-x was successful and you should have a
