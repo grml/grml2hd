@@ -1,3 +1,15 @@
+grml2hd (1.4.1) unstable; urgency=low
+
+  [ Christian Hofstaedtler ]
+  * [35e5ee5] update for new grml-x command line syntax
+  * [75508b5] reset Xwrapper.config to Debian defaults
+
+  [ Michael Prokop ]
+  * [e2bf1bb] Dynamically calculate grml2hd version based on installed
+    Debian package version.
+
+ -- Michael Prokop <mika@grml.org>  Wed, 01 Dec 2010 22:52:42 +0100
+
 grml2hd (1.4.0) unstable; urgency=low
 
   * [2acabce] grml2hd-chrooted: drop fix_sysvinit(), we no longer want
