@@ -48,7 +48,7 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION='1.4.0'
+VERSION="${$(dpkg --list grml2hd 2>/dev/null| awk '/^i/ {print $3}'):-unknown}"
 PN=$(basename "$0")
 PID="$(echo $$)"
 UNAME=$(uname -r)
