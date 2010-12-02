@@ -48,8 +48,9 @@ image=/boot/memtest86+.bin
 "
 
 # variables
-VERSION="${$(dpkg --list grml2hd 2>/dev/null| awk '/^i/ {print $3}'):-unknown}"
-PN=$(basename "$0")
+PN="$(basename $0)"
+VERSION="$(dpkg --list $PN 2>/dev/null| awk '/^i/ {print $3}')"
+VERSION="${VERSION:-unknown}"
 PID="$(echo $$)"
 UNAME=$(uname -r)
 UNAME_SHORT=$(echo $UNAME | sed 's/-small//')
@@ -90,7 +91,7 @@ LOGFILE=${LOGFILE:-'/dev/null'}
 
 usageinfo() {
     cat <<EOF >&2
-Usage: $PN [ -i | <partition> ]
+Usage: $PN [ --noninteractive | <partition> ]
 
 Usage examples:
 
@@ -100,7 +101,7 @@ Usage examples:
   $PN /dev/hda2
   Run the interactive installer and select /dev/hda2 for partition dialog.
 
-  $PN -i
+  $PN --noninteractive
   Start the non-interactive installer.
 
 For more information take a look at 'man grml2hd' and http://grml.org/grml2hd/
