@@ -1,3 +1,10 @@
+grml2hd (1.4.2) unstable; urgency=low
+
+  * [c9058b2] Fix $VERSION handling and use --noninteractive instead of
+    -i in usage example.
+
+ -- Michael Prokop <mika@grml.org>  Thu, 02 Dec 2010 15:22:44 +0100
+
 grml2hd (1.4.1) unstable; urgency=low
 
   [ Christian Hofstaedtler ]
