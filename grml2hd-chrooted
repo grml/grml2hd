@@ -442,7 +442,7 @@ install_grub() {
 
   if [ "$?" -eq 0 ]; then
      is_grml2hd_noninteractive || \
-     dialog --stdout --title "${PN}" --msgbox "Installation of Grub exited successfully" 5 60
+     dialog --stdout --title "${PN}" --msgbox "Installation of Grub exited successfully." 5 60
   else
      dialog --stdout --title "${PN}" --msgbox "Installation of Grub failed! Please fix manually.
 
@@ -455,34 +455,15 @@ $(cat /tmp/grub.error)
 }
 
 bootmanager_selection() {
-  # in non-interactive mode we use lilo by default, unless $BOOT_MANAGER is set to grub
-  # our grub code within grml2hd does not support SWRAID and LVM yet, so use lilo
-  #if [ -n "$SWRAID" -o -n "$LVM" ] ; then
-  #   USE_GRUB=''
-  #   return 0
-  #   LVM_BOOT='\n\nWarning: installation of grub not supported when using SW-RAID and/or LVM!'
-  #fi
+  # in non-interactive mode we use grub by default, unless $BOOT_MANAGER is set to lilo;
 
-  if is_grml2hd_noninteractive ; then
-     if [ "$BOOT_MANAGER" = "grub" ] ; then
-        export USE_GRUB='1'
-     else
-        export USE_GRUB=''
-     fi
-  else # running in interactive mode:
-     GETBOOTMANAGER=$(dialog --stdout --title "grml2hd" --default-item lilo \
-                             --radiolist "Which bootmanager do you want to install?" 0 0 0 \
-                             lilo  "install lilo on partition $BOOT_PARTITION" on \
-                             grub  "install grub on partition $BOOT_PARTITION" off)
+  if ! is_grml2hd_noninteractive ; then
+     BOOT_MANAGER=$(dialog --stdout --title "grml2hd" --default-item lilo \
+                          --radiolist "Which bootmanager do you want to install?" 0 0 0 \
+                          grub  "install grub on partition $BOOT_PARTITION" on \
+                          lilo  "install lilo on partition $BOOT_PARTITION" off \
+                          none  "do not install any boot manager" off)
      [ $? -eq 0 ] || exit 20
-
-     case "$GETBOOTMANAGER" in
-       grub)
-         export USE_GRUB='1'
-         ;;
-       *)
-         export USE_GRUB=''
-     esac
   fi
 
   if [ -x /sbin/dmraid ] ; then
@@ -493,15 +474,15 @@ There might be problems with booting your systems due to the
 presense of the dmraid signature. Please fix it manually
 removing the dmraid signature running:
 
-dmraid -r $BOOT_PARTITION -E
+  dmraid -r $BOOT_PARTITION -E
 
 and reinstalling the bootmanager then.
 
 Usage example if your system is installed on /dev/sda3 and
 you want grub on /dev/sda:
 
-mount /mnt/sda3
-grub-install --recheck --root-directory /mnt/sda3 /dev/sda
+  mount /mnt/sda3
+  grub-install --recheck --root-directory /mnt/sda3 /dev/sda
 
 "
      fi
@@ -620,11 +601,16 @@ if checkvalue $CHROOT_INSTALL_BOOTMANAGER ; then
     echo "XXX";
     echo "Installing bootmanager..."
     echo "XXX";
-    if [ -n "$USE_GRUB" ] ; then
-       install_grub
-    else
-       install_lilo
-    fi
+    case "$BOOT_MANAGER" in
+      grub)
+        install_grub
+        ;;
+      lilo)
+        install_lilo
+        ;;
+      *)
+	;;
+    esac
     echo "100") | \
   dialog --title "${PN}" --gauge "Installing bootmanager..." 9 50 0
 fi
