@@ -1,3 +1,10 @@
+grml2hd (1.5.0) unstable; urgency=low
+
+  * [4e834a2] Provide option to *not* install bootmanager. Use Grub by
+    default now. [Closes: issue696]
+
+ -- Michael Prokop <mika@grml.org>  Tue, 07 Dec 2010 20:37:02 +0100
+
 grml2hd (1.4.2) unstable; urgency=low
 
   * [c9058b2] Fix $VERSION handling and use --noninteractive instead of
