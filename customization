@@ -94,8 +94,8 @@ CHROOT_NEWUSER='yes'
 # set up /etc/sudoers
 CHROOT_CREATE_SUDOERS='yes'
 
-# purge grml-sysvinit and adjust /etc/runlevel.conf
-CHROOT_FIX_SYSVINIT='yes'
+# adjust /etc/runlevel.conf
+CHROOT_ADJUST_FILERC='yes'
 
 # remove unwanted packages (grml-firefox)
 CHROOT_REMOVE_UNWANTED_PACKAGES='yes'
