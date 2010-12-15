@@ -491,7 +491,8 @@ you want grub on /dev/sda:
 }
 
 adjust_timezone() {
-  if grep -q -e utc -e gmt /proc/cmdline ; then
+  # /proc/cmdline might not be available inside chroot?
+  if grep -q -e utc -e gmt /proc/cmdline 2>/dev/null ; then
      sed -i 's/^UTC=.*/UTC=yes/' /etc/default/rcS
      if [ "$?" -eq 0 ]; then
         is_grml2hd_noninteractive ||  dialog --stdout --title "${PN}" --msgbox "Adjusted timezone for UTC as requested via bootoption." 5 60
