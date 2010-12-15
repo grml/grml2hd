@@ -1,3 +1,16 @@
+grml2hd (1.5.1) unstable; urgency=low
+
+  * [ed70285] Adjust /etc/runlevel.conf via CHROOT_ADJUST_FILERC,
+    addressing the readonly rootfs issue.
+  * [f12ca8f] Redirect debconf-communicate output to /dev/null to avoid
+    unnecessary "0" output on stdout.
+  * [0aa1f00] Drop old copy_files_linuxrc stuff, we do not support
+    /UNIONFS any longer.
+  * [10f4973] adjust_timezone(): redirect output of /proc/cmdline check
+    to /dev/null.
+
+ -- Michael Prokop <mika@grml.org>  Wed, 15 Dec 2010 15:55:03 +0100
+
 grml2hd (1.5.0) unstable; urgency=low
 
   * [4e834a2] Provide option to *not* install bootmanager. Use Grub by
