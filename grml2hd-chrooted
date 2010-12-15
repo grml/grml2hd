@@ -128,8 +128,8 @@ as user to start the X." 8 60
   fi
   # recreate Xwrapper.config with defaults
   rm -f /etc/X11/Xwrapper.config
-  echo reset x11-common/xwrapper/allowed_users | debconf-communicate
-  echo reset x11-common/xwrapper/actual_allowed_users | debconf-communicate
+  echo reset x11-common/xwrapper/allowed_users | debconf-communicate >/dev/null
+  echo reset x11-common/xwrapper/actual_allowed_users | debconf-communicate >/dev/null
   dpkg-reconfigure -phigh x11-common
 }
 
