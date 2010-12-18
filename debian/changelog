@@ -1,3 +1,10 @@
+grml2hd (1.5.2) unstable; urgency=low
+
+  [ Ulrich Dangel ]
+  * [6a7c0d5] Start networking init script (via runlevel.conf).
+
+ -- Michael Prokop <mika@grml.org>  Sat, 18 Dec 2010 22:00:49 +0100
+
 grml2hd (1.5.1) unstable; urgency=low
 
   * [ed70285] Adjust /etc/runlevel.conf via CHROOT_ADJUST_FILERC,
