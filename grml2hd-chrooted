@@ -534,7 +534,7 @@ adjust_filerc() {
   update-rc.d mountall.sh            start 35 S . >/dev/null || true
   update-rc.d mountall-bootclean.sh  start 36 S . >/dev/null || true
   update-rc.d mountoverflowtmp       start 37 S . >/dev/null || true
-  update-rc.d networking.sh          start 40 S . start 35 0 6 . >/dev/null || true
+  update-rc.d networking             start 40 S . start 35 0 6 . >/dev/null || true
   update-rc.d mountnfs.sh            start 45 S . >/dev/null || true
   update-rc.d mountnfs-bootclean.sh  start 46 S . >/dev/null || true
   update-rc.d urandom                start 55 S . start 30 0 6 . >/dev/null || true
