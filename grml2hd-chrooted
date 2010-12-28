@@ -62,7 +62,8 @@ is_grml2hd_noninteractive() {
 }
 
 root_account() {
-  shadowconfig on
+  shadowconfig on 2>>$DEBUG # redirect as it complains about:
+  # "pwconf: failed to change the mode of /etc/passwd- to 0600"
 
   if [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
      ROOTPW1='PW1'
@@ -403,8 +404,6 @@ install_grub2()
 
   grub-mkdevicemap >/dev/null 2>/tmp/grub.device-map.error
 
-  update-grub >/dev/null 2>/tmp/update-grub.error
-
   # if installing to MBR we can call grub-install with defaults
   if [ -n "$USE_MBR" ] ; then
     grub-install         "$BOOT_PARTITION" >/dev/null 2>/tmp/grub.error
@@ -413,6 +412,9 @@ install_grub2()
     # because of the blocklists warning
     grub-install --force "$BOOT_PARTITION" >/dev/null 2>/tmp/grub.error
   fi
+
+  update-grub >/dev/null 2>/tmp/update-grub.error
+
 }
 
 install_grub() {
@@ -430,6 +432,7 @@ install_grub() {
      GRUBDEVICE="$BOOT_PARTITION"
      GRUBSETUPDEVICE="$BOOT_PARTITION"
   else
+    # TODO - shouldn't be relevant for grub2 anymore
      grubdevice "$PARTITION" >/dev/null 2>/tmp/grubdevice
   fi
 
