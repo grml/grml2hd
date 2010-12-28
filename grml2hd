@@ -327,7 +327,7 @@ that $PARTITION is not in use/mounted. Exiting."
   bailout 9
 }
 
-copy_files_initramfs() {
+copy_files() {
   cd /
   ( echo "0" ;
     cp -a backups $TARGET 1>>$LOGFILE 2>&1
@@ -930,7 +930,7 @@ if checkvalue $GRML2HD_INITIALIZE ; then
 fi
 
 if checkvalue $GRML2HD_COPY_FILES ; then
-   copy_files_initramfs
+   copy_files
 fi
 
 if checkvalue $GRML2HD_IS_GRML_SMALL ; then
