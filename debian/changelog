@@ -1,3 +1,18 @@
+grml2hd (1.5.3) unstable; urgency=low
+
+  [ Michael Prokop ]
+  * [79129d7] bootmanager_selection(): Set default item to grub as it is
+    the default nowadays.
+  * [e9d1aef] grml2hd-chrooted: it is networking and not networking.sh.
+  * [3dcc14e] install_grub2(): execute update-grub *after* grub-install.
+  * [62904e4] Rename copy_files_initramfs() to copy_files() now that old
+    linuxrc version has gone.
+
+  [ Ulrich Dangel ]
+  * [e067392] Correct echo statements for progress screen
+
+ -- Michael Prokop <mika@grml.org>  Tue, 28 Dec 2010 14:10:33 +0100
+
 grml2hd (1.5.2) unstable; urgency=low
 
   [ Ulrich Dangel ]
