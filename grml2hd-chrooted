@@ -458,7 +458,7 @@ bootmanager_selection() {
   # in non-interactive mode we use grub by default, unless $BOOT_MANAGER is set to lilo;
 
   if ! is_grml2hd_noninteractive ; then
-     BOOT_MANAGER=$(dialog --stdout --title "grml2hd" --default-item lilo \
+     BOOT_MANAGER=$(dialog --stdout --title "grml2hd" --default-item grub \
                           --radiolist "Which bootmanager do you want to install?" 0 0 0 \
                           grub  "install grub on partition $BOOT_PARTITION" on \
                           lilo  "install lilo on partition $BOOT_PARTITION" off \
