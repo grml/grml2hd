@@ -331,103 +331,103 @@ copy_files() {
   cd /
   ( echo "0" ;
     cp -a backups $TARGET 1>>$LOGFILE 2>&1
-    echo "2"
     echo "XXX";
+    echo "2"
     echo "Copying /bin";
     echo "XXX";
     cp -a bin $TARGET 1>>$LOGFILE 2>&1
-    echo "6"
     echo "XXX";
+    echo "6"
     echo "Copying /boot";
     echo "XXX";
     cp -a boot $TARGET 1>>$LOGFILE 2>&1
-    echo "8"
     echo "XXX";
+    echo "8"
     echo "Copying /cdrom";
     echo "XXX";
     cp -a cdrom $TARGET 1>>$LOGFILE 2>&1
-    echo "9"
     echo "XXX";
+    echo "9"
     echo "Copying /dev";
     echo "XXX";
     cp -a dev $TARGET 1>>$LOGFILE 2>&1
-    echo "10"
     echo "XXX";
+    echo "10"
     echo "Copying /etc";
     echo "XXX";
     cp -a etc $TARGET 1>>$LOGFILE 2>&1
-    echo "15"
     echo "XXX";
+    echo "15"
     echo "Copying /floppy";
     echo "XXX";
     cp -a floppy $TARGET 1>>$LOGFILE 2>&1
-    echo "16"
     echo "XXX";
+    echo "16"
     echo "Copying /home";
     echo "XXX";
     cp -a home $TARGET 1>>$LOGFILE 2>&1
-    echo "21"
     echo "XXX";
+    echo "21"
     echo "Copying /lib";
     echo "XXX";
     cp -a lib $TARGET 1>>$LOGFILE 2>&1
     if [ -r lib64 ] ; then
-       echo "25"
        echo "XXX";
+       echo "25"
        echo "Copying 64bit stuff";
        echo "XXX";
        [ -r lib32 ] && cp -a lib32 $TARGET 1>>$LOGFILE 2>&1
        [ -r lib64 ] && cp -a lib64 $TARGET 1>>$LOGFILE 2>&1
        [ -r emul ]  && cp -a emul $TARGET 1>>$LOGFILE 2>&1
     fi
-    echo "30"
     echo "XXX";
+    echo "30"
     echo "Copying /media";
     echo "XXX";
     cp -a media $TARGET 1>>$LOGFILE 2>&1
     mkdir $TARGET/mnt 1>>$LOGFILE 2>&1
-    echo "34"
     echo "XXX";
+    echo "34"
     echo "Copying /none";
     echo "XXX";
     cp -a none $TARGET 1>>$LOGFILE 2>&1
-    echo "35"
     echo "XXX";
+    echo "35"
     echo "Copying /opt";
     echo "XXX";
     cp -a opt $TARGET 1>>$LOGFILE 2>&1
-    echo "36"
     echo "XXX";
+    echo "36"
     echo "Copying /root";
     echo "XXX";
     cp -a root $TARGET 1>>$LOGFILE 2>&1
-    echo "37"
     echo "XXX";
+    echo "37"
     echo "Copying /sbin";
     echo "XXX";
     cp -a sbin $TARGET 1>>$LOGFILE 2>&1
-    echo "40"
     echo "XXX";
+    echo "40"
     echo "Copying /swap";
     echo "XXX";
     cp -a swap $TARGET 1>>$LOGFILE 2>&1
-    echo "41"
     echo "XXX";
+    echo "41"
     echo "Copying /tmp";
     echo "XXX";
     cp -a tmp $TARGET 1>>$LOGFILE 2>&1
-    echo "42"
     echo "XXX";
+    echo "42"
     echo "Copying /usr\n(Notice: this takes a while - be patient!)";
     echo "XXX";
     cp -a usr $TARGET 1>>$LOGFILE 2>&1
-    echo "80"
     echo "XXX";
+    echo "80"
     echo "Copying /var";
     echo "XXX";
     cp -a var $TARGET 1>>$LOGFILE 2>&1
-    echo "95"
     echo "XXX";
+    echo "95"
     echo "Creating /sys, /proc, /tmp and fixing permissions...";
     echo "XXX";
     mkdir -m  755 ${TARGET}/sys  ; chown root.root ${TARGET}/sys
