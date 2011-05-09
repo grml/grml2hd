@@ -1,3 +1,11 @@
+grml2hd (1.5.4) unstable; urgency=low
+
+  * [b01e002] Improve dialog message for usage on 80x25 consoles.
+    [Closes: issue955]
+  * [47acc20] Bump Standards-Version to 3.9.2.
+
+ -- Michael Prokop <mika@grml.org>  Mon, 09 May 2011 17:24:07 +0200
+
 grml2hd (1.5.3) unstable; urgency=low
 
   [ Michael Prokop ]
