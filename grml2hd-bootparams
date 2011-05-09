@@ -75,16 +75,10 @@ interface()
   dialog --cr-wrap --clear --title "$PN" --checklist "Do you want to use any special boot parameters?
 
 This script checks for the boot parameters you used for booting
-the grml system. If there were any important options found
+the Grml system. If there were any important options found
 they will be activated in this menu.
 
-If you do not know what to do at this stage just continue!
-
-If you want to adjust boot parameters manually please edit the
-append-line in /etc/lilo.conf if you are using lilo or
-/boot/grub/menu.lst when using grub. See
-/usr/share/doc/kernel-doc-`uname -r`/Documentation/kernel-parameters.txt.gz
-for details about kernel parameters.
+If you do not know what to do at this stage just continue.
 
 Set the boot parameters for kernel via bootmanager (lilo/grub):
 " 0 0 0 \

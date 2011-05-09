@@ -759,16 +759,14 @@ welcome_screen() {
   if ! is_grml2hd_noninteractive ; then
      dialog --title "$PN" --yes-label Continue --no-label Quit --yesno "Welcome to ${PN} ${VERSION}!
 
-${PN} can install grml to your harddisk.
+${PN} can install Grml to your harddisk.
 
-The grml team doesn't take responsibility for any loss of data!
+The Grml team doesn't take responsibility for any loss of data!
 grml2hd requires at least $SPACE_REQUIRED_MB MB of free space on your harddisk.
 
 Make sure you have the latest version of ${PN}!
-Additional information and updates are available at:
-http://grml.org/grml2hd/
 
-Please make sure that your grml-ISO is ok. Otherwise installation
+Please make sure that your Grml-ISO is ok. Otherwise installation
 will not be possible and might hang at a specific point. Verify the
 ISO via booting with 'grml testcd'. Check your CD low-level running
 # readcd -c2scan dev=/dev/cdrom
@@ -776,7 +774,6 @@ ISO via booting with 'grml testcd'. Check your CD low-level running
 If you are running a grml2hd installation we strongly recommend to
 subscribe to the grml-user mailinglist (see http://grml.org/mailinglist/)!
 
-Please give us feedback to improve the installer!
 http://grml.org/contact/    contact (at) grml.org
 " 0 0
 
