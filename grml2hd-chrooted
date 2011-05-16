@@ -288,7 +288,7 @@ get_rootpartition() {
 }
 
 # get grub's syntax for /dev/ice
-# usage example: 'grubdevice /dev/hda2' returns '(hd0,1)'
+# usage example: 'grubdevice /dev/sda2' returns '(hd0,1)'
 grubdevice() {
   if [ -z "$1" ] ; then
      echo "Usage: grubdevice <device>">&2

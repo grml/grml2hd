@@ -98,8 +98,8 @@ Usage examples:
   $PN
   Run the interactive installer.
 
-  $PN /dev/hda2
-  Run the interactive installer and select /dev/hda2 for partition dialog.
+  $PN /dev/sda2
+  Run the interactive installer and select /dev/sda2 for partition dialog.
 
   $PN --noninteractive
   Start the non-interactive installer.
@@ -661,7 +661,7 @@ $MEMTEST
 # following lines, changing the device name on the 'other' line to
 # where your other OS' partition is.
 #
-# other=/dev/hda4
+# other=/dev/sda4
 # label=HURD
 
 EOF

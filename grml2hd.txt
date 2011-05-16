@@ -84,9 +84,9 @@ Configuration is done via boot options:
    mbr=/dev/...                             => partition where MBR should be installed (default:=partition)
    partition=/dev/...                       => partition where grml should be installed (must be set - no default!)
 
-Usage example for booting and installing grml on partition /dev/hda4:
+Usage example for booting and installing grml on partition /dev/sda4:
 
-   grml2hd partition=/dev/hda4 mbr=/dev/hda filesystem=ext3 user=mika
+   grml2hd partition=/dev/sda4 mbr=/dev/sda filesystem=ext3 user=mika
 
 Passwords of user root and user are "grml" - please adjust after harddisk
 installation!
@@ -100,7 +100,7 @@ know what you are doing!
 grml2hd with software RAID
 --------------------------
 
-  mdadm --create --verbose /dev/md0 --level=raid1 --raid-devices=2 /dev/hda1 /dev/hdc1
+  mdadm --create --verbose /dev/md0 --level=raid1 --raid-devices=2 /dev/sda1 /dev/hdc1
 
 Prepare RAID setup with mdadm.
 
@@ -118,11 +118,11 @@ grml2hd with Logical Volumes (LVM)
 
 You can configure LVM as you prefer it to (see 'grml-tips lvm' for some basic
 instructions on LVM) and use a logical volume as installation target. Usage
-example for /dev/hda1:
+example for /dev/sda1:
 
-  # make sure /dev/hda1 is of partition type 8E / Linux LVM!
-  pvcreate /dev/hda1
-  vgcreate grml2hd /dev/hda1
+  # make sure /dev/sda1 is of partition type 8E / Linux LVM!
+  pvcreate /dev/sda1
+  vgcreate grml2hd /dev/sda1
   lvcreate -n rootlv -L1000 grml2hd
   LVM=/dev/mapper/grml2hd-rootlv grml2hd
 
@@ -143,7 +143,7 @@ Deactivate swap partition:
 
 Now adjust /etc/crypttab
 
-  # echo "cswap   /dev/hda5       /dev/urandom    swap" >> /etc/crypttab
+  # echo "cswap   /dev/sda5       /dev/urandom    swap" >> /etc/crypttab
 
 Now delete the old swap-entry in /etc/fstab and add the following line:
 
@@ -163,19 +163,19 @@ using grml-crypt. Important: this will destroy all data on /home!
 grml-crypt is a wrapper around cryptsetup-luks, you will be able to use the
 partition with every Linux distribution which supports cryptsetup-luks.
 
-The following example demonstrates how to use /dev/hda5 as an encrypted
+The following example demonstrates how to use /dev/sda5 as an encrypted
 /home partition:
 
-  # grml-crypt -t ext3 -o format /dev/hda5
+  # grml-crypt -t ext3 -o format /dev/sda5
 
 Now adjust /etc/crypttab
 
-  # echo "chda5  /dev/hda5  none luks" >>/etc/crypttab
+  # echo "csda5  /dev/sda5  none luks" >>/etc/crypttab
 
 Then add the /home-partition to /etc/fstab (make sure there is not other
 entry for the partition):
 
-  /dev/mapper/chda5  /home  ext3  defaults  0 0
+  /dev/mapper/csda5  /home  ext3  defaults  0 0
 
 Make sure this entry is above(!) the \'Warning! Please do \*not\* change
 any...\' line! If you want to keep content of your old /home make sure you
@@ -269,9 +269,9 @@ I can't boot my grml system because Lilo says LI L99 99 99...
 You probably did not install lilo to master boot record (MBR) within grml2hd and
 don't have a bootmanager in your MBR.  Solution: Install lilo to MBR. Example:
 
-  sudo mount /mnt/hda1  # mount harddisk
-  sudo chroot /mnt/hda1 # chroot into the grml-system
-  vim -X /etc/lilo.conf # adjust the line containing the bootoption to 'boot=/dev/hda'
+  sudo mount /mnt/sda1  # mount harddisk
+  sudo chroot /mnt/sda1 # chroot into the grml-system
+  vim -X /etc/lilo.conf # adjust the line containing the bootoption to 'boot=/dev/sda'
   lilo  # now run lilo again, leave chroot environment (exit) and reboot your system afterwards
 
 I installed grml on a XFS or JFS filesystem and grml does not boot anymore
@@ -292,8 +292,8 @@ is provided by an initial ramdisk. Please use the initrd support within
 grml2hd. To fix this issue please install a kernel with SCSI-device support
 in the chroot after running grml2hd:
 
-  sudo mount -o /mnt/hda1   # mount harddisk where grml is installed
-  sudo chroot /mnt/hda1     # chroot into the grml-system
+  sudo mount -o /mnt/sda1   # mount harddisk where grml is installed
+  sudo chroot /mnt/sda1     # chroot into the grml-system
   update-initramfs -u -t -k $(uname -r) # create initramfs
   vim -X /etc/lilo.conf               # adjust lilo for use with initrd
   lilo  # now run lilo again, leave chroot environment (exit) and reboot your system afterwards

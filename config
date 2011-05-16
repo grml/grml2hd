@@ -21,12 +21,12 @@ ROOTPASSWD="grml"
 USERPASSWD="grml"
 
 # which partition should be used for installation to harddisk:
-# e.g.: "/dev/hda1"  -> install grml on /dev/hda1
+# e.g.: "/dev/sda1"  -> install grml on /dev/sda1
 PARTITION=""         # empty by default to avoid accidents
 
 # install lilo into mbr (master boot record) of the following device:
-# e.g.: "/dev/hda"   -> install in mbr
-# e.g.: "/dev/hda1"  -> don't touch mbr but write into partition only
+# e.g.: "/dev/sda"   -> install in mbr
+# e.g.: "/dev/sda1"  -> don't touch mbr but write into partition only
 BOOT_PARTITION=""    # empty by default to avoid accidents
 
 # which bootmanager should be installed:
@@ -51,7 +51,7 @@ GRMLX='yes'
 # commands which should be run right before main installation
 # e.g.:
 # PREEXECUTE() {
-#   echo -e "o\nn\np\n1\n\n$size\nt\n7\na\n1\nw\n" | fdisk /dev/hda
+#   echo -e "o\nn\np\n1\n\n$size\nt\n7\na\n1\nw\n" | fdisk /dev/sda
 #   apt-get -o Acquire::HTTP::Timeout=1 -y --force-yes update
 #   apt-get -y --force-yes install jfsutils
 # }

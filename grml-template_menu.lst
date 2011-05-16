@@ -45,7 +45,7 @@ timeout		10
 #
 # title		Linux
 # root		(hd0,1)
-# kernel	/vmlinuz root=/dev/hda2 ro
+# kernel	/vmlinuz root=/dev/sda2 ro
 #
 
 # Put static boot stanzas before and/or after AUTOMAGIC KERNEL LIST
@@ -61,7 +61,7 @@ timeout		10
 ## default kernel options for automagic boot options
 ## If you want special options for specific kernels use kopt_x_y_z
 ## where x.y.z is kernel version. Minor versions can be omitted.
-## e.g. kopt=root=/dev/hda1 ro
+## e.g. kopt=root=/dev/sda1 ro
 ##      kopt_2_6_8=root=/dev/hdc1 ro
 ##      kopt_2_6_8_2_686=root=/dev/hdc2 ro
 # kopt=root=/dev/sda5 ro
@@ -82,7 +82,7 @@ timeout		10
 
 ## additional options to use with the default boot option, but not with the
 ## alternatives
-## e.g. defoptions=vga=791 resume=/dev/hda5
+## e.g. defoptions=vga=791 resume=/dev/sda5
 # defoptions=vga=791
 
 ## altoption boot targets option
