@@ -1,3 +1,14 @@
+grml2hd (1.5.5) unstable; urgency=low
+
+  * [77e77bd] Bindmount /proc and /sys outside of the chroot
+  * [3f15f82] Create /run and related directories
+  * [1642043] fix permissions of /tmp
+  * [b2d07fd] no longer copy /swap
+  * [88ccd41] Fix progress bar hang before copying /usr
+  * [310a649] Examples: replace 'hda' with 'sda'
+
+ -- Christian Hofstaedtler <ch@grml.org>  Mon, 16 May 2011 23:28:46 +0200
+
 grml2hd (1.5.4) unstable; urgency=low
 
   * [b01e002] Improve dialog message for usage on 80x25 consoles.
