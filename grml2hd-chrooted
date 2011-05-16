@@ -48,11 +48,6 @@ checkvalue() {
   fi
 }
 
-initialize() {
-  [ -f /proc/version ] || mount -t proc  none /proc
-  [ -d /sys/kernel ]   || mount -t sysfs none /sys  # important for grml-x and it's hwinfo [and yaird]
-}
-
 is_grml2hd_noninteractive() {
   if ! [ -z "$GRML2HD_NONINTERACTIVE" ] ; then
      return 0 # we running automatic installation
@@ -581,7 +576,6 @@ finalize() {
 }
 
 # now run the functions:
-checkvalue $CHROOT_INITIALIZE     && initialize
 checkvalue $CHROOT_SETHOSTNAME    && sethostname
 checkvalue $CHROOT_SETLANGUAGE    && setlanguage
 checkvalue $CHROOT_ADJUSTTIMEZONE && adjust_timezone

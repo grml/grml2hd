@@ -708,9 +708,13 @@ Please make sure that the partition itself is available (check e.g. via cfdisk)!
 call_chroot() {
   mount --bind /dev     $TARGET/dev
   mount --bind /dev/pts $TARGET/dev/pts
+  mount --bind /proc    $TARGET/proc
+  mount --bind /sys     $TARGET/sys
   GRML2HD=1 chroot $TARGET /usr/share/grml2hd/grml2hd-chrooted
   umount -l $TARGET/dev/pts
   umount -l $TARGET/dev
+  umount -l $TARGET/proc
+  umount -l $TARGET/sys
 }
 
 finalize() {
