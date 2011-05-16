@@ -428,10 +428,13 @@ copy_files() {
     cp -a var $TARGET 1>>$LOGFILE 2>&1
     echo "XXX";
     echo "95"
-    echo "Creating /sys, /proc, /tmp and fixing permissions...";
+    echo "Creating /run, /sys, /proc and fixing permissions...";
     echo "XXX";
-    mkdir -m  755 ${TARGET}/sys  ; chown root.root ${TARGET}/sys
-    mkdir -m  555 ${TARGET}/proc ; chown root.root ${TARGET}/proc
+    mkdir -m  755 ${TARGET}/run      ; chown root.root ${TARGET}/run
+    mkdir -m 1777 ${TARGET}/run/lock ; chown root.root ${TARGET}/run/lock
+    mkdir -m 1777 ${TARGET}/run/shm  ; chown root.root ${TARGET}/run/shm
+    mkdir -m  755 ${TARGET}/sys      ; chown root.root ${TARGET}/sys
+    mkdir -m  555 ${TARGET}/proc     ; chown root.root ${TARGET}/proc
     chmod 755 ${TARGET}/home/
     chmod 750 ${TARGET}/home/*
     echo "100") | \
