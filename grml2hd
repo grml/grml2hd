@@ -408,11 +408,6 @@ copy_files() {
     cp -a sbin $TARGET 1>>$LOGFILE 2>&1
     echo "XXX";
     echo "40"
-    echo "Copying /swap";
-    echo "XXX";
-    cp -a swap $TARGET 1>>$LOGFILE 2>&1
-    echo "XXX";
-    echo "41"
     echo "Copying /tmp";
     echo "XXX";
     cp -a tmp $TARGET 1>>$LOGFILE 2>&1
