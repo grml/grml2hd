@@ -435,8 +435,9 @@ copy_files() {
     mkdir -m 1777 ${TARGET}/run/shm  ; chown root.root ${TARGET}/run/shm
     mkdir -m  755 ${TARGET}/sys      ; chown root.root ${TARGET}/sys
     mkdir -m  555 ${TARGET}/proc     ; chown root.root ${TARGET}/proc
-    chmod 755 ${TARGET}/home/
-    chmod 750 ${TARGET}/home/*
+    chmod  755 ${TARGET}/home/
+    chmod  750 ${TARGET}/home/*
+    chmod 1777 ${TARGET}/tmp
     echo "100") | \
   dialog --title "${PN}" --gauge "Copying files to $PARTITION" 9 50 0
   is_grml2hd_noninteractive || dialog --msgbox "Copying files was successful!" 5 50
