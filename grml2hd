@@ -413,7 +413,7 @@ copy_files() {
     cp -a tmp $TARGET 1>>$LOGFILE 2>&1
     echo "XXX";
     echo "42"
-    echo "Copying /usr\n(Notice: this takes a while - be patient!)";
+    echo "Copying /usr, this may take a while...";
     echo "XXX";
     cp -a usr $TARGET 1>>$LOGFILE 2>&1
     echo "XXX";
