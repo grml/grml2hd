@@ -3,7 +3,7 @@ Section: grml
 Priority: optional
 Maintainer: Michael Prokop <mika@grml.org>
 Uploaders: Andreas "Jimmy" Gredler <jimmy@grml.org>
-Build-Depends: debhelper (>= 5)
+Build-Depends: debhelper (>= 8)
 Build-Depends-Indep: asciidoc, xsltproc, docbook-xsl
 Standards-Version: 3.9.2
 Homepage: http://grml.org/grml2hd/
@@ -26,3 +26,10 @@ Description: make a harddisk installation of grml
  Debian/unstable user. Thanks!
  .
  Use it with care! Also take a look at grml2hd-utils.
+
+Package: grml2hd-utils
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: utilities for a Grml system on harddisk
+ The scripts provided by this package are useful for
+ Grml systems on harddisk.

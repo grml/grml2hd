@@ -1,0 +1,115 @@
+#!/bin/bash
+# Filename:      remove-packages-server
+# Purpose:       remove server packages from system
+# Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>
+# Bug-Reports:   see http://grml.org/bugs/
+# License:       This file is licensed under the GPL v2.
+################################################################################
+
+. /etc/grml/script-functions
+check4root || exit 1
+
+PN=$(basename "$0")
+TMP=$(mktemp)
+TMP_REMOVE=$(mktemp)
+
+bailout(){
+  rm -f "$TMP" "$TMP_REMOVE"
+  exit 0
+}
+
+trap bailout 1 2 3 15
+
+remove_service(){
+ [ -n "$1" ] || return 2
+ [ -r "$TMP" ] || return 3
+ grep -q "$1" $TMP && return 0 || return 1
+}
+
+INFO="Select packages to keep (the rest will be removed):
+
+Some packages are useful only for server systems. Some other packages provide cron jobs you probably do not want to run. It is recommended to remove those packages.
+
+If you do not know what to do at this stage just continue and defaults.
+
+Select packages which should *not* be removed from your system, deactivated packages will be removed:"
+
+[ -x /usr/sbin/apache2 ] && APACHE='apache2!next generation of the well known HTTP server!on'
+[ -x /usr/sbin/atftpd ] && ATFTPD='atftpd!advanced TFTP server!off'
+[ -x /usr/bin/atsar ] && ATSAR='atsar!system activity reporter!off'
+[ -x /usr/sbin/backup2l ] && BACKUP2L='backup2l!low-maintenance backup/restore tool for mountable media!off'
+[ -x /usr/sbin/backup-manager ] && BACKUPMANAGER='backup-manager!command-line backup tool!off'
+[ -x /etc/init.d/bind9 ] && BIND9='bind9!Internet Domain Name Server!off'
+[ -x /usr/sbin/crack_packer ] && CRACKLIB='cracklib-runtime!runtime for cpm: console tool to manage passwords!off'
+[ -x /usr/bin/ctrlproxy ] && CTRLPROXY='ctrlproxy!An IRC proxy with multiserver support!off'
+[ -x /usr/bin/debarchiver ] && DEBARCHIVER='debarchiver!Tool to handle debian package archives!off'
+[ -x /usr/bin/debsecan ] && DEBSECAN='debsecan!Debian Security Analyzer!off'
+[ -x /usr/sbin/dhcpd3 ] && DHCP3='dhcp3-server!DHCP server for automatic IP address assignment!off'
+[ -x /usr/bin/dirmngr ] && DIRMNGR='dirmngr!server for managing certificate revocation lists!off'
+[ -x /usr/sbin/dirvish ] && DIRVISH='dirvish!Filesystem based backup system using rsync!off'
+[ -x /usr/sbin/dropbear ] && DROPBEAR='dropbear!lightweight SSH2 server!off'
+[ -x /usr/sbin/filetraq ] && FILETRAQ='filetraq!Small utility to keep track of changes in config files!off'
+[ -x /usr/sbin/fnord ] && FNORD='fnord!yet another small httpd!off'
+[ -x /usr/sbin/freeradius ] && FREERADIUS='freeradius*!a high-performance and highly configurable RADIUS server!off'
+[ -x /usr/bin/gsmsmsd ] && GSMUTILS='gsm-utils!GSM mobile phone access applications!off'
+[ -x /usr/bin/icecast2 ] && ICECAST='icecast2!Ogg Vorbis and MP3 streaming media server!off'
+[ -x /usr/sbin/mcelog ] && MCELOG='mcelog!x86-64 Machine Check Exceptions collector and decoder!off'
+[ -x /usr/bin/mixmaster ] && MIXMASTER='mixmaster!Anonymous remailer client and server!off'
+[ -x /usr/sbin/nsd ] && NSD='nsd!authoritative name domain server!off'
+[ -x /usr/sbin/partimaged ] && PARTIMAGE='partimage-server!server to use partimage across a network!off'
+[ -x /usr/sbin/pdns_server ] && PDNS='pdns-server!extremely powerful and versatile nameserver!off'
+[ -x /usr/sbin/pptpd ] && PPTPD='pptpd!PoPToP Point to Point Tunneling Server!off'
+[ -x /usr/sbin/rinetd ] && RINETD='rinetd!Internet TCP redirection server!off'
+[ -x /usr/sbin/smbd ] && SAMBA='samba!a LanManager-like file and printer server!on'
+[ -x /usr/sbin/slapd ] && SLAPD='slapd!OpenLDAP server!off'
+[ -x /usr/sbin/snort ] && SNORT='snort!Flexible Network Intrusion Detection System!off'
+[ -x /usr/sbin/sncat ] && SN='sn!Small NNTP server for leaf sites!off'
+[ -x /usr/sbin/squid ] && SQUID='squid!Internet Object Cache (WWW proxy cache)!off'
+[ -x /usr/sbin/in.telnetd ] && TELNETD='telnetd-ssl!The telnet server with SSL encryption support!off'
+[ -x /usr/bin/vnstat ] && VNSTAT='vnstat!console-based network traffic monitor!off'
+
+interface(){
+  oifs="$IFS"
+  IFS='!'
+  dialog --cr-wrap --clear --title "${PN}" --checklist "$INFO" 0 0 0 \
+  $APACHE $ATFTPD $ATSAR $BACKUP2L $BACKUPMANAGER $BIND9 $CRACKLIB \
+  $CTRLPROXY $DEBARCHIVER $DEBSECAN $DHCP3 $DIRMNGR $DIRVISH $DROPBEAR \
+  $FILETRAQ $FNORD $FREERADIUS $GSMUTILS $ICECAST $MCELOG $MIXMASTER $NSD \
+  $PARTIMAGE $PDNS $PPTPD $RINETD $SAMBA $SLAPD $SNORT $SN $SQUID $TELNETD \
+  $VNSTAT 2>$TMP
+  rc=$?
+  IFS="$oifs"
+  return $rc
+}
+
+  interface
+  retval=$?
+  case $retval in
+   0)
+    echo -n > $TMP_REMOVE
+    IFS='
+'
+
+    for selection in  \
+	$APACHE $ATFTPD $ATSAR $BACKUP2L $BACKUPMANAGER $BIND9 $CRACKLIB \
+	$CTRLPROXY $DEBARCHIVER $DEBSECAN $DHCP3 $DIRMNGR $DIRVISH \
+	$DROPBEAR $FILETRAQ $FNORD $FREERADIUS $GSMUTILS $ICECAST $MCELOG \
+	$MIXMASTER $NSD $PARTIMAGE $PDNS $PPTPD $RINETD $SAMBA $SLAPD \
+	$SNORT $SN $SQUID $TELNETD $VNSTAT
+    do
+        service=$(echo $selection | awk -F! '{print $1}')
+        remove_service "$service" || echo $service >> $TMP_REMOVE
+    done
+    apt-get --purge remove $(cat $TMP_REMOVE)
+    ;;
+   1)
+    echo "Cancel pressed."
+    ;;
+   255)
+    echo "ESC pressed."
+    ;;
+  esac
+
+rm -f "$TMP" "$TMP_REMOVE"
+
+## END OF FILE #################################################################

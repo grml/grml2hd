@@ -734,8 +734,6 @@ finalize() {
   look at the script 'grml-autoconfig'. To configure network
   run 'grml-network' or edit /etc/network/interfaces manually.
 
-  Run 'grml2hd-utils' to install useful additional software.
-
   Visit the grml2hd-homepage for more information:
   http://grml.org/grml2hd/
 
