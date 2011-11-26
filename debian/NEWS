@@ -1,0 +1,9 @@
+grml2hd (1.5.5) unstable; urgency=low
+
+  grml2hd is no longer available inside $PATH. Too many users
+  who can't properly deal with Debian/unstable are using grml2hd
+  to install their regular desktop system even though we print
+  a strong warning. So just provide grml2hd to the ones who know
+  how and where to find grml2hd.
+
+ -- Michael Prokop <mika@grml.org>  Sat, 26 Nov 2011 20:11:59 +0100
