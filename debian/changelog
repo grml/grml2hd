@@ -1,3 +1,19 @@
+grml2hd (1.6.0) unstable; urgency=low
+
+  [ Christian Hofstaedtler ]
+  * [757313f] Add debian/control headers Origin, Bugs
+  * [9a9693c] Merge remaining grml2hd-utils source
+  * [5382e0d] Remove unmaintained accessibility support
+
+  [ Michael Prokop ]
+  * [a18f492] move grml2hd from /usr/sbin to /usr/share/grml2hd/
+  * [f3c0128] Provide NEWS entry
+  * [9462726] Drop usr/{s,}bin from debian/grml2hd.dirs
+  * [e7a98e7] Remove debian/TODO
+  * [8e04196] Update docs to match current $PATH situation
+
+ -- Michael Prokop <mika@grml.org>  Sat, 26 Nov 2011 20:26:37 +0100
+
 grml2hd (1.5.5) unstable; urgency=low
 
   * [77e77bd] Bindmount /proc and /sys outside of the chroot
