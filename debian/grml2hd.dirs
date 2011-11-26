@@ -1,5 +1,3 @@
-usr/bin
-usr/sbin
 usr/share/grml2hd
 etc/grml2hd
 boot/grub
