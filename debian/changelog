@@ -1,3 +1,11 @@
+grml2hd (1.7.0) unstable; urgency=low
+
+  * [dd8439a] Bump Standards-Version to 3.9.4
+  * [7f55659] Drop Jimmy from Uploaders field
+  * [6cb508a] Support grub-pc as alternative to grub dependency
+
+ -- Michael Prokop <mika@grml.org>  Mon, 18 Feb 2013 23:14:16 +0100
+
 grml2hd (1.6.0) unstable; urgency=low
 
   [ Christian Hofstaedtler ]
