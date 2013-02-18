@@ -13,7 +13,7 @@ Bugs: mailto:bugs@grml.org
 
 Package: grml2hd
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, lilo, grub, grml-autoconfig, initramfs-tools, file-rc, grml-scripts (>= 0.7-19)
+Depends: ${shlibs:Depends}, ${misc:Depends}, lilo, grub | grub-pc, grml-autoconfig, initramfs-tools, file-rc, grml-scripts (>= 0.7-19)
 Suggests: grml2hd-utils, grml-x, jfsutils, xfsprogs, reiserfsprogs
 Description: make a harddisk installation of grml
  grml2hd is a script that installs a running grml system
