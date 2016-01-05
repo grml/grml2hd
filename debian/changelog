@@ -1,3 +1,14 @@
+grml2hd (1.8.0) unstable; urgency=medium
+
+  * [fc29d21] Update package description
+  * [bbfd490] Bump Standards-Version to 3.9.6
+  * [726ccbf] wrap-and-sort debian directory
+  * [36054ee] Drop dependency on file-rc
+  * [04d03a1] Check whether file-rc is installed, otherwise skip
+    adjust_filerc code
+
+ -- Michael Prokop <mika@grml.org>  Tue, 05 Jan 2016 16:52:43 +0100
+
 grml2hd (1.7.0) unstable; urgency=low
 
   * [dd8439a] Bump Standards-Version to 3.9.4
