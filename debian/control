@@ -2,8 +2,12 @@ Source: grml2hd
 Section: grml
 Priority: optional
 Maintainer: Michael Prokop <mika@grml.org>
-Build-Depends: debhelper (>= 8)
-Build-Depends-Indep: asciidoc, xsltproc, docbook-xsl
+Build-Depends:
+ debhelper (>= 8),
+Build-Depends-Indep:
+ asciidoc,
+ docbook-xsl,
+ xsltproc,
 Standards-Version: 3.9.6
 Homepage: http://grml.org/grml2hd/
 Vcs-git: git://git.grml.org/grml2hd.git
@@ -13,8 +17,21 @@ Bugs: mailto:bugs@grml.org
 
 Package: grml2hd
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, lilo, grub | grub-pc, grml-autoconfig, initramfs-tools, file-rc, grml-scripts (>= 0.7-19)
-Suggests: grml2hd-utils, grml-x, jfsutils, xfsprogs, reiserfsprogs
+Depends:
+ file-rc,
+ grml-autoconfig,
+ grml-scripts (>= 0.7-19),
+ grub | grub-pc,
+ initramfs-tools,
+ lilo,
+ ${misc:Depends},
+ ${shlibs:Depends},
+Suggests:
+ grml-x,
+ grml2hd-utils,
+ jfsutils,
+ reiserfsprogs,
+ xfsprogs,
 Description: make a harddisk installation of grml
  grml2hd is a script that installs a running grml system
  on your hard disk. It just copies the running system
@@ -28,7 +45,9 @@ Description: make a harddisk installation of grml
 
 Package: grml2hd-utils
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
 Description: utilities for a Grml system on harddisk
  The scripts provided by this package are useful for
  Grml systems on harddisk.

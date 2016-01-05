@@ -1,10 +1,10 @@
-grml2hd usr/share/grml2hd/
-grml2hd-bootparams usr/share/grml2hd
-grml2hd-chrooted usr/share/grml2hd
-grml.bmp usr/share/grml2hd
-grml.bmp.conf usr/share/grml2hd
 bootscreen.bmp usr/share/grml2hd
 bootscreen.bmp.conf usr/share/grml2hd
 config etc/grml2hd
 customization etc/grml2hd
 grml-template_menu.lst boot/grub
+grml.bmp usr/share/grml2hd
+grml.bmp.conf usr/share/grml2hd
+grml2hd usr/share/grml2hd/
+grml2hd-bootparams usr/share/grml2hd
+grml2hd-chrooted usr/share/grml2hd
