@@ -523,6 +523,11 @@ remove_unwanted_packages() {
 }
 
 adjust_filerc() {
+  if ! dpkg --list file-rc 2>/dev/null | grep -q '^ii' ; then
+    echo "Looks like file-rc isn't installed, skipping adjust_filerc therefore."
+    return 0
+  fi
+
   # make sure /etc/runlevel.conf looks like needed for a Debian harddisk system
   # based on /var/lib/dpkg/info/initscripts.postinst
   update-rc.d bootlogd               start 05 S . >/dev/null || true
