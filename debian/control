@@ -22,7 +22,7 @@ Description: make a harddisk installation of grml
  bootloader,..) to get a working harddisk installation of
  grml.
  Please do NOT use grml2hd if you aren't an experienced
- Debian/unstable user. Thanks!
+ Debian user. Thanks!
  .
  Use it with care! Also take a look at grml2hd-utils.
 
